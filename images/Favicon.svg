@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_1" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 535.3 593.54">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#Degradado_sin_nombre_106);
+      }
+
+      .cls-2 {
+        fill: url(#Degradado_sin_nombre_106-4);
+      }
+
+      .cls-3 {
+        fill: url(#Degradado_sin_nombre_106-3);
+      }
+
+      .cls-4 {
+        fill: url(#Degradado_sin_nombre_106-2);
+      }
+    </style>
+    <linearGradient id="Degradado_sin_nombre_106" data-name="Degradado sin nombre 106" x1="321.3" y1="53.06" x2="456.86" y2="443.33" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4d8fcc"/>
+      <stop offset=".04" stop-color="#568cc4"/>
+      <stop offset=".1" stop-color="#6f86b1"/>
+      <stop offset=".17" stop-color="#997b91"/>
+      <stop offset=".27" stop-color="#d26d65"/>
+      <stop offset=".3" stop-color="#ea6753"/>
+      <stop offset=".35" stop-color="#ec7b4c"/>
+      <stop offset=".45" stop-color="#f1a240"/>
+      <stop offset=".55" stop-color="#f5bf38"/>
+      <stop offset=".64" stop-color="#f8d032"/>
+      <stop offset=".7" stop-color="#f9d731"/>
+      <stop offset="1" stop-color="#179172"/>
+    </linearGradient>
+    <linearGradient id="Degradado_sin_nombre_106-2" data-name="Degradado sin nombre 106" x1="135.57" y1="117.58" x2="271.14" y2="507.85" xlink:href="#Degradado_sin_nombre_106"/>
+    <linearGradient id="Degradado_sin_nombre_106-3" data-name="Degradado sin nombre 106" x1="74.48" y1="138.8" x2="210.05" y2="529.07" xlink:href="#Degradado_sin_nombre_106"/>
+    <linearGradient id="Degradado_sin_nombre_106-4" data-name="Degradado sin nombre 106" x1="260.2" y1="74.28" x2="395.77" y2="464.56" xlink:href="#Degradado_sin_nombre_106"/>
+  </defs>
+  <polygon class="cls-1" points="437.89 170.38 278.13 330.15 375.54 427.56 410.48 392.62 348.01 330.15 437.89 240.27 500.36 302.74 535.3 267.8 437.89 170.38"/>
+  <polygon class="cls-4" points="108.04 433.78 142.98 468.72 234.57 377.13 324.45 467.01 267.8 523.66 267.8 593.54 394.33 467.01 234.57 307.25 108.04 433.78"/>
+  <polygon class="cls-3" points="159.76 165.98 124.82 200.92 187.29 263.4 97.41 353.27 34.94 290.8 0 325.74 97.41 423.16 257.18 263.4 159.76 165.98"/>
+  <polygon class="cls-2" points="427.27 159.76 392.33 124.82 300.74 216.41 210.86 126.53 268.18 69.21 267.51 0 140.97 126.53 300.74 286.29 427.27 159.76"/>
+</svg>

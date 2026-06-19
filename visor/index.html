@@ -1,0 +1,2224 @@
+﻿<!DOCTYPE html>
+<html lang="es-ES">
+
+<head>
+    <link rel="preload" href="styles.css" as="style">
+    <link rel="preload" href="index.js" as="script">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="description"
+        content="Colombia en Mapas, un atlas vivo. Conoce, descarga y comparte  los mapas oficiales de la República de Colombia." />
+    <meta name="keywords"
+        content="mapa, mapas, Colombia, atlas, imágenes, cartografía, municipio, departamento, catastro, oficial, IGAC" />
+    <meta name="author" content="Instituto Geográfico Agustín Codazzi - IGAC" />
+    <meta name="title" property="og:title" content="Colombia en Mapas">
+    <meta property="og:type" content="website">
+    <meta name="image" property="og:image" content="https://www.colombiaenmapas.gov.co/images/Preview.png">
+    <meta http-equiv="content-language" content="es" />
+    <link rel="canonical" href="https://www.colombiaenmapas.gov.co" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <title>Observatorio de la tierra y el territorio</title>
+
+    <link type="text/css" async rel="stylesheet"
+        href="https://www.gstatic.com/firebasejs/ui/4.5.0/firebase-ui-auth.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jquery-typeahead/2.11.0/jquery.typeahead.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.min.css" />
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/css/dataTables.bootstrap.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.3/css/bootstrap-colorpicker.min.css" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/calcite-maps-bootstrap.min-v0.10.css">
+    <link rel="stylesheet" href="../css/calcite-maps-arcgis-3.x.min-v0.10.css">
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.44/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.44/esri/css/esri.css">
+    <link rel="stylesheet" href="styles.css">
+    <!-- <link rel="stylesheet" href="./../css/maestra.css">     -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-930NN4JH6K"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-930NN4JH6K');
+    </script>
+</head>
+
+<body class="calcite calcite-maps calcite-nav-top claro esri" style="background: lightgray;">
+    <div class="barra_gov">
+        <a class="logo-gov" href="https://www.gov.co/home/" target="_blank">
+            <img alt="Logo Gov.co" src="../images/header_govco.png">
+        </a>
+    </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbarigac">
+        <div class="logos h-100">
+            <a rel="noopener" class="navbar-brand-igac" href="https://www.igac.gov.co" target="_blank">
+                <img src="../images/logo.png" alt="Logo IGAC">
+            </a>
+            <img src="../images/logo_OBS.svg" alt="Colombia en Mapas">
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="icon-bar" style="background-color: white;"></span>
+            <span class="icon-bar" style="background-color: white;"></span>
+            <span class="icon-bar" style="background-color: white;"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <li>
+                    <a href="/" rel="noopener" class="nav-item nav-link">Inicio</a>
+                </li>
+                <a id="loginBtn" onclick="gotoLogin();">
+                    <span id="userName" style="color: white; padding-right: 5px; text-align: right; ">Iniciar
+                        sesion</span>
+                    <img id="userPhoto" src="../images/user.png" onerror="defaultUserPhoto();" alt="Iniciar sesion">
+                </a>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+    <!-- <div class="container-fluid main-cmp position-relative"> -->
+    <div class="container-fluid main-cmp position-relative">
+        <div class="calcite-map mt-3 row" style="display: none;">
+
+            <div id="mainDiv" class="col-md-4 col-lg-3 pr-0">
+                <!-- Search Panel -->
+                <div id="panelSearch" class="panel mb-0 collapse">
+                    <div id="collapseSearch" class="panel-collapse">
+                        <div class="panel-body p-0">
+                            <div id="containerFiltros">
+                                <div id="panelSearchFiltros" class="panel panel-default" data-toggle="popover">
+                                    <div>
+                                        <div id="searchHeader" class="panel-heading">
+                                            <h3 class="panel-title" style="display: inline-block;">Filtrar</h3>
+                                            <a id="panelSearchToggle" style="float: right; color:white;" href="#"
+                                                onclick="toggleFiltros();"><img src="../images/iconos/Close_01.png"
+                                                    alt="Minimizar" style="width: 10px; height: 2px;" /></a>
+                                        </div>
+                                        <div id="searchBody" class="panel-body">
+                                            <div id="searchBarTabF">
+                                                <ul class="nav nav-tabs">
+                                                    <li id="searchHeaderEntidad" class="active">
+                                                        <a href="#" class="pillsearch"
+                                                            onclick="toggleMain('entidad');">Entidad Territorial</a>
+                                                    </li>
+                                                    <li id="searchHeaderArea" class="">
+                                                        <a href="#" class="pillsearch"
+                                                            onclick="toggleMain('area');">Área</a>
+                                                    </li>
+                                                    <li id="searchHeaderGeoJSON" class="">
+                                                        <a href="#" class="pillsearch"
+                                                            onclick="toggleMain('geojson');">GeoJSON</a>
+                                                    </li>
+                                                </ul>
+                                                <div class="d-flex align-items-center">
+                                                    <div id="searchHeaderEntidadDiv" class="w-100 mr-2">
+                                                        <select class="form-control" id="searchFiltro"
+                                                            style="width: 100%;font-size: 14px;">
+                                                        </select>
+                                                    </div>
+                                                    <div id="searchHeaderAreaDiv" class="w-100 mr-2"
+                                                        style="display: none;">
+                                                        <div id="drawMain">
+                                                            <div id="drawBar">
+                                                                <div class="btn-group" role="group"
+                                                                    style="width: 100%;">
+                                                                    <button id="drawTriangleBtn2" type="button"
+                                                                        onclick="modoDibujo2('triangle');"
+                                                                        class="btn btn-default"></button>
+                                                                    <button id="drawCircleBtn2" type="button"
+                                                                        onclick="modoDibujo2('circle');"
+                                                                        class="btn btn-default"></button>
+                                                                    <button id="drawEllipseBtn2" type="button"
+                                                                        onclick="modoDibujo2('extent');"
+                                                                        class="btn btn-default"></button>
+                                                                    <button id="drawPolygonBtn2" type="button"
+                                                                        onclick="modoDibujo2('polygon');"
+                                                                        class="btn btn-default"></button>
+                                                                    <button id="drawFreehandPolygonBtn2" type="button"
+                                                                        onclick="modoDibujo2('freehandpolygon');"
+                                                                        class="btn btn-default"></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="searchHeaderGeoJSONDiv" class="w-100 mr-2"
+                                                        style="display: none;">
+                                                        <input name="file" id="file" type="file" class="form-control"
+                                                            style="height: auto;">
+                                                    </div>
+                                                    <label id="limpiarBtn"><a href="#"
+                                                            onclick="limpiarMain(); return false;">Limpiar</a></label>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                            <div id="panelSearchFiltroImagenes" class="panelSearchFiltro">
+                                                <hr style="margin-bottom: 0px;" />
+                                                <table style="width: 100%;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="padding: 10px 5px 10px 0px;">
+                                                                <div class="input-group date">
+                                                                    <input id="searchImagenesFechaInicial"
+                                                                        placeholder="Fecha inicial" type="text"
+                                                                        class="form-control">
+                                                                </div>
+                                                            </td>
+                                                            <td style="padding: 10px 0px 10px 5px;">
+                                                                <div class="input-group date">
+                                                                    <input id="searchImagenesFechaFinal"
+                                                                        placeholder="Fecha final" type="text"
+                                                                        class="form-control">
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2">
+                                                                <label for="searchImagenesCloud">Porcentaje de
+                                                                    nubes</label>
+                                                                <input id="searchImagenesCloud"
+                                                                    data-slider-id="searchImagenesCloud" type="text"
+                                                                    data-slider-min="0" data-slider-max="50"
+                                                                    data-slider-step="1" data-slider-value="50" />
+                                                                <span id="searchImagenesCloudTxt"
+                                                                    style="vertical-align: top;">0.5</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2">
+                                                                <a href="#" class="btn btn-default btn-primary"
+                                                                    onclick="aplicarFiltro();">Filtrar</a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+
+                                            <div style="display: none !important;">
+                                                <label>Escoge un sistema de referencia</label>
+                                                <select class="form-control" id="querySearchConsultaFormat">
+                                                    <option value="EPSG:9377" selected=selected>Origen Nacional
+                                                        (EPSG:9377)</option>
+                                                    <option value="EPSG:4326">WGS 84 (EPSG:4326)</option>
+                                                    <option value="EPSG:3857">WGS84 Web Mercator (EPSG:3857)</option>
+                                                    <option value="EPSG:4686">MAGNA-SIRGAS (EPSG:4686)</option>
+                                                    <option value="EPSG:3114">MAGNA-SIRGAS / Colombia Far West zone
+                                                        (EPSG:3114)</option>
+                                                    <option value="EPSG:3115">MAGNA-SIRGAS / Colombia West zone
+                                                        (EPSG:3115)</option>
+                                                    <option value="EPSG:3116">MAGNA-SIRGAS / Colombia Bogota zone
+                                                        (EPSG:3116)</option>
+                                                    <option value="EPSG:3117">MAGNA-SIRGAS / Colombia East Central zone
+                                                        (EPSG:3117)</option>
+                                                    <option value="EPSG:3118">MAGNA-SIRGAS / Colombia East zone
+                                                        (EPSG:3118)</option>
+                                                    <option value="EPSG:32617">WGS 84 / UTM zone 17N (EPSG:32617)
+                                                    </option>
+                                                    <option value="EPSG:32618">WGS 84 / UTM zone 18N (EPSG:32618)
+                                                    </option>
+                                                    <option value="EPSG:32619">WGS 84 / UTM zone 19N (EPSG:32619)
+                                                    </option>
+                                                    <option value="EPSG:32717">WGS 84 / UTM zone 17S (EPSG:32717)
+                                                    </option>
+                                                    <option value="EPSG:32718">WGS 84 / UTM zone 18S (EPSG:32718)
+                                                    </option>
+                                                    <option value="EPSG:32719">WGS 84 / UTM zone 19S (EPSG:32719)
+                                                    </option>
+                                                </select>
+                                                <div id="resultadoConsultaCoordenadas">
+                                                    <div id="resultadoConsultaCoordenadasX"></div>
+                                                    <div id="resultadoConsultaCoordenadasY"></div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div id="panelSearchResultados">
+
+                                <div id="searchBarTab">
+                                    <ul class="nav nav-tabs">
+                                        <li id="searchHeaderMedia" class="active">
+                                            <a href="#" class="pillsearch" onclick="toggleMedia();">Media
+                                                resoluci&oacute;n</a>
+                                        </li>
+                                        <li id="searchHeaderAlta" class="">
+                                            <a href="#" class="pillsearch" onclick="toggleAlta();">Alta
+                                                resoluci&oacute;n</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div id="panelSearchNivelImagenes">
+
+                                    <div id="panelSearchNivelImagenesMedia">
+                                        <div class="media-info">
+                                            <div class="pt-3">
+                                                <div id="searchImagenesTitle" class="titulo-interior">Im&aacute;genes
+                                                    PlanetScope</div>
+                                            </div>
+                                            <div id="searchImagenesBtns" class="d-flex px-3 pb-2 pt-3">
+                                                <div role="group" class="btn-group w-100">
+                                                    <span id="searchImagenesCount"></span>
+                                                </div>
+                                                <div role="group" class="btn-group d-flex" style="text-align: right;">
+                                                    <a href="#" id="searchImagenesBtnGrid" type="button"
+                                                        class="btn btn-sm mr-2 btn-outline-secondary active"
+                                                        onclick="toggleViewImagenes(); return false;">
+                                                        <img src="../images/iconos/Tiles_Blue.svg" alt="Modo grilla">
+                                                    </a>
+                                                    <a href="#" id="searchImagenesBtnList" type="button"
+                                                        class="btn btn-sm btn-outline-secondary"
+                                                        onclick="toggleViewImagenes();return false;">
+                                                        <img src="../images/iconos/List_Gray.svg" alt="Modo listado">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+
+                                        <table id="tableSearchBni" class="table table-condensed table-hover"
+                                            style="text-align: center;width: 100%;display: none;">
+                                            <thead id="tableSearchBniHeader">
+                                                <tr>
+                                                    <th style="text-align: center;">No.</th>
+                                                    <th style="text-align: center;">Fecha</th>
+                                                    <th style="text-align: center;">C&oacute;digo</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tableSearchBniTable">
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div id="panelSearchNivelImagenesAlta" style="display: none;">
+                                        <div class="media-info">
+                                            <div id="searchServiciosList" class="py-0">
+                                                <div class="media media-resultados2 pt-2"
+                                                    onclick="gotoServicioDetalle();return false;">
+                                                    <div class="media-right panel-resultados-media-left">
+                                                        <div class="panel-resultados-media-thumb"
+                                                            style="background-image: url('/images/CoberturaOTT.PNG')">
+                                                        </div>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <div class="panel panel-default panel-resultados2">
+                                                            <div class="panel-body">
+                                                                <div class="panel-resultados-titulo">Cobertura imágenes
+                                                                    alta resolución</div>
+                                                                <div class="panel-resultados-descripcion">
+                                                                    <i>Instituto Geográfico Agustín Codazzi -
+                                                                        IGAC</i><br><span class="fecha-servicio"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="media-right panel-resultados-media-right">
+                                                        <div onclick="gotoServicioDetalle();return false;"
+                                                            class="btn-resultados2">
+                                                            <img src="../images/iconos/Forward_01.svg" alt="Ver Detalle"
+                                                                style="width: 25px; height: 25px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="searchImagenesBtns2" class="w-100 d-flex px-3 pt-2"
+                                                style="padding-bottom: 10px;">
+                                                <div role="group" class="btn-group w-100">
+                                                    <span id="searchImagenesCount2"></span>
+                                                </div>
+                                                <div role="group" class="btn-group d-flex" style="text-align: right;">
+                                                    <a href="#" id="searchImagenesBtnGrid2" type="button"
+                                                        class="btn btn-sm mr-2 btn-outline-secondary active"
+                                                        onclick="toggleViewImagenes2(); return false;">
+                                                        <img src="../images/iconos/Tiles_Blue.svg" alt="Modo grilla">
+                                                    </a>
+                                                    <a href="#" id="searchImagenesBtnList2" type="button"
+                                                        class="btn btn-sm btn-outline-secondary"
+                                                        onclick="toggleViewImagenes2();return false;">
+                                                        <img src="../images/iconos/List_Gray.svg" alt="Modo listado">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </div>
+
+                                        <table id="tableSearchBni2" class="table table-condensed table-hover"
+                                            style="text-align: center;width: 100%;display: none;">
+                                            <thead id="tableSearchBniHeader2">
+                                                <tr>
+                                                    <th style="text-align: center;">No.</th>
+                                                    <th style="text-align: center;">Fecha</th>
+                                                    <th style="text-align: center;">C&oacute;digo</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tableSearchBniTable2">
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+
+                                <div id="panelSearchImagenDetalle" style="display: none;">
+                                    <div style="padding: 0px 20px 20px 20px;">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <a href="#" onclick="backImagenDetalle();" class="pull-left volver-btn"><img
+                                                    src="../images/iconos/Back_03.png"
+                                                    style="width: 8px; height: 10px;" /></a>
+                                            <div class="titulo-interior">Detalle de la imagen</div>
+                                        </div>
+                                        <div id="detalleImagenTitle" class="titulo-detalle"></div>
+                                        <div id="detalleImagenThumb">
+                                            <div id="detalleImagenThumbTools">
+                                                <div id="detalleImagenOpacity" style="display: inline-block;"
+                                                    class="colorpicker-element" data-toggle="tooltip"
+                                                    data-placement="bottom" title="Transparencia">
+                                                    <img src="../images/iconos/Transparency.png" alt="Transparencia"
+                                                        style="width: 10px; height: 10px;">
+                                                </div>
+                                                <div onclick="toggleImagenDetalleSwipe(); return false;"
+                                                    style="display: inline-block;padding-left: 10px;"
+                                                    data-toggle="tooltip" data-placement="bottom" title="Comparar">
+                                                    <i class="glyphicon glyphicon-transfer" aria-hidden="true"></i>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="detalleImagenAlerta" class="alert alert-warning" role="alert">
+                                            <p>Esta imagen dispuesta por el Instituto Geográfico Agustín Codazzi es una
+                                                imagen de referencia al cubrimiento del territorio, la imagen satelital
+                                                no cuenta con ortorectificación ni validación de calidad del producto.
+                                                Actualmente estos productos se encuentran en el proceso de generación de
+                                                productos cartográficos.</p>
+                                        </div>
+                                        <div id="detalleImagen"></div>
+                                        <div id="detalleImagenDescarga">
+                                            <hr />
+                                            <!--
+                                            <label><strong>Formato de descarga:</strong></label>
+                                            <select class="form-control" id="detalleImagenDescargaFormato" style="width: 100%;margin-bottom: 10px;">
+                                                <option value="">TIFF</option>
+                                                <option value="imagen_alta_md">Metadato</option>
+                                            </select>-->
+                                            <button type="button" onclick="downloadImagen(); return false;"
+                                                class="btn btn-primary btn-interior">Descargar</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="panelSearchServicioDetalle" style="display: none;">
+                                    <div style="padding: 20px;">
+                                        <a href="#" onclick="backServicioDetalle();" class="pull-left volver-btn"><img
+                                                src="../images/iconos/Back_03.png"
+                                                style="width: 8px; height: 10px;"></a>
+                                        <div class="titulo-interior">Detalle del servicio</div>
+                                        <div id="detalleServicioNombre" class="titulo-detalle"></div>
+                                        <div id="detalleServicioThumb"
+                                            style="background-image: url('/images/CoberturaOTT.PNG')"></div>
+                                        <div id="detalleServicio"></div>
+                                        <button id="detalleServicioBtn" href="#" type="button"
+                                            onclick="loadServicio(); return false;" class="btn btn-primary">Agregar al
+                                            mapa</button>
+                                        <button id="detalleServicioBtn2" href="#" type="button"
+                                            onclick="quitarServicio(); return false;" class="btn btn-danger"
+                                            style="display: none;">Eliminar del mapa</button>
+                                        <div id="detalleServicioDescarga">
+                                            <hr>
+                                            <label><strong>Formato de descarga:</strong></label>
+                                            <select class="form-control" id="detalleServicioFormato"
+                                                style="width: 100%;margin-bottom: 10px;">
+                                                <option value="0" selected="">GDB</option>
+                                                <option value="1">Shapefile</option>
+                                                <option value="2">Geopackage</option>
+                                                <option value="3">GeoJson</option>
+                                            </select>
+                                            <button type="button" onclick="downloadServicio(); return false;"
+                                                class="btn btn-primary btn-interior">Descargar</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div class="d-flex col-md-8 col-lg-9">
+                <div id="mapViewDiv">
+                    <div id="alertList" style="display: none;">
+                        <div>
+                            <div id="alertHeader" class="alert-header" style="background-color:#6b7d6c;"></div>
+                            <div style="background: white;" class="alert-media">
+                                <div id="alertContentLeft" class="media-left">
+                                    <img alt="imagen" class="media-object" style="width: 20px; height: 20px;" src="" />
+                                </div>
+                                <div id="alertContent" class="media-body alert-media-body" style="width: 250px;">
+
+                                </div>
+                                <div class="media-right" style="color: gray;" onclick="$('#alertList').hide();">
+                                    <span class="esri-icon esri-icon-close" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="coordinatesDiv"></div>
+                    <div id="shAnalyticsLegendBottom" class="sh-analytics-legend-bottom" style="display: none;"></div>
+                    <div id="homeButton"></div>
+                    <div id="locateButton"></div>
+                    <div id="swipeDiv"></div>
+                    <div id="swipe2Div"></div>
+                    <div id="swipe4Div"></div>
+                    <div id="swipe3Div"></div>
+                    <div id="toolsDiv" style="display: none;">
+                        <a href="#" onclick="gotoImprimir();">Imprimir</a><br />
+                        <a href="#" onclick="gotoCoordenadas();">Buscar coordenadas</a><br />
+                        <a href="#" onclick="gotoDibujar();">Dibujar</a>
+                    </div>
+                    <div id="infoToolDiv" style="display: none;">
+                        <a href="https://observatorios-organization.gitbook.io/observatorio-de-la-tierra-y-el-territorio"
+                            target="_blank">Tutorial y FAQ</a><br />
+                        <a href="#" onclick="gotoTutorial();">Exploración rápida</a>
+                        <a href="#" onclick="gotoInfo();">Acerca de</a><br />
+                    </div>
+                    <div id="shToolDiv" style="display: none;">
+                        <a href="#" onclick="gotoSH();">Índices espectrales</a><br />
+                        <a href="#" onclick="gotoSHStats();">Análisis espectral multitemporal</a>
+                        <a href="#" onclick="gotoSHAnalytics();">Detección de cambios</a>
+                        <a href="#" onclick="gotoPrisma();">Segmentación de coberturas</a><br />
+                    </div>
+                    <div id="rasterToolDiv" style="display: none;">
+                        <a href="#" onclick="gotoImagenes();">Mosaicos Imagenes raster</a><br />
+                        <a href="#" onclick="gotoRasterMosaicCatalog();">Descarga imagenes insumo mosaicos </a>
+                    </div>
+                    <div class="calcite-panels calcite-panels-right calcite-bg-light calcite-text-light panel-group"
+                        role="tablist" aria-multiselectable="true">
+
+                        <!-- Leyenda Panel -->
+                        <div id="panelLeyenda" class="panel collapse">
+                            <div id="headingLeyenda" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style=" background-image: url('../images/iconos/Leyenda.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label">Leyenda</span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closeLeyenda();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapseLeyenda" class="panel-collapse">
+                                <div class="panel-body">
+                                    <div id="leyendaDiv"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info Panel -->
+                        <div id="panelInfo" class="panel collapse">
+                            <div id="headingInfo" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style=" background-image: url('../images/iconos/Info.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label">Información del proyecto</span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closeInfo();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapseInfo" class="panel-collapse">
+                                <div class="panel-body">
+                                    El <a href="https://observatoriotierrayterritorio.igac.gov.co"
+                                        target="_blank">Observatorio de la Tierra y Territorio (OTT)</a> es una
+                                    plataforma virtual desarrollada por el <a href="https://www.igac.gov.co"
+                                        target="_blank">Instituto Geográfico Agustín Codazzi (IGAC)</a> cuyo objetivo
+                                    principal es permitir el monitoreo continuo y seguimiento de los cambios del
+                                    territorio colombiano a partir de datos obtenidos por percepción remota, mediante el
+                                    uso de imágenes satelitales y otros datos geoespaciales.<br />
+                                    Consideraciones para su uso:
+                                    <ol>
+                                        <li>Las imágenes satelitales y datos geoespaciales dispuestos dentro del OTT son
+                                            de uso principal de las entidades de orden nacional que el IGAC ha
+                                            seleccionado para el uso de las licencias multiusuarios de la plataforma.
+                                        </li>
+                                        <li>La descarga y disposición de las imágenes y datos dentro de la plataforma se
+                                            encuentran regidos bajo el licenciamiento y custodia de la información, por
+                                            lo tanto, el usuario deberá cumplir cada una de sus condiciones.</li>
+                                        <li>El usuario utiliza la plataforma y los datos bajo su propio riesgo y acepta
+                                            que el IGAC no es responsable por cualquier pérdida o daño de información
+                                            ocasionado por el uso de esta plataforma.</li>
+                                        <li>La escala de generación de los datos contenidos en esta plataforma, no
+                                            permiten el cálculo de áreas oficiales ni la definición en materia de
+                                            límites.</li>
+                                    </ol>
+                                    Si desea más información acerca de los datos dispuestos dentro de esta plataforma,
+                                    escríbanos a <a href="mailto:ott@igac.gov.co">ott@igac.gov.co</a>.<br /><br />
+                                    © 2024 Derechos Reservados | <a
+                                        href="https://tiendavirtual.igac.gov.co/sites/tiendavirtual.igac.gov.co/files/tyc/AUTORIZACI%C3%93N%20TRATAMIENTO%20DATOS%20PERSONALES.pdf"
+                                        target="_blank">Política de privacidad y condiciones de uso</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coordenadas Panel -->
+                        <div id="panelCoordenadas" class="panel collapse">
+                            <div id="headingCoordenadas" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style=" background-image: url('../images/iconos/Conversion de coordenadas.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label">Coordenadas</span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closeCoordenadas();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapseCoordenadas" class="panel-collapse">
+                                <div class="panel-body" style="padding: 0px 0px 0px 0px;">
+
+                                    <div class="tab-content"
+                                        style="padding-right: 15px; padding-left: 15px; padding-top: 15px;">
+
+                                        <label>Escoge un sistema de referencia</label>
+                                        <select class="form-control" id="querySearchCoordinateFormat">
+                                            <option value="EPSG:9377" selected=selected>Origen Nacional (EPSG:9377)
+                                            </option>
+                                            <option value="EPSG:4326">WGS 84 (EPSG:4326)</option>
+                                            <option value="EPSG:3857">WGS84 Web Mercator (EPSG:3857)</option>
+                                            <option value="EPSG:4686">MAGNA-SIRGAS (EPSG:4686)</option>
+                                            <option value="EPSG:3114">MAGNA-SIRGAS / Colombia Far West zone (EPSG:3114)
+                                            </option>
+                                            <option value="EPSG:3115">MAGNA-SIRGAS / Colombia West zone (EPSG:3115)
+                                            </option>
+                                            <option value="EPSG:3116">MAGNA-SIRGAS / Colombia Bogota zone (EPSG:3116)
+                                            </option>
+                                            <option value="EPSG:3117">MAGNA-SIRGAS / Colombia East Central zone
+                                                (EPSG:3117)</option>
+                                            <option value="EPSG:3118">MAGNA-SIRGAS / Colombia East zone (EPSG:3118)
+                                            </option>
+                                            <option value="EPSG:32617">WGS 84 / UTM zone 17N (EPSG:32617)</option>
+                                            <option value="EPSG:32618">WGS 84 / UTM zone 18N (EPSG:32618)</option>
+                                            <option value="EPSG:32619">WGS 84 / UTM zone 19N (EPSG:32619)</option>
+                                            <option value="EPSG:32717">WGS 84 / UTM zone 17S (EPSG:32717)</option>
+                                            <option value="EPSG:32718">WGS 84 / UTM zone 18S (EPSG:32718)</option>
+                                            <option value="EPSG:32719">WGS 84 / UTM zone 19S (EPSG:32719)</option>
+                                        </select>
+                                        <div style="clear: both;">
+                                            <table style="width: 100%;">
+                                                <tr>
+                                                    <td style="padding: 10px 10px 10px 0px;">
+                                                        <label id="querySearchCoordinateLatitudLabel"
+                                                            for="querySearchCoordinateLatitud">Norte (m)</label>
+                                                        <div class="btn-group"
+                                                            style="width: 100%; margin-bottom: 10px;">
+                                                            <input id="querySearchCoordinateLatitud" type="text"
+                                                                class="form-control" style="width: 100%;"
+                                                                placeholder="Ej: 2000000" />
+                                                            <span class="clearTextBtn glyphicon glyphicon-remove-circle"
+                                                                onclick="$('#querySearchCoordinateLatitud').val('');"></span>
+                                                        </div>
+                                                    </td>
+                                                    <td style="padding: 10px 0px 10px 10px;">
+                                                        <label id="querySearchCoordinateLongitudLabel"
+                                                            for="querySearchCoordinateLongitud">Este (m)</label>
+                                                        <div class="btn-group"
+                                                            style="width: 100%; margin-bottom: 10px;">
+                                                            <input id="querySearchCoordinateLongitud" type="text"
+                                                                class="form-control" style="width: 100%;"
+                                                                placeholder="Ej: 5000000" />
+                                                            <span class="clearTextBtn glyphicon glyphicon-remove-circle"
+                                                                onclick="$('#querySearchCoordinateLongitud').val('');"></span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <a href="#" class="btn btn-default btn-primary"
+                                            onclick="buscarCoordenada();">Buscar</a>
+
+
+                                    </div>
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Layers Panel -->
+                        <div id="panelLayers" class="panel collapse">
+                            <div id="headingLayers" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style=" background-image: url('../images/iconos/Mapas base y capas.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label" id="panelLayersTitle">Capas activas</span><span
+                                            id="panelLayersZoom" style="display: none;"></span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closeLayers();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapseLayers" class="panel-collapse">
+                                <div class="panel-body">
+                                    <div>
+                                        <div>
+                                            <label>Mapa base</label>
+                                        </div>
+                                        <select id="selectBasemapPanel" class="form-control">
+                                            <option value="igac">Mapa Topográfico Colombia</option>
+                                            <option value="igachibrido">Mapa Híbrido Colombia</option>
+                                            <option value="igacfisico">Mapa Físico Colombia</option>
+                                            <option value="igacterreno">Mapa Terreno Colombia</option>
+                                            <option value="igacsatelital">Mapa Satelital Colombia</option>
+                                            <option value="igaclonanegra">Mapa Lona Negra Colombia</option>
+                                            <option value="igaclonaazul">Mapa Lona Azul Colombia</option>
+                                            <option value="igacsatelitaltopo" selected>Mapa Satelital-Topográfico
+                                                Colombia</option>
+                                        </select>
+                                        <div class="alert alert-warning" role="alert"
+                                            style="font-size: small; line-height: 1.1em; padding: 4px 10px; margin-top: 10px; margin-bottom: 10px;">
+                                            <label aria-hidden="true" data-container="body" data-toggle="popover"
+                                                data-placement="bottom"
+                                                data-content="<p style='font-size: x-small;'>Las Instituciones p&uacute;blicas que bajo su rol misional requieran utilizar representaciones gr&aacute;ficas que incluyan los l&iacute;mites de las entidades territoriales nacionales, deber&aacute;n utilizar como el mapa base oficial, el dispuesto por el Instituto Geogr&aacute;fico Agust&iacute;n Codazzi o quien haga sus veces, a trav&eacute;s de servicios web interoperables, los cuales ser&aacute;n actualizados de acuerdo con la din&aacute;mica de los procesos de deslindes de las entidades territoriales del pa&iacute;s, atendiendo la expedici&oacute;n de normas y regulaci&oacute;n que en la materia expida el gobierno nacional.</p>"
+                                                data-html="true" data-trigger="hover" data-original-title="" title="">
+                                                <span class="glyphicon glyphicon-info-sign"></span>
+                                            </label>
+                                            &nbsp;Representaci&oacute;n de los L&iacute;mites de la Rep&uacute;blica
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SH Panel -->
+                        <div id="panelSH" class="panel collapse">
+                            <div id="headingSH" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style=" background-image: url('../images/iconos/Mapas base y capas.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label" id="panelSHTitle">Índices espectrales</span><span
+                                            id="panelSHZoom" style="display: none;"></span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closeSH();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapseSH" class="panel-collapse">
+                                <div class="panel-body">
+                                    <div>
+                                        <div>
+                                            <label>Fecha</label>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <select id="selectSHY" class="form-control"
+                                                    style="width: 100%;font-size: 14px;">
+                                                </select>
+                                            </div>
+                                            <div class="col-md-7">
+                                                <select id="selectSHM" class="form-control"
+                                                    style="width: 100%;font-size: 14px;">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <label>Capas disponibles</label>
+                                        <div id="layersDiv" class="list-group">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SHStats Panel -->
+                        <div id="panelSHStats" class="panel collapse">
+                            <div id="headingSHStats" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style=" background-image: url('../images/iconos/Mapas base y capas.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label" id="panelSHStatsTitle">Análisis espectral
+                                            multitemporal</span><span id="panelSHStatsZoom"
+                                            style="display: none;"></span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closeSHStats();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapseSHStats" class="panel-collapse">
+                                <div class="panel-body">
+                                    <div>
+                                        <label id="limpiarBtn2" style="font-size: 14px;float: right;"><a href="#"
+                                                onclick="limpiarArea2(); return false;"
+                                                style="color: darkred;">Limpiar</a></label>
+                                        <div>
+                                            <label>&Aacute;rea a graficar</label>
+                                        </div>
+                                        <div class="btn-group" role="group" style="width: 101%;">
+                                            <button id="drawTriangleBtn3" type="button"
+                                                onclick="modoDibujo3('triangle');" class="btn btn-default"></button>
+                                            <button id="drawCircleBtn3" type="button" onclick="modoDibujo3('circle');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawEllipseBtn3" type="button" onclick="modoDibujo3('extent');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawPolygonBtn3" type="button" onclick="modoDibujo3('polygon');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawFreehandPolygonBtn3" type="button"
+                                                onclick="modoDibujo3('freehandpolygon');"
+                                                class="btn btn-default"></button>
+                                        </div>
+                                        <label style="margin-top: 5px;"><strong>Área (GeoJSON):</strong></label>
+                                        <input name="areaFile2" id="areaFile2" type="file" class="form-control"
+                                            style="height: auto;">
+                                        <hr style="margin-bottom: 0px;">
+                                        <div>
+                                            <label>Rango de fechas</label>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="input-group date">
+                                                    <input id="selectSHStats1" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group date">
+                                                    <input id="selectSHStats2" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label>Indice</label>
+                                        <select id="selectSHStatsIdx" class="form-control"
+                                            style="width: 100%;font-size: 14px;">
+                                            <option value="">Ninguno</option>
+                                            <option value="NDVI">NDVI - Normalized Difference Vegetation Index</option>
+                                            <option value="GNDVI">GNDVI - Green Normalized Difference Vegetation
+                                            </option>
+                                            <option value="EVI">EVI - Enhanced Vegetation Index</option>
+                                            <option value="NDMI">NDMI - Normalized Difference Moisture Index</option>
+                                            <option value="SAVI">SAVI - Soil Adjusted Vegetation Index</option>
+                                            <option value="NDSI">NDSI - Normalised difference snow index</option>
+                                            <option value="NDWI">NDWI - Normalized difference water index</option>
+                                            <option value="NDBI">NDBI - Normalized Difference Built-up Index</option>
+                                            <option value="NDCI">NDCI - Normalized Difference Chlorophyll Index</option>
+                                            <option value="NBR">Zonas de quema</option>
+                                            <option value="MAP_DEFORESTATION">Pérdida de cobertura vegetal</option>
+                                        </select>
+                                        <div id="selectSHStatsAggContainer">
+                                            <label>Nivel de agrupamiento</label>
+                                            <select id="selectSHStatsAgg" class="form-control"
+                                                style="width: 100%;font-size: 14px;">
+                                                <option value="P1M">Mensual</option>
+                                                <option value="P1W">Semanal</option>
+                                                <option value="P1D">Diario</option>
+                                            </select>
+                                        </div>
+                                        <div id="sliderCCSHStatsContainer" class="sh-cloud-cover-control"
+                                            style="display: none;">
+                                            <label>Porcentaje de nubosidad&nbsp; 0 - 100%</label>
+                                            <div class="sh-cloud-slider-wrap">
+                                                <input id="sliderCCSHStats" data-slider-id="sliderCCSHStats" type="text"
+                                                    data-slider-min="0" data-slider-max="100" data-slider-step="1"
+                                                    data-slider-value="[0,100]" data-slider-range="true" />
+                                            </div>
+                                            <div class="sh-cloud-cover-values" aria-live="polite">
+                                                <div class="sh-cloud-cover-input">
+                                                    <input id="sliderCCSHStatsMinTxt" type="number" min="0" max="100"
+                                                        step="1" value="0"
+                                                        aria-label="Porcentaje mínimo de nubosidad" />
+                                                    <span>%</span>
+                                                </div>
+                                                <span class="sh-cloud-cover-separator">—</span>
+                                                <div class="sh-cloud-cover-input">
+                                                    <input id="sliderCCSHStatsMaxTxt" type="number" min="0" max="100"
+                                                        step="1" value="100"
+                                                        aria-label="Porcentaje máximo de nubosidad" />
+                                                    <span>%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="sliderCCSHStatsIndexContainer" style="display: none;">
+                                            <div class="sh-index-threshold-header">
+                                                <label>Index umbral (0.1 - 0.25):</label>
+                                                <span class="tooltip-container sh-inline-info" data-container="body"
+                                                    data-toggle="popover" data-placement="left" data-html="true"
+                                                    data-trigger="hover" data-original-title="" title=""
+                                                    data-content="<ul><li>Valores cercanos a 0.1 deben ser utilizados en áreas urbanas o aledañas a estas.</li><li>Valores cercanos a 0.15 deben ser empleados en zonas cercanas a cuerpos hídricos loticos.</li><li>Valores cercanos a 0.2 deben ser empleados en zonas con alta presencia histórica de quemas, asociado a mantenimiento de cultivos y/o perdida de cobertura vegetal.</li></ul>">
+                                                    <span class="icon">i</span>
+                                                </span>
+                                            </div>
+                                            <div class="sh-index-threshold-stepper">
+                                                <input id="txtSHStatsIndexThreshold" type="number" class="form-control"
+                                                    value="0.15" min="0.1" max="0.25" step="0.01"
+                                                    aria-label="Index umbral" />
+                                            </div>
+                                            <input id="sliderCCSHStatsIndex" type="hidden" value="0.15" />
+                                        </div>
+                                        <br />
+                                        <button type="button" id="btnSHStats" onclick="updateSHStats();"
+                                            class="btn btn-default btn-primary">
+                                            Visualizar
+                                        </button>
+                                        <button type="button" id="btnSHDownloadStats" onclick="downloadSHStats();"
+                                            class="btn btn-default" disabled="disabled" style="float: right;">
+                                            Descargar
+                                        </button>
+                                        <br /><br />
+                                        <div id="divSHStats" style="display: none;">
+                                            <div style="float: right;"><a href="#" id="divSHStatsTool"
+                                                    data-container="body" data-toggle="popover" data-placement="left"
+                                                    data-content="" style="display: none;" data-html="true">Como
+                                                    interpretar la gr&aacute;fica</a></div>
+                                            <label>Fecha:</label>&nbsp;<span id="sliderSHStatsTxt"
+                                                style="vertical-align: top;"></span>
+                                            <br />
+                                            <div>
+                                                <input id="sliderSHStats" data-slider-id="sliderSHStats" type="text"
+                                                    data-slider-min="0" data-slider-max="50" data-slider-step="1"
+                                                    data-slider-value="0" />
+                                            </div>
+                                            <canvas id="timeSeriesChart" style="height: 300px;" height="300">
+                                            </canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Prisma Panel -->
+                        <div id="panelPrisma" class="panel collapse">
+                            <div id="headingPrisma" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style=" background-image: url('../images/iconos/Mapas base y capas.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label" id="panelPrismaTitle">Segmentación De
+                                            Cobertura</span><span id="panelPrismaZoom" style="display: none;"></span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closePrisma();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapsePrisma" class="panel-collapse">
+                                <div class="panel-body">
+                                    <div>
+                                        <label id="limpiarBtn2" style="font-size: 14px;float: right;"><a href="#"
+                                                onclick="limpiarArea3(); return false;"
+                                                style="color: darkred;">Limpiar</a></label>
+                                        <div>
+                                            <label>&Aacute;rea a graficar</label>
+                                        </div>
+                                        <div class="btn-group" role="group" style="width: 101%;">
+                                            <button id="drawTriangleBtn4" type="button"
+                                                onclick="modoDibujo4('triangle');" class="btn btn-default"></button>
+                                            <button id="drawCircleBtn4" type="button" onclick="modoDibujo4('circle');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawEllipseBtn4" type="button" onclick="modoDibujo4('extent');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawPolygonBtn4" type="button" onclick="modoDibujo4('polygon');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawFreehandPolygonBtn4" type="button"
+                                                onclick="modoDibujo4('freehandpolygon');"
+                                                class="btn btn-default"></button>
+                                        </div>
+                                        <label style="margin-top: 5px;"><strong>Área (GeoJSON):</strong></label>
+                                        <input name="areaFile3" id="areaFile3" type="file" class="form-control"
+                                            style="height: auto;">
+                                        <hr style="margin-bottom: 0px;">
+
+                                        <div>
+                                            <label>Rango de fechas</label>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="input-group date">
+                                                    <input id="selectPrisma1" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group date">
+                                                    <input id="selectPrisma2" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label>Porcentaje de cubrimiento de nubes</label>
+                                        </div>
+                                        <div>
+                                            <input id="sliderPrismaCloud" data-slider-id="sliderPrismaCloud" type="text"
+                                                data-slider-min="0" data-slider-max="100" data-slider-step="1"
+                                                data-slider-value="10" />
+                                        </div>
+                                        <label>Modelo</label>
+                                        <form id="prismaToken" method="post" enctype="multipart/form-data">
+                                        </form>
+                                        <form id="prismaFileData" method="post" enctype="multipart/form-data">
+                                        </form>
+                                        <select id="selectPrismaIdx" class="form-control"
+                                            style="width: 100%;font-size: 14px;">
+                                            <option value="">Ninguno</option>
+                                            <option value="dl/dl_bosques/">Detección de bosques</option>
+                                            <option value="dl/dl_cultivos/">Detección de cultivos</option>
+                                            <option value="dl/dl_infraestructura/">Detección de infraestructura</option>
+                                            <option value="dl/dl_vias/">Detección de vías</option>
+                                        </select>
+                                        <div id="prismaOpt" style="display: none;">
+                                            <div>
+                                                <input type="checkbox" id="prismaOptCheck" name="prismaOptCheck" />
+                                                <label>Hay cultivos?</label>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <button type="button" id="btnPrisma" onclick="updatePrisma();"
+                                            class="btn btn-default btn-primary">
+                                            Procesar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- SHAnalytics Panel -->
+                        <div id="panelSHAnalytics" class="panel collapse">
+                            <div id="headingSHAnalytics" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style=" background-image: url('../images/iconos/Mapas base y capas.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label" id="panelSHAnalyticsTitle">Detección de
+                                            cambios</span><span id="panelSHAnalyticsZoom" style="display: none;"></span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closeSHAnalytics();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapseSHAnalytics" class="panel-collapse">
+                                <div class="panel-body">
+                                    <div>
+                                        <label>Suscripcion</label>
+                                        <select id="selectSHAnalyticsSubs" class="form-control"
+                                            style="width: 100%;font-size: 14px;">
+                                            <option></option>
+                                        </select>
+                                        <div class="sh-analytics-boundary-control">
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" id="chkSHAnalyticsBoundaries" checked>
+                                                Mostrar límites del área analizada
+                                            </label>
+                                            <div id="shAnalyticsBoundaryStatus" class="sh-analytics-boundary-status">
+                                            </div>
+                                        </div>
+                                        <div id="shAnalyticsDateFilter" class="sh-analytics-date-filter"
+                                            style="display: none;">
+                                            <div class="sh-analytics-date-filter-fields">
+                                                <label for="shAnalyticsStartMonthBtn">Desde
+                                                    <button type="button" id="shAnalyticsStartMonthBtn"
+                                                        class="sh-analytics-month-trigger"
+                                                        data-sh-analytics-month-field="start">
+                                                        <span id="shAnalyticsStartMonthLabel"></span>
+                                                        <span class="sh-analytics-month-trigger-icon">▾</span>
+                                                    </button>
+                                                    <input type="hidden" id="shAnalyticsStartMonth">
+                                                </label>
+                                                <label for="shAnalyticsEndMonthBtn">Hasta
+                                                    <button type="button" id="shAnalyticsEndMonthBtn"
+                                                        class="sh-analytics-month-trigger"
+                                                        data-sh-analytics-month-field="end">
+                                                        <span id="shAnalyticsEndMonthLabel"></span>
+                                                        <span class="sh-analytics-month-trigger-icon">▾</span>
+                                                    </button>
+                                                    <input type="hidden" id="shAnalyticsEndMonth">
+                                                </label>
+                                            </div>
+                                            <div id="shAnalyticsMonthPickerPopover"
+                                                class="sh-analytics-month-picker-popover" style="display: none;">
+                                                <div class="sh-analytics-month-picker-header">
+                                                    <button id="shAnalyticsMonthPickerPrevYear" type="button">«</button>
+                                                    <div id="shAnalyticsMonthPickerYear"></div>
+                                                    <button id="shAnalyticsMonthPickerNextYear" type="button">»</button>
+                                                </div>
+                                                <div id="shAnalyticsMonthPickerGrid"
+                                                    class="sh-analytics-month-picker-grid"></div>
+                                            </div>
+                                            <div id="shAnalyticsDateFilterStatus"
+                                                class="sh-analytics-date-filter-status"></div>
+                                        </div>
+                                        <div class="sh-analytics-municipality-control">
+                                            <div class="sh-analytics-admin-tabs">
+                                                <button type="button" class="sh-analytics-admin-tab active"
+                                                    data-sh-analytics-admin-level="department">Departamentos</button>
+                                                <button type="button" class="sh-analytics-admin-tab"
+                                                    data-sh-analytics-admin-level="municipality">Municipios</button>
+                                            </div>
+                                            <div class="sh-analytics-municipality-search">
+                                                <span class="esri-icon esri-icon-search" aria-hidden="true"></span>
+                                                <input type="text" id="txtSHAnalyticsMunicipalitySearch"
+                                                    class="form-control" placeholder="Buscar departamento"
+                                                    autocomplete="off">
+                                            </div>
+                                            <div id="shAnalyticsMunicipalityResults"></div>
+                                        </div>
+                                        <br />
+
+                                        <label>Resultados</label>
+                                        <div id="selectSHAnalyticsResults" class="list-group">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Descargar Imágenes Mosaicos Panel -->
+                        <div id="panelRasterMosaics" class="panel collapse">
+                            <div id="headingRasterMosaics" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style=" background-image: url('../images/iconos/Mapas base y capas.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label" id="panelRasterMosaicsTitle">Descarga imágenes insumo
+                                            mosaicos</span><span id="panelRasterMosaicsZoom"
+                                            style="display: none;"></span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closeRasterMosaicsCatalog();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapseRasterMosaics" class="panel-collapse">
+                                <div class="panel-body">
+                                    <div>
+                                        <label id="limpiarBtnRasterMosaics" style="font-size: 14px;float: right;"><a
+                                                href="#" onclick="limpiarAreaRasterMosaics(); return false;"
+                                                style="color: darkred;">Limpiar</a></label>
+                                        <div>
+                                            <label>Área a consultar</label>
+                                        </div>
+                                        <div class="btn-group" role="group" style="width: 101%;">
+                                            <button id="drawTriangleBtnRasterMosaics" type="button"
+                                                onclick="modoDibujoRasterMosaics('triangle');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawCircleBtnRasterMosaics" type="button"
+                                                onclick="modoDibujoRasterMosaics('circle');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawEllipseBtnRasterMosaics" type="button"
+                                                onclick="modoDibujoRasterMosaics('extent');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawPolygonBtnRasterMosaics" type="button"
+                                                onclick="modoDibujoRasterMosaics('polygon');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawFreehandPolygonBtnRasterMosaics" type="button"
+                                                onclick="modoDibujoRasterMosaics('freehandpolygon');"
+                                                class="btn btn-default"></button>
+                                        </div>
+                                        <label style="margin-top: 5px;"><strong>Área (GeoJSON):</strong></label>
+                                        <input name="areaFileRasterMosaics" id="areaFileRasterMosaics" type="file"
+                                            class="form-control" style="height: auto;">
+                                        <hr style="margin-bottom: 0px;">
+                                        <div>
+                                            <label>Año(s) de imagen:</label>
+                                        </div>
+                                        <div class="raster-mosaic-years-panel">
+                                            <label><input type="checkbox" name="rasterMosaicYearPanel" value="2023">
+                                                2023</label>
+                                            <label><input type="checkbox" name="rasterMosaicYearPanel" value="2024">
+                                                2024</label>
+                                            <label><input type="checkbox" name="rasterMosaicYearPanel" value="2025">
+                                                2025</label>
+                                        </div>
+                                        <hr style="margin-bottom: 0px;">
+                                        <div>
+                                            <label>Índice</label>
+                                        </div>
+                                        <select id="selectRasterMosaicIdx" class="form-control"
+                                            style="width: 100%;font-size: 14px;">
+                                            <option value="TrueColor">Color natural (True Color)</option>
+                                            <option value="FalseColor">Falso color (False Color)</option>
+                                            <option value="FullDataset8Bands">Dataset completo (8 Bandas)</option>
+                                            <option value="NDVI">NDVI - Normalized Difference Vegetation Index</option>
+                                            <option value="GNDVI">GNDVI - Green Normalized Difference Vegetation Index
+                                            </option>
+                                            <option value="EVI">EVI - Enhanced Vegetation Index</option>
+                                            <option value="SAVI">SAVI - Soil Adjusted Vegetation Index</option>
+                                            <option value="NDWI">NDWI - Normalized Difference Water Index</option>
+                                            <option value="NDCI">NDCI - Normalized Difference Chlorophyll Index</option>
+                                        </select>
+                                        <br />
+                                        <button type="button" id="btnRasterMosaicsCatalog"
+                                            onclick="searchRasterMosaicCatalog();"
+                                            class="btn btn-default btn-primary btn-block">
+                                            <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
+                                            Consultar
+                                        </button>
+                                        <div id="rasterMosaicsCatalogLoader" class="raster-mosaic-loader"
+                                            style="display: none;">Consultando catálogo...</div>
+                                        <div id="rasterMosaicsCatalogResults" class="raster-mosaic-results">Los
+                                            resultados del catálogo aparecerán aquí...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Importar Panel -->
+                        <div id="panelImprimir" class="panel collapse">
+                            <div id="headingImprimir" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style=" background-image: url('../images/iconos/Imprimir.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label">Imprimir</span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closeImprimir();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapseImprimir" class="panel-collapse">
+                                <div class="panel-body">
+                                    <label for="printTitle"><strong>T&iacute;tulo</strong></label>
+                                    <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
+                                        <input id="printTitle" class="form-control"
+                                            placeholder="Escribe el nombre del archivo" style="width: 100%;"
+                                            type="text" />
+                                        <span class="clearTextBtn glyphicon glyphicon-remove-circle"
+                                            onclick="$('#printTitle').val(''); $('#serviceListFilter').trigger('change');"></span>
+                                    </div>
+                                    <div class="tamano">
+                                        <p>
+                                            <label for="selectPrintTemplate"><strong>Tama&ntilde;o</strong></label>
+                                            <select id="selectPrintTemplate" class="form-control">
+                                                <option value="MAP_ONLY" selected=selected>Sólo mapa</option>
+
+                                                <option value="Carta horizontal derecha">Carta horizontal derecha
+                                                </option>
+                                                <option value="Carta horizontal izquierda">Carta horizontal izquierda
+                                                </option>
+                                                <option value="Carta vertical derecha">Carta vertical derecha</option>
+                                                <option value="Carta vertical izquierda">Carta vertical izquierda
+                                                </option>
+                                                <option value="Horizontal A3 derecha">Horizontal A3 derecha</option>
+                                                <option value="Horizontal A3 izquierda">Horizontal A3 izquierda</option>
+                                                <option value="Horizontal A4 derecha">Horizontal A4 derecha</option>
+                                                <option value="Horizontal A4 izquierda">Horizontal A4 izquierda</option>
+                                                <option value="Oficio horizontal derecha">Oficio horizontal derecha
+                                                </option>
+                                                <option value="Oficio horizontal izquierda">Oficio horizontal izquierda
+                                                </option>
+                                                <option value="Oficio vertical derecha">Oficio vertical derecha</option>
+                                                <option value="Oficio vertical izquierda">Oficio vertical izquierda
+                                                </option>
+                                                <option value="Vertical A3 derecha">Vertical A3 derecha</option>
+                                                <option value="Vertical A3 izquierda">Vertical A3 izquierda</option>
+                                            </select>
+                                        </p>
+                                    </div>
+                                    <div class="row imprimir_formato">
+                                        <div class="col-md-6">
+                                            <label for="selectPrintFormat"><strong>Formato</strong></label>
+                                            <select id="selectPrintFormat" class="form-control">
+                                                <option value="pdf" selected="">PDF</option>
+                                                <option value="jpg">JPG</option>
+                                                <option value="png32">PNG</option>
+                                                <option value="svg">SVG</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="selectPrintDPI"><strong>Calidad DPI</strong></label>
+                                            <select id="selectPrintDPI" class="form-control">
+                                                <option value="75" selected="">75</option>
+                                                <option value="150">150</option>
+                                                <option value="300">300</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <a href="#" class="btn btn-default btn-primary" onclick="printMap();">Imprimir</a>
+                                    <div id="printDiv" style="display: none;">
+                                    </div>
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info Panel -->
+                        <div id="panelPopup" class="panel collapse">
+                            <div id="headingPopup" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style=" background-image: url('../images/iconos/Info.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label">Información del elemento</span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closePopup();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapsePopup" class="panel-collapse">
+                                <div id="contentPopup" class="panel-body">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tiempo Panel -->
+                        <div id="panelTiempo" class="panel collapse">
+                            <div id="headingTiempo" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label">Mosaicos</span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closeTiempo();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapseTiempo" class="panel-collapse">
+                                <div class="panel-body">
+                                    <div>
+                                        <label>Capa Izquierda</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <select id="selectTile2YPanel" class="form-control"
+                                                style="width: 100%;font-size: 14px;">
+                                            </select>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <select id="selectTile2MPanel" class="form-control"
+                                                style="width: 100%;font-size: 14px;">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div>
+                                        <label>Capa Derecha</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <select id="selectTile1YPanel" class="form-control"
+                                                style="width: 100%;font-size: 14px;">
+                                            </select>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <select id="selectTile1MPanel" class="form-control"
+                                                style="width: 100%;font-size: 14px;">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <button type="button" onclick="borrarSeleccion();"
+                                                class="btn btn-default btn-danger">
+                                                Borrar selección
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="btn-group pull-right" role="group">
+                                                <button type="button" id="btnTiempoMode0"
+                                                    onclick="tiempoMode(0); return false;"
+                                                    class="btn btn-default active"><span
+                                                        class="glyphicon glyphicon-resize-vertical"
+                                                        aria-hidden="true"></span></button>
+                                                <button type="button" id="btnTiempoMode1"
+                                                    onclick="tiempoMode(1); return false;" class="btn btn-default"><span
+                                                        class="glyphicon glyphicon-resize-horizontal"
+                                                        aria-hidden="true"></span></button>
+                                                <button type="button" id="btnTiempoMode2"
+                                                    onclick="tiempoMode(2); return false;" class="btn btn-default"><span
+                                                        class="glyphicon glyphicon-transfer"
+                                                        aria-hidden="true"></span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Imagenes Panel -->
+                        <div id="panelImagenes" class="panel collapse">
+                            <div id="headingImagenes" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label">Imagenes Raster</span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closeImagenes();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapseImagenes" class="panel-collapse">
+                                <div class="panel-body">
+                                    <p id="layersRasterDivSelect">
+                                        <label>Capas Raster</label>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <select id="selectLayersRasterY1" class="form-control"
+                                                style="width: 100%;font-size: 14px;">
+                                            </select>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <select id="selectLayersRaster1" class="form-control"
+                                                style="width: 100%;font-size: 14px;">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    </p>
+                                    <div id="layerRasterContainer">
+                                        <div>
+                                            <h5>
+                                                Enlaces de inter&eacute;s: <label aria-hidden="true"
+                                                    data-container="body" data-toggle="popover" data-placement="right"
+                                                    data-content="<p>Como consumir estos servicios:<br/><a href='https://observatorios-organization.gitbook.io/observatorio-de-la-tierra-y-el-territorio/funcionalidades/como-combinar-bandas/consumo-servicios-wms' target='_blank'>Consumo Servicios WMS</a><br/><a href='https://observatorios-organization.gitbook.io/observatorio-de-la-tierra-y-el-territorio/funcionalidades/como-combinar-bandas/consumo-servicios-wcs' target='_blank'>Consumo Servicios WCS</a><br /><a href='https://observatorios-organization.gitbook.io/observatorio-de-la-tierra-y-el-territorio/funcionalidades/como-combinar-bandas/consumo-servicios-rest' target='_blank'>Consumo Servicios REST</a></p>"
+                                                    data-html="true" data-trigger="click" data-original-title=""
+                                                    title="">
+                                                    <span class="glyphicon glyphicon-info-sign"></span>
+                                                </label>
+                                            </h5>
+                                            <ul id="layerRasterEnlacesContainer"></ul>
+                                            <h5>Bandas: </h5>
+                                            <span id="layerRasterInputTxt"></span>
+                                            <div id="rasterThumbTools" style="float: right;">
+                                                <div id="rasterImagenOpacity" style="display: inline-block;"
+                                                    class="colorpicker-element" data-toggle="tooltip"
+                                                    data-placement="bottom" title="Transparencia">
+                                                    <img src="../images/iconos/Transparency.png" alt="Transparencia"
+                                                        style="width: 10px; height: 10px;">
+                                                </div>
+                                                <div onclick="toggleImagenRasterSwipe(); return false;"
+                                                    style="display: inline-block;padding-left: 10px;"
+                                                    data-toggle="tooltip" data-placement="bottom" title="Comparar">
+                                                    <i class="glyphicon glyphicon-transfer" aria-hidden="true"></i>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <div>
+                                            <h5>Uso de Bandas: </h5>
+                                            <table style="width: 100%;">
+                                                <tr class="mb-2 d-flex align-items-center">
+                                                    <td style="width: 80px;">Rojo (R)</td>
+                                                    <td class="w-100"><select id="layerRasterOutputR"
+                                                            class="form-control" style="width: 100%;"></select></td>
+                                                </tr>
+                                                <tr class="mb-2 d-flex align-items-center">
+                                                    <td style="width: 80px;">Verde (G)</td>
+                                                    <td class="w-100"><select id="layerRasterOutputG"
+                                                            class="form-control" style="width: 100%;"></select></td>
+                                                </tr>
+                                                <tr class="mb-2 d-flex align-items-center">
+                                                    <td style="width: 80px;">Azul (B)</td>
+                                                    <td class="w-100"><select id="layerRasterOutputB"
+                                                            class="form-control" style="width: 100%;"></select></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <hr />
+                                        <div>
+                                            <h5>Corrección de color: </h5>
+                                            <select id="layerRasterStretch" class="form-control" style="width: 100%;">
+                                                <option value="0">Ninguna</option>
+                                                <option value="3">Desviación estándar</option>
+                                                <option value="5">Mínimo y máximo</option>
+                                                <option value="6">Porcentaje recortado</option>
+                                                <option value="4">Histograma</option>
+                                                <option value="9">Sigmoid</option>
+                                            </select>
+                                            <div class="clearfix"></div><br />
+                                            <div id="rasterParamsDesv" class="rasterParams" style="display: none;">
+                                                <label>Desviaciones estandar</label><br />
+                                                <input id="rasterParamsDesvPercentage"
+                                                    data-slider-id="rasterParamsDesvPercentage" type="text"
+                                                    data-slider-min="0" data-slider-max="5" data-slider-step="1"
+                                                    data-slider-value="1" />
+                                                <span id="rasterParamsDesvPercentageTxt"
+                                                    style="vertical-align: top; padding-left: 20px;">1</span>
+                                            </div>
+                                            <div id="rasterParamsPercentage" class="rasterParams"
+                                                style="display: none;">
+                                                <label>Excluir la parte inferior</label><br />
+                                                <input id="rasterParamsPercentage1"
+                                                    data-slider-id="rasterParamsPercentage1" type="text"
+                                                    data-slider-min="0" data-slider-max="50" data-slider-step="1"
+                                                    data-slider-value="10" />
+                                                <span id="rasterParamsPercentage1Txt"
+                                                    style="vertical-align: top; padding-left: 20px;">10%</span>
+                                                <label>Excluir la parte superior</label>
+                                                <input id="rasterParamsPercentage2"
+                                                    data-slider-id="rasterParamsPercentage2" type="text"
+                                                    data-slider-min="0" data-slider-max="50" data-slider-step="1"
+                                                    data-slider-value="10" />
+                                                <span id="rasterParamsPercentage2Txt"
+                                                    style="vertical-align: top; padding-left: 20px; ">10%</span>
+                                            </div>
+                                            <div id="rasterParamsGamma" class="rasterParams" style="display: none;">
+                                                <label>Gamma</label><br />
+                                                <input id="rasterParamsGammaPercentage"
+                                                    data-slider-id="rasterParamsGammaPercentage" type="text"
+                                                    data-slider-min="0" data-slider-max="10" data-slider-step="0.1"
+                                                    data-slider-value="1.25" />
+                                                <span id="rasterParamsGammaPercentageTxt"
+                                                    style="vertical-align: top; padding-left: 20px;">1.25</span>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <button type="button" onclick="updateRasterFunctions();"
+                                            class="btn btn-default btn-primary">
+                                            Actualizar
+                                        </button>&nbsp;
+                                        <button type="button" onclick="updateRasterZoom();" class="btn btn-default">
+                                            Centrar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dibujar Panel -->
+                        <div id="panelDibujar" class="panel collapse">
+                            <div id="headingDibujar" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style=" background-image: url('../images/iconos/Herramientas de medicion.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed">
+                                        <span class="panel-label">Herramientas de dibujo y medici&oacute;n</span>
+                                    </a>
+                                    <a class="panel-close" href="#" onclick="closeDibujar();"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div id="collapseDibujar" class="panel-collapse panel-body">
+                                <div id="drawMain" class="p-2">
+                                    <ul class="nav nav-tabs">
+                                        <li id="dibujoPuntoHeader" class="active">
+                                            <a href="#" class="pillsearch" style="color: black;"
+                                                onclick="toggleDibujoPunto();">Puntos</a>
+                                        </li>
+                                        <li id="dibujoLineaHeader" class="">
+                                            <a href="#" class="pillsearch" style="color: black;"
+                                                onclick="toggleDibujoLinea();">Lineas</a>
+                                        </li>
+                                        <li id="dibujoPoligonoHeader" class="">
+                                            <a href="#" class="pillsearch" style="color: black;"
+                                                onclick="toggleDibujoPoligono();">Poligonos</a>
+                                        </li>
+                                    </ul>
+                                    <div id="drawBar">
+                                        <div role="group">
+                                            <button id="drawPointBtn" type="button" onclick="modoDibujo('Point');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawLineBtn" type="button" onclick="modoDibujo('Line');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawPolylineBtn" type="button" onclick="modoDibujo('Polyline');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawFreehandPolylineBtn" type="button"
+                                                onclick="modoDibujo('FreehandPolyline');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawTextBtn" type="button" onclick="modoDibujo('Text');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawTriangleBtn" type="button" onclick="modoDibujo('Triangle');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawCircleBtn" type="button" onclick="modoDibujo('Circle');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawEllipseBtn" type="button" onclick="modoDibujo('Ellipse');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawPolygonBtn" type="button" onclick="modoDibujo('Polygon');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawFreehandPolygonBtn" type="button"
+                                                onclick="modoDibujo('FreehandPolygon');"
+                                                class="btn btn-default"></button>
+                                            <button id="drawDeleteBtn" type="button" onclick="modoCleanDibujo();"
+                                                class="btn btn-default"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="width: 314px;">
+                                    <div id="drawIntro">
+                                        Haz click sobre la herramienta que deseas utilizar
+                                    </div>
+                                    <div id="drawEdit" style="display: none;">
+                                        <div id="drawCurrentTool" style="display: none !important;"></div>
+                                        <div id="txtSymbolEditorHolder" style="display: none !important;"></div>
+                                        <div id="drawOptsLine"
+                                            class="border-bottom pb-1 mb-1 d-flex align-items-center">
+                                            <div style="width: 100%; display: inline-block;"><strong>Color de la
+                                                    linea</strong></div>
+                                            <div style="display: inline-block;">
+                                                <a href="#" class="btn btn-default" id="drawOptLineColor">
+                                                    <span class="glyphicon glyphicon-tint" aria-hidden="true"></span>
+                                                </a>
+                                                <input type="text" id="drawOptLineColorInput" style="display: none;" />
+                                            </div>
+                                            <hr style="margin-top: 10px; margin-bottom: 10px;" />
+                                        </div>
+                                        <div id="drawOptsFill"
+                                            class="border-bottom pb-1 mb-1 d-flex align-items-center">
+                                            <div style="width: 100%; display: inline-block;"><strong>Color de
+                                                    relleno</strong></div>
+                                            <div style="display: inline-block;">
+                                                <a href="#" class="btn btn-default" id="drawOptFillColor">
+                                                    <span class="glyphicon glyphicon-tint" aria-hidden="true"></span>
+                                                </a>
+                                                <input type="text" id="drawOptFillColorInput" style="display: none;" />
+                                            </div>
+                                            <hr style="margin-top: 10px; margin-bottom: 10px;" />
+                                        </div>
+                                        <div id="drawOptsText" style="display: none;">
+                                            <input id="drawText" type="text" class="form-control" style="width: 100%;"
+                                                placeholder="" />
+                                            <hr />
+                                        </div>
+                                        <!--
+                                        <button type="button" onclick="deleteDibujo();" class="btn btn-default btn-danger">
+                                            Borrar
+                                        </button>
+                                            -->
+                                        <div id="measureDivContainer">
+                                            <div id="measureDivAreaUnits">
+                                                <label><strong>Unidad de área:</strong></label>
+                                                <select class="form-control" id="measureAreaUnit">
+                                                    <option value="hectares">Hectareas</option>
+                                                    <option value="square-kilometers">Kilómetros cuadrados</option>
+                                                    <option value="square-meters">Metros cuadrados</option>
+                                                    <option value="square-feet">Pies cuadrados</option>
+                                                    <option value="square-miles">Millas cuadradas</option>
+                                                    <option value="square-yards">Yardas cuadradas</option>
+                                                </select>
+                                                <div id="measureDivArea">
+
+                                                </div>
+                                            </div>
+                                            <div id="measureDivLengthUnits">
+                                                <label><strong>Unidad de longitud:</strong></label>
+                                                <select class="form-control" id="measureLengthUnit">
+                                                    <option value="kilometers">Kilómetros</option>
+                                                    <option value="meters">Metros</option>
+                                                    <option value="feet">Pies</option>
+                                                    <option value="miles">Millas</option>
+                                                    <option value="yards">Yardas</option>
+                                                </select>
+                                                <div id="measureDivLength">
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div id="drawClean" style="display: none;">
+                                        <button type="button" onclick="cleanDibujo();"
+                                            class="btn btn-default btn-danger">
+                                            Borrar todo
+                                        </button>&nbsp;
+                                    </div>
+                                    <div>
+                                        <strong>Geometrias</strong>
+                                        <br />
+                                        <div id="drawList"></div>
+                                        <br />
+                                        <button type="button" onclick="exportDibujo();"
+                                            class="btn btn-default btn-primary">
+                                            Exportar
+                                        </button>&nbsp;
+                                        <button type="button" onclick="cleanDibujo();"
+                                            class="btn btn-default btn-primary">
+                                            Borrar todo
+                                        </button>&nbsp;
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tools">
+                    <a id="toolBtn" class="panel-tools text-center" onclick="toggleTools();" data-toggle="tooltip"
+                        data-placement="left" title="Herramientas"></a>
+                    <a id="layersToolBtn" class="panel-tools text-center" onclick="gotoLayers();" data-toggle="tooltip"
+                        data-placement="left" title="Mapas base & capas"></a>
+                    <div id="tutorial6Div">
+                        <a id="mosaicosToolBtn" class="panel-tools text-center" onclick="gotoTiempo();"
+                            data-toggle="tooltip" data-placement="left" title="Mosaicos"></a>
+                        <a id="videoToolBtn" class="panel-tools text-center" onclick="gotoVideo();"
+                            data-toggle="tooltip" data-placement="left" title="Generar video"></a>
+                    </div>
+                    <a id="rasterToolBtn" class="panel-tools text-center" onclick="toggleRasterTools();"
+                        data-toggle="tooltip" data-placement="left" title="Imagenes (raster)"></a>
+                    <a id="shToolBtn" class="panel-tools text-center" onclick="toggleSHTools();" data-toggle="tooltip"
+                        data-placement="left" title="Analítica e IA"></a>
+                    <a id="infoToolBtn" class="panel-tools text-center" onclick="toggleInfoTools();"
+                        data-toggle="tooltip" data-placement="left" title="Información adicional"></a>
+                </div>
+            </div>
+        </div>
+        <div class="calcite-panels calcite-panels-right calcite-bg-light calcite-text-light panel-group" role="tablist"
+            aria-multiselectable="true">
+            <!-- Login Panel -->
+            <div id="panelLogin" class="panel collapse">
+                <div id="headingLogin" class="panel-heading-f" role="tab">
+                    <div class="panel-title">
+                        <a class="panel-toggle icon-panel" href="#"
+                            style=" background-image: url('../images/iconos/Comparte el mapa.png');"></a>
+                        <a href="#" class="panel-toggle collapsed">
+                            <span class="panel-label">Iniciar sesion</span>
+                        </a>
+                        <a class="panel-close" href="#" onclick="closeLogin();"><span class="esri-icon esri-icon-close"
+                                aria-hidden="true"></span></a>
+                    </div>
+                </div>
+                <div id="collapseLogin" class="panel-collapse">
+                    <div class="panel-body">
+                        <div id="loginContainer">
+                            <div id="authContainer">
+                            </div>
+                        </div>
+                        <div id="logoutContainer" style="text-align: center;padding: 10px;">
+                            <img id="userPhoto2" src="../images/login_1.png"
+                                style="width: 64px; height: 64px;border-radius: 50%;" alt="Imagen Usuario" />
+                            <h5><span id="userName2"></span></h5>
+                            <button id="logoutBtn" type="button" onclick="signOut();"
+                                class="btn btn-default btn-danger">
+                                Cerrar sesi&oacute;n
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="rasterMosaicCatalogDialog" class="raster-mosaic-dialog" style="display: none;">
+        <div class="raster-mosaic-dialog-header">
+            <strong>Consultar catalogo Imágenes Mosaicos Anuales</strong>
+            <a href="#" onclick="closeRasterMosaicCatalog(); return false;" aria-label="Cerrar">&times;</a>
+        </div>
+        <div class="raster-mosaic-dialog-body">
+            <label>Año(s) de imagen:</label>
+            <div class="raster-mosaic-years">
+                <label><input type="checkbox" name="rasterMosaicYear" value="2023"> 2023</label>
+                <label><input type="checkbox" name="rasterMosaicYear" value="2024"> 2024</label>
+                <label><input type="checkbox" name="rasterMosaicYear" value="2025"> 2025</label>
+            </div>
+            <button type="button" id="rasterMosaicCatalogSearchBtn" onclick="searchRasterMosaicCatalog();"
+                class="btn btn-default btn-primary btn-block">
+                <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span> Consultar
+            </button>
+            <div id="rasterMosaicCatalogLoader" class="raster-mosaic-loader" style="display: none;">Consultando
+                cat&aacute;logo...</div>
+            <div id="rasterMosaicCatalogResults" class="raster-mosaic-results">Los resultados del cat&aacute;logo
+                aparecer&aacute;n aqu&iacute;...</div>
+        </div>
+    </div>
+
+    <div id="modalMantenimiento" class="modal fade" role="dialog">
+        <div class="modal-dialog  modal-lg" role="document">
+            <div class="modal-content" style="background: white;">
+                <div class="modal-body" style="text-align: center;padding-top: 0px;">
+                    <img src="../images/mantenimiento_ott.png" style="height: 80vh;" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalTutorial" class="modal fade" role="dialog">
+        <div class="modal-dialog  modal-lg" role="document">
+            <div class="modal-content">
+                <div id="modalTutorialDiv" class="modal-body p-0" style="text-align: center;">
+
+                </div>
+                <div class="modal-footer" style="text-align: center;padding-top: 10px;line-height: 2.5em;">
+                    <span style="width: 100%;">1 de 7</span>
+                    <a href="#" class="btn btn-primary" onclick="gotoTutorialStep2(); return false;"
+                        style="background-color: #6b7d6c;float: right;">Siguiente</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalFinTutorial" class="modal fade" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="border: none; padding-bottom: 0px;background-color: #EEF8FA;">
+                    <a href="#" class="close" onclick="cancelTutorial(); return false;" aria-label="Cerrar"><span
+                            aria-hidden="true">&times;</span></a>
+                </div>
+                <div id="modalFinTutorialDiv" class="modal-body"
+                    style="text-align: center; padding-top: 0px; background-color: #EEF8FA;">
+                </div>
+                <div class="modal-footer" style="text-align: center;padding-top: 10px;line-height: 2.5em;">
+                    <span style="width: 100%;">7 de 7</span>
+                    <a href="#" class="btn btn-primary" onclick="finTutorial(); return false;"
+                        style="background-color: #6b7d6c;float: right;">Finalizar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalLicencia" class="modal fade" role="dialog">
+        <div class="modal-dialog  modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="border: none; padding-bottom: 0px;">
+                    <a href="#" class="close" onclick="closeLicencia(); return false;" aria-label="Cerrar"><span
+                            aria-hidden="true">&times;</span></a>
+                </div>
+                <div id="LicenciaDiv" class="modal-body" style="text-align: center;padding-top: 0px;">
+                    <div><img src="../images/Logo_OBS.png" /></div>
+                    <br />
+                    <h4 style="color: black;">OBSERVATORIO DE LA TIERRA Y EL TERRITORIO</h4>
+                    <div>
+                        <p>El Instituto Geográfico Agustín Codazzi (IGAC), de acuerdo con el Decreto 846 de 2021
+                            artículo 3, tiene como objetivo principal elaborar y actualizar el mapa oficial de Colombia,
+                            así como ser la máxima autoridad catastral nacional.</p>
+                        <p>En el marco de nuestro compromiso con el desarrollo del país, estamos implementando el
+                            Observatorio de la Tierra y el Territorio OTT, una plataforma que permite monitorear los
+                            cambios del territorio colombiano a partir de datos obtenidos por percepción remota
+                            (imágenes de satélite).</p>
+                        <p>El Observatorio de la Tierra y el Territorio OTT es un centro de información para el
+                            monitoreo y diagnóstico de la dinámica territorial, que dispone imágenes satelitales de todo
+                            el territorio nacional. Es una herramienta clave para procesos como Catastro Multipropósito,
+                            prevención de desastres naturales, ordenamiento territorial e implementación de políticas
+                            públicas, fortaleciendo y facilitando el acceso a insumos cartográficos actualizados del
+                            país con la mejor calidad posible.</p>
+                        <p>Esta plataforma está restringida para 72 entidades de Orden Nacional, lo cual ha facilitado
+                            la labor y toma de decisiones a nivel gubernamental. Actualmente, su usuario no cuenta con
+                            licenciamiento dentro de la plataforma, si desea hacer parte de esta iniciativa, encontrará
+                            a continuación un formulario con el cual nos pondremos en contacto con usted tan pronto sea
+                            evaluado su acceso a la plataforma y el posible uso de sus funcionalidades.</p>
+                    </div>
+                    <div id="licenciaAlerta" style="display: none;">Debes aceptar completar todos los campos para
+                        continuar<br /></div>
+                    <table style="width: 100%; text-align: left;">
+                        <tr>
+                            <td>Nombre del solicitante</td>
+                            <td><input type="text" class="form-control" id="licenciaSolicitante"
+                                    placeholder="Nombre del solicitante"></td>
+                        </tr>
+                        <tr>
+                            <td>Correo Electr&oacute;nico</td>
+                            <td><input type="text" class="form-control" id="licenciaCorreo"
+                                    placeholder="Correo electrónico"></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 250px;">Entidad</td>
+                            <td>
+                                <select id="licenciaEntidad3" class="form-control" style="width: 100%;">
+                                    <option disabled selected>Entidad</option>
+                                    <option value='Agencia De Desarrollo Rural (ADR)'>Agencia De Desarrollo Rural (ADR)
+                                    </option>
+                                    <option value='Agencia De Renovación Del Territorio (ART)'>Agencia De Renovación Del
+                                        Territorio (ART)</option>
+                                    <option value='Agencia Nacional De Infraestructura'>Agencia Nacional De
+                                        Infraestructura</option>
+                                    <option value='Agencia Nacional De Tierras (ANT)'>Agencia Nacional De Tierras (ANT)
+                                    </option>
+                                    <option value='Banco de la República'>Banco de la República</option>
+                                    <option value='Cancilleria'>Cancilleria</option>
+                                    <option value='Cardique'>Cardique</option>
+                                    <option value='Comisión De Regulación De Agua Potable Y Saneamiento Básico (CRA)'>
+                                        Comisión De Regulación De Agua Potable Y Saneamiento Básico (CRA)</option>
+                                    <option value='Cormacarena'>Cormacarena</option>
+                                    <option value='Corpocaldas'>Corpocaldas</option>
+                                    <option value='Corpocesar'>Corpocesar</option>
+                                    <option value='Corpochivor'>Corpochivor</option>
+                                    <option value='Corporación Autónoma Regional De Boyacá (CORPOBOYACÁ)'>Corporación
+                                        Autónoma Regional De Boyacá (CORPOBOYACÁ)</option>
+                                    <option value='Corporación Autónoma Regional De Cundinamarca (CAR)'>Corporación
+                                        Autónoma Regional De Cundinamarca (CAR)</option>
+                                    <option value='Corporación Autónoma Regional De La Frontera Nororiental (CORPONOR)'>
+                                        Corporación Autónoma Regional De La Frontera Nororiental (CORPONOR)</option>
+                                    <option value='Corporación Autónoma Regional De La Orinoquía (CORPORINOQUIA)'>
+                                        Corporación Autónoma Regional De La Orinoquía (CORPORINOQUIA)</option>
+                                    <option
+                                        value='Corporación Autónoma Regional De Las Cuencas De Los Ríos Negro Y Nare (CORNARE)'>
+                                        Corporación Autónoma Regional De Las Cuencas De Los Ríos Negro Y Nare (CORNARE)
+                                    </option>
+                                    <option value='Corporación Autónoma Regional De Nariño (CORPONARIÑO)'>Corporación
+                                        Autónoma Regional De Nariño (CORPONARIÑO)</option>
+                                    <option value='Corporación Autónoma Regional De Risaralda (CARDER)'>Corporación
+                                        Autónoma Regional De Risaralda (CARDER)</option>
+                                    <option value='Corporación Autónoma Regional De Sucre (CARSUCRE)'>Corporación
+                                        Autónoma Regional De Sucre (CARSUCRE)</option>
+                                    <option value='Corporación Autónoma Regional Del Alto Magdalena (CAM)'>Corporación
+                                        Autónoma Regional Del Alto Magdalena (CAM)</option>
+                                    <option value='Corporación Autónoma Regional Del Atlántico (CRA)'>Corporación
+                                        Autónoma Regional Del Atlántico (CRA)</option>
+                                    <option value='Corporación Autónoma Regional Del Cauca (CRC)'>Corporación Autónoma
+                                        Regional Del Cauca (CRC)</option>
+                                    <option
+                                        value='Corporación Autónoma Regional Del Centro De Antioquia (CORANTIOQUIA)'>
+                                        Corporación Autónoma Regional Del Centro De Antioquia (CORANTIOQUIA)</option>
+                                    <option value='Corporación Autónoma Regional Del Magdalena (CORPAMAG)'>Corporación
+                                        Autónoma Regional Del Magdalena (CORPAMAG)</option>
+                                    <option value='Corporación Autónoma Regional Del Quindío (CRQ)'>Corporación Autónoma
+                                        Regional Del Quindío (CRQ)</option>
+                                    <option value='Corporación Autónoma Regional Del Sur De Bolívar (CSB)'>Corporación
+                                        Autónoma Regional Del Sur De Bolívar (CSB)</option>
+                                    <option value='Corporación Autónoma Regional Del Valle Del Cauca (CVC)'>Corporación
+                                        Autónoma Regional Del Valle Del Cauca (CVC)</option>
+                                    <option
+                                        value='Corporación Autónoma Regional Para La Defensa De La Meseta De Bucaramanga (CDMB)'>
+                                        Corporación Autónoma Regional Para La Defensa De La Meseta De Bucaramanga (CDMB)
+                                    </option>
+                                    <option value='Corporación CVS'>Corporación CVS</option>
+                                    <option
+                                        value='Corporación Para El Desarrollo Sostenible De La Mojana Y El San Jorge (CORPOMOJANA)'>
+                                        Corporación Para El Desarrollo Sostenible De La Mojana Y El San Jorge
+                                        (CORPOMOJANA)</option>
+                                    <option
+                                        value='Corporación Para El Desarrollo Sostenible Del Archipiélago De San Andrés, Providencia Y Santa Catalina (CORALINA)'>
+                                        Corporación Para El Desarrollo Sostenible Del Archipiélago De San Andrés,
+                                        Providencia Y Santa Catalina (CORALINA)</option>
+                                    <option
+                                        value='Corporación Para El Desarrollo Sostenible Del Norte Y Oriente De La Amazonía (CDA)'>
+                                        Corporación Para El Desarrollo Sostenible Del Norte Y Oriente De La Amazonía
+                                        (CDA)</option>
+                                    <option value='Corpouraba'>Corpouraba</option>
+                                    <option value='Cortolima'>Cortolima</option>
+                                    <option value='Departamento Administrativo Nacional De Estadística (DANE)'>
+                                        Departamento Administrativo Nacional De Estadística (DANE)</option>
+                                    <option value='Departamento Nacional De Planeación'>Departamento Nacional De
+                                        Planeación</option>
+                                    <option value='Dirección De Sustitución De Cultivos De Uso Ilícito'>Dirección De
+                                        Sustitución De Cultivos De Uso Ilícito</option>
+                                    <option value='Dirección Nacional De Inteligencia (DNI)'>Dirección Nacional De
+                                        Inteligencia (DNI)</option>
+                                    <option value='Fondo Adaptación'>Fondo Adaptación</option>
+                                    <option value='Gobernación de Amazonas'>Gobernación de Amazonas</option>
+                                    <option value='Gobernación de Antioquia'>Gobernación de Antioquia</option>
+                                    <option value='Gobernación de Arauca'>Gobernación de Arauca</option>
+                                    <option value='Gobernación de Atlántico'>Gobernación de Atlántico</option>
+                                    <option value='Gobernación de Bolívar'>Gobernación de Bolívar</option>
+                                    <option value='Gobernación de Boyacá'>Gobernación de Boyacá</option>
+                                    <option value='Gobernación de Caquetá'>Gobernación de Caquetá</option>
+                                    <option value='Gobernación de Casanare'>Gobernación de Casanare</option>
+                                    <option value='Gobernación de Cesar'>Gobernación de Cesar</option>
+                                    <option value='Gobernación de Chocó'>Gobernación de Chocó</option>
+                                    <option value='Gobernación de Cundinamarca'>Gobernación de Cundinamarca</option>
+                                    <option value='Gobernación de Córdoba'>Gobernación de Córdoba</option>
+                                    <option value='Gobernación de Guainía'>Gobernación de Guainía</option>
+                                    <option value='Gobernación de Guaviare'>Gobernación de Guaviare</option>
+                                    <option value='Gobernación de Huila'>Gobernación de Huila</option>
+                                    <option value='Gobernación de La Guajira'>Gobernación de La Guajira</option>
+                                    <option value='Gobernación de Magdalena'>Gobernación de Magdalena</option>
+                                    <option value='Gobernación de Meta'>Gobernación de Meta</option>
+                                    <option value='Gobernación de Nariño'>Gobernación de Nariño</option>
+                                    <option value='Gobernación de Norte de Santander'>Gobernación de Norte de Santander
+                                    </option>
+                                    <option value='Gobernación de Putumayo'>Gobernación de Putumayo</option>
+                                    <option value='Gobernación de Quindío'>Gobernación de Quindío</option>
+                                    <option value='Gobernación de San Andrés, Providencia y Santa Catalina'>Gobernación
+                                        de San Andrés, Providencia y Santa Catalina</option>
+                                    <option value='Gobernación de Sucre'>Gobernación de Sucre</option>
+                                    <option value='Gobernación de Tolima'>Gobernación de Tolima</option>
+                                    <option value='Gobernación de Valle del Cauca'>Gobernación de Valle del Cauca
+                                    </option>
+                                    <option value='Gobernación de Vaupés'>Gobernación de Vaupés</option>
+                                    <option value='Gobernación de Vichada'>Gobernación de Vichada</option>
+
+                                    <option value='Instituto Colombiano Agropecuario (ICA)'>Instituto Colombiano
+                                        Agropecuario (ICA)</option>
+                                    <option value='Instituto Colombiano De Antropología E Historia (ICANH)'>Instituto
+                                        Colombiano De Antropología E Historia (ICANH)</option>
+                                    <option
+                                        value='Instituto De Investigaciones Marinas Y Costeras José Benito Vives De Andréis (INVEMAR)'>
+                                        Instituto De Investigaciones Marinas Y Costeras José Benito Vives De Andréis
+                                        (INVEMAR)</option>
+                                    <option
+                                        value='Instituto De Planificación Y Promoción De Soluciones Energéticas Para Zonas No Interconectadas (IPSE)'>
+                                        Instituto De Planificación Y Promoción De Soluciones Energéticas Para Zonas No
+                                        Interconectadas (IPSE)</option>
+                                    <option value='Instituto Geográfico Agustín Codazzi (IGAC)'>Instituto Geográfico
+                                        Agustín Codazzi (IGAC)</option>
+                                    <option value='Instituto Nacional De Vías'>Instituto Nacional De Vías</option>
+                                    <option value='Ministerio De Agricultura - Gestión General'>Ministerio De
+                                        Agricultura - Gestión General</option>
+                                    <option value='Ministerio De Ambiente Y Desarrollo Sostenible'>Ministerio De
+                                        Ambiente Y Desarrollo Sostenible</option>
+                                    <option value='Ministerio De Ciencia, Tecnología E Innovación'>Ministerio De
+                                        Ciencia, Tecnología E Innovación</option>
+                                    <option value='Ministerio De Educación Nacional'>Ministerio De Educación Nacional
+                                    </option>
+                                    <option value='Ministerio De Minas Y Energía - Gestión General'>Ministerio De Minas
+                                        Y Energía - Gestión General</option>
+                                    <option value='Ministerio De Transporte'>Ministerio De Transporte</option>
+                                    <option value='Ministerio De Vivienda, Ciudad Y Territorio'>Ministerio De Vivienda,
+                                        Ciudad Y Territorio</option>
+                                    <option value='Registraduría Nacional Del Estado Civil'>Registraduría Nacional Del
+                                        Estado Civil</option>
+                                    <option value='Servicio Geológico Colombiano'>Servicio Geológico Colombiano</option>
+                                    <option value='Servicio Nacional De Aprendizaje (SENA)'>Servicio Nacional De
+                                        Aprendizaje (SENA)</option>
+                                    <option value='Sociedad De Activos Especiales (SAE)'>Sociedad De Activos Especiales
+                                        (SAE)</option>
+                                    <option
+                                        value='Unidad Administrativa Especial De Gestión De Restitución De Tierras Despojadas'>
+                                        Unidad Administrativa Especial De Gestión De Restitución De Tierras Despojadas
+                                    </option>
+                                    <option value='Unidad Administrativa Especial De La Aeronáutica Civil'>Unidad
+                                        Administrativa Especial De La Aeronáutica Civil</option>
+                                    <option value='Unidad De Atención Y Reparación Integral A Las Víctimas'>Unidad De
+                                        Atención Y Reparación Integral A Las Víctimas</option>
+                                    <option
+                                        value='Unidad De Búsqueda De Personas Dadas Por Desaparecidas En El Contexto Y En Razón Del Conflicto Armado (UBPD)'>
+                                        Unidad De Búsqueda De Personas Dadas Por Desaparecidas En El Contexto Y En Razón
+                                        Del Conflicto Armado (UBPD)</option>
+                                    <option
+                                        value='Unidad De Planeación Del Sector De Infraestructura De Transporte (UPIT)'>
+                                        Unidad De Planeación Del Sector De Infraestructura De Transporte (UPIT)</option>
+                                    <option value='Unidad De Planeación Minero-Energética (UPME)'>Unidad De Planeación
+                                        Minero-Energética (UPME)</option>
+                                    <option value='Unidad De Planificación Rural Agropecuaria (UPRA)'>Unidad De
+                                        Planificación Rural Agropecuaria (UPRA)</option>
+                                    <option value='Unidad Nacional Para La Gestión Del Riesgo De Desastres'>Unidad
+                                        Nacional Para La Gestión Del Riesgo De Desastres</option>
+                                    <option value='Universidad Distrital Francisco José De Caldas (UDFJC)'>Universidad
+                                        Distrital Francisco José De Caldas (UDFJC)</option>
+                                    <option value='Universidad Nacional de Colombia'>Universidad Nacional de Colombia
+                                    </option>
+                                    <option value=''>Otra entidad</option>
+                                </select>
+                                <input type="text" class="form-control" id="licenciaEntidad" placeholder="Entidad"
+                                    style="display: none;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Objetivo del uso</td>
+                            <td><input type="text" class="form-control" id="licenciaProyecto"
+                                    placeholder="Objetivo del uso"></td>
+                        </tr>
+                    </table>
+                    <br />
+                    <p>
+                        A través de nuevas herramientas el IGAC sigue construyendo una Geografía Para la Vida.
+                    </p>
+                </div>
+                <div class="modal-footer" style="text-align: center;padding-top: 10px;line-height: 2.5em;">
+                    <a href="#" class="btn btn-primary" onclick="acceptLicencia(); return false;">Enviar
+                        Formulario</a>&nbsp;
+                    <a href="#" class="btn btn-primary" onclick="closeLicencia(); return false;">Volver a OTT</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalLicencia2" class="modal fade" role="dialog">
+        <div class="modal-dialog  modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="border: none; padding-bottom: 0px;">
+                    <a href="#" class="close" onclick="closeLicencia2(); return false;" aria-label="Cerrar"><span
+                            aria-hidden="true">&times;</span></a>
+                </div>
+                <div id="LicenciaDiv2" class="modal-body" style="text-align: center;padding-top: 0px;">
+                    <div><img src="../images/Logo_OBS.png" /></div>
+                    <br />
+                    <h4 style="color: black;">OBSERVATORIO DE LA TIERRA Y EL TERRITORIO</h4>
+                    <div>
+                        <p>La descarga de imágenes de alta resolución se encuentra limitada para algunos usuarios que
+                            hacen parte de la plataforma del Observatorio de la Tierra y el Territorio del Instituto
+                            Geográfico Agustín Codazzi. La restricción de uso se encuentra actualmente vigente debido a
+                            que la información corresponde a una imagen satelital la cual no cuenta con
+                            ortorectificación ni validación de calidad del producto, estos productos se encuentran en la
+                            actualidad en el proceso de generación de productos cartográficos.</p>
+                        <p>Es por ello que lo invitamos a completar el siguiente formulario para evaluar la posibilidad
+                            de hacer entrega de esta imagen de referencia:.</p>
+                    </div>
+                    <div id="licenciaAlerta2" style="display: none;">Debes aceptar completar todos los campos para
+                        continuar<br /></div>
+                    <table style="width: 100%; text-align: left;">
+                        <tr>
+                            <td>Nombre del solicitante</td>
+                            <td><input type="text" class="form-control" id="licenciaSolicitante2"
+                                    placeholder="Nombre del solicitante"></td>
+                        </tr>
+                        <tr>
+                            <td>Correo Electr&oacute;nico</td>
+                            <td><input type="text" class="form-control" id="licenciaCorreo2"
+                                    placeholder="Correo electrónico"></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 250px;">Entidad</td>
+                            <td><input type="text" class="form-control" id="licenciaEntidad2" placeholder="Entidad">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Objetivo del uso</td>
+                            <td><input type="text" class="form-control" id="licenciaProyecto2"
+                                    placeholder="Objetivo del uso"></td>
+                        </tr>
+                        <tr>
+                            <td>Nombre de la imagen</td>
+                            <td><input type="text" class="form-control" id="licenciaNombre2"
+                                    placeholder="Nombre de la imagen"></td>
+                        </tr>
+                    </table>
+                    <br />
+                    <p>
+                        A través de nuevas herramientas el IGAC sigue construyendo una Geografía Para la Vida.
+                    </p>
+                </div>
+                <div class="modal-footer" style="text-align: center;padding-top: 10px;line-height: 2.5em;">
+                    <a href="#" class="btn btn-primary" onclick="acceptLicencia2(); return false;">Enviar
+                        Formulario</a>&nbsp;
+                    <a href="#" class="btn btn-primary" onclick="closeLicencia2(); return false;">Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalVideo" class="modal fade" role="dialog">
+        <div class="modal-dialog  modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center pb-1 px-3 py-3">
+                    <h4 class="modal-title text-white">Generar video</h4>
+                    <a href="#" class="close p-0 m-0" onclick="closeVideo(); return false;" aria-label="Cerrar"><span
+                            aria-hidden="true">&times;</span></a>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <img id="videoSlide" src="" class="bg-dark"
+                                style="width: 100%; height: auto; max-height: 50vh; object-fit: contain;" />
+                            <canvas id="frameCanvas" width="1024" height="768" style="display: none;"></canvas>
+                            <canvas id="videoCanvas" width="1024" height="768" style="display: none;"></canvas>
+
+                        </div>
+                        <div class="col-md-3">
+                            <h4>Configuraci&oacute;n</h4>
+                            <div>
+                                <label>Fecha</label>
+                            </div>
+                            <select id="selectTile3YPanel" class="form-control" style="width: 100%;font-size: 14px;">
+                            </select>
+                            <select id="selectTile3MPanel" class="form-control" style="width: 100%;font-size: 14px;">
+                            </select>
+                            <br />
+                            <div style="display: none;">
+                                <label>Duraci&oacute;n</label>
+                            </div>
+                            <br />
+                            <button type="button" onclick="deleteVideoSlide();" class="btn btn-default btn-danger">
+                                Borrar
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <div>
+                        <ul id="videoPager" class="pagination" style="margin: 0px;">
+                        </ul>
+                    </div>
+                    <div class="w-100">
+                        <a href="#" class="btn" onclick="closeVideo(); return false;">Cancelar</a>&nbsp;
+                        <a href="#" class="btn btn-primary" onclick="generarVideo(); return false;">Generar video</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        window.dojoConfig = {
+            async: false,
+            packages: [
+                {
+                    name: 'app',
+                    location: window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) + '/../js'
+                }
+            ]
+        };
+    </script>
+
+    <script type="text/javascript" src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/firebasejs/ui/4.5.0/firebase-ui-auth__es.js"></script>
+
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.full.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/i18n/es.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchorme/2.1.2/anchorme.min.js"></script>
+
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.3/js/bootstrap-colorpicker.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.es.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-typeahead/2.11.0/jquery.typeahead.min.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.6.0/proj4.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/terraformer/1.0.9/terraformer.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sortable/0.9.13/jquery-sortable-min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/geotiff/dist/geotiff.bundle.min.js"></script>
+
+    <!-- <script type="text/javascript">
+        window.dojoConfig = {
+            async: false,
+            isDebug: true,
+            packages: [{
+                name: 'app',
+                location: './../js/'
+            }]
+        };
+    </script> -->
+
+    <script type="text/javascript" defer src="https://js.arcgis.com/3.44/"></script>
+    <script type="text/javascript" async src="../js/mkg-share.min.js"></script>
+    <script type="text/javascript" src="../js/terraformer-arcgis-parser.min.js"></script>
+    <!-- <script type="text/javascript" src="/js/lib/terraformer-arcgis-parser.min.js"></script> -->
+    <script type="text/javascript" src="env.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+</body>
+
+</html>

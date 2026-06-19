@@ -1,0 +1,13 @@
+{
+  "name": "ottigac-sentinel-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Proxy backend para el visor OTT IGAC y servicios de Sentinel Hub.",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
