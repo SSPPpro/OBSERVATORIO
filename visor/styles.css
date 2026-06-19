@@ -4146,7 +4146,7 @@ footer .gov-co-logo-pie-mesa {
     object-fit: cover;
 }
 
-.sh-pdf-map-copy>* {
+.sh-pdf-map-copy > * {
     pointer-events: none !important;
 }
 
@@ -4638,7 +4638,7 @@ strong {
     margin: 0 0 12px 0;
 }
 
-.sh-cloud-slider-wrap>input#sliderCCSHStats {
+.sh-cloud-slider-wrap > input#sliderCCSHStats {
     display: none;
 }
 

@@ -5,15 +5,22 @@ const querystring = require("querystring");
 const CLIENT_ID = process.env.SENTINEL_HUB_CLIENT_ID || "e9b1b73f-2ee8-4add-86ed-673541dc930d";
 const CLIENT_SECRET = process.env.SENTINEL_HUB_CLIENT_SECRET || "qLnyHdNf5I0ssBpdBEG976WO4OIeGJPS";
 const PLANET_API_KEY = process.env.PLANET_API_KEY || "PLAKd9faf25449294d9d86096fe33d980662";
+const PRISMA_API_BASE_URL = (process.env.PRISMA_API_BASE_URL || "https://prisma.procalculo.com").replace(/\/+$/, "");
+const PRISMA_USERNAME = process.env.PRISMA_USERNAME || "karens_diaz";
+const PRISMA_PASSWORD = process.env.PRISMA_PASSWORD || "Ig4c.2026";
 const PORT = Number(process.env.PORT) || 3000;
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "*")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+const ALLOWED_PRISMA_PROXY_PATHS = [/^\/dl\/[a-zA-Z0-9/_-]*\/?$/, /^\/analytics\/[a-zA-Z0-9/_-]*\/?$/];
 
 let sentinelHubTokenCache = null;
 let sentinelHubTokenExpiresAt = 0;
 let sentinelHubTokenRequest = null;
+let prismaTokenCache = null;
+let prismaTokenExpiresAt = 0;
+let prismaTokenRequest = null;
 
 function getCorsOrigin(requestOrigin) {
   if (ALLOWED_ORIGINS.includes("*")) return requestOrigin || "*";
@@ -41,7 +48,7 @@ function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function requestBuffer(url, options, body) {
+function requestBuffer(url, options, body, label = "Upstream request", timeoutMs = 60000) {
   return new Promise((resolve, reject) => {
     const upstreamReq = https.request(url, options, (upstreamRes) => {
       const chunks = [];
@@ -56,8 +63,8 @@ function requestBuffer(url, options, body) {
     });
 
     upstreamReq.on("error", reject);
-    upstreamReq.setTimeout(60000, () => {
-      upstreamReq.destroy(new Error("Sentinel Hub request timed out"));
+    upstreamReq.setTimeout(timeoutMs, () => {
+      upstreamReq.destroy(new Error(`${label} timed out`));
     });
 
     if (body) {
@@ -67,11 +74,25 @@ function requestBuffer(url, options, body) {
   });
 }
 
-async function requestBufferWithRetry(url, options, body, label, maxAttempts = 3) {
+function readRequestBody(req) {
+  return new Promise((resolve) => {
+    let requestBody = "";
+    req.on("data", (chunk) => {
+      requestBody += chunk;
+    });
+    req.on("end", () => resolve(requestBody));
+  });
+}
+
+function isAllowedPrismaProxyPath(pathname) {
+  return ALLOWED_PRISMA_PROXY_PATHS.some((pattern) => pattern.test(pathname));
+}
+
+async function requestBufferWithRetry(url, options, body, label, maxAttempts = 3, timeoutMs = 60000) {
   let lastError = null;
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
-      const response = await requestBuffer(url, options, body);
+      const response = await requestBuffer(url, options, body, label, timeoutMs);
       if (!shouldRetryStatus(response.statusCode) || attempt === maxAttempts) {
         return response;
       }
@@ -138,6 +159,75 @@ async function getSentinelHubToken() {
   return sentinelHubTokenRequest;
 }
 
+function parseJwtExpiration(token) {
+  try {
+    const parts = String(token || "").split(".");
+    if (parts.length < 2) return 0;
+    const payload = JSON.parse(Buffer.from(parts[1].replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8"));
+    return payload && payload.exp ? Number(payload.exp) * 1000 : 0;
+  } catch (error) {
+    return 0;
+  }
+}
+
+async function getPrismaToken() {
+  const now = Date.now();
+  if (prismaTokenCache && now < prismaTokenExpiresAt) {
+    return prismaTokenCache;
+  }
+
+  if (prismaTokenRequest) {
+    return prismaTokenRequest;
+  }
+
+  if (!PRISMA_USERNAME || !PRISMA_PASSWORD) {
+    throw new Error("PRISMA_USERNAME and PRISMA_PASSWORD are required");
+  }
+
+  prismaTokenRequest = (async () => {
+    const bodyString = JSON.stringify({
+      username: PRISMA_USERNAME,
+      password: PRISMA_PASSWORD,
+    });
+
+    const tokenResponse = await requestBufferWithRetry(
+      PRISMA_API_BASE_URL + "/api/token/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(bodyString),
+          Accept: "application/json",
+        },
+        rejectUnauthorized: false,
+      },
+      bodyString,
+      "Prisma token request",
+      2
+    );
+
+    if (tokenResponse.statusCode !== 200) {
+      throw new Error(`Prisma token request failed with status ${tokenResponse.statusCode}: ${tokenResponse.body.toString("utf8")}`);
+    }
+
+    const tokenPayload = JSON.parse(tokenResponse.body.toString("utf8"));
+    if (!tokenPayload.access) {
+      throw new Error("Prisma access token missing");
+    }
+
+    prismaTokenCache = tokenPayload.access;
+    const tokenExp = parseJwtExpiration(tokenPayload.access);
+    prismaTokenExpiresAt = tokenExp > Date.now()
+      ? Math.max(tokenExp - 60000, Date.now() + 60000)
+      : Date.now() + 4 * 60 * 1000;
+    return prismaTokenCache;
+  })().finally(() => {
+    prismaTokenRequest = null;
+  });
+
+  return prismaTokenRequest;
+}
+
 function relayBufferedResponse(res, origin, upstreamResponse, fallbackContentType) {
   const headers = { "Access-Control-Allow-Origin": origin };
   const contentType = upstreamResponse.headers["content-type"] || fallbackContentType;
@@ -152,7 +242,7 @@ const server = http.createServer((req, res) => {
   const origin = getCorsOrigin(req.headers.origin);
   res.setHeader("Access-Control-Allow-Origin", origin);
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
   if (req.method === "OPTIONS") {
     res.writeHead(204);
@@ -192,6 +282,49 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (requestUrl.pathname.startsWith("/prisma-proxy/") && (req.method === "GET" || req.method === "POST")) {
+    const upstreamPath = requestUrl.pathname.replace(/^\/prisma-proxy/, "");
+    if (!isAllowedPrismaProxyPath(upstreamPath)) {
+      sendJson(res, 400, origin, { error: "Invalid Prisma proxy path" });
+      return;
+    }
+
+    readRequestBody(req).then((requestBody) => {
+      const upstreamUrl = PRISMA_API_BASE_URL + upstreamPath + requestUrl.search;
+      const headers = {
+        Accept: "application/json",
+      };
+
+      if (req.headers.authorization && req.headers.authorization.trim().split(/\s+/).length === 2) {
+        headers.Authorization = req.headers.authorization;
+      }
+
+      if (req.method === "POST") {
+        headers["Content-Type"] = req.headers["content-type"] || "application/json";
+        headers["Content-Length"] = Buffer.byteLength(requestBody);
+      }
+
+      return requestBufferWithRetry(
+        upstreamUrl,
+        {
+          method: req.method,
+          headers,
+          rejectUnauthorized: false,
+        },
+        req.method === "POST" ? requestBody : null,
+        "Prisma request",
+        2,
+        180000
+      );
+    }).then((prismaResponse) => {
+      relayBufferedResponse(res, origin, prismaResponse, "application/json");
+    }).catch((error) => {
+      console.error("[PROXY] Prisma request error:", error.message);
+      sendJson(res, 502, origin, { error: "Prisma request failed", detail: error.message });
+    });
+    return;
+  }
+
   if (req.url === "/sh-token" && req.method === "POST") {
     const body = querystring.stringify({
       grant_type: "client_credentials",
@@ -213,7 +346,7 @@ const server = http.createServer((req, res) => {
     const shReq = https.request("https://services.sentinel-hub.com/oauth/token", options, (shRes) => {
       let responseData = "";
       console.log("[PROXY] SH Response status:", shRes.statusCode);
-
+      
       shRes.on("data", (chunk) => {
         responseData += chunk;
       });
@@ -232,6 +365,16 @@ const server = http.createServer((req, res) => {
 
     shReq.write(body);
     shReq.end();
+    return;
+  }
+
+  if (req.url === "/prisma-token" && req.method === "POST") {
+    getPrismaToken().then((accessToken) => {
+      sendJson(res, 200, origin, { access: accessToken });
+    }).catch((error) => {
+      console.error("[PROXY] Prisma token request error:", error.message);
+      sendJson(res, 502, origin, { error: "Prisma token request failed", detail: error.message });
+    });
     return;
   }
 

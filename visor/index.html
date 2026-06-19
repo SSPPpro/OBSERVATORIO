@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="es-ES">
 
 <head>
@@ -468,7 +468,7 @@
                     </div>
                 </div>
 
-
+                
 
             </div>
             <div class="d-flex col-md-8 col-lg-9">
@@ -511,7 +511,7 @@
                     <div id="shToolDiv" style="display: none;">
                         <a href="#" onclick="gotoSH();">Índices espectrales</a><br />
                         <a href="#" onclick="gotoSHStats();">Análisis espectral multitemporal</a>
-                        <a href="#" onclick="gotoSHAnalytics();">Detección de cambios</a>
+                        <a href="#" onclick="gotoSHAnalytics();">Planet Analytics - Detección de cambios</a>
                         <a href="#" onclick="gotoPrisma();">Segmentación de coberturas</a><br />
                     </div>
                     <div id="rasterToolDiv" style="display: none;">
@@ -842,8 +842,7 @@
                                                 <option value="P1D">Diario</option>
                                             </select>
                                         </div>
-                                        <div id="sliderCCSHStatsContainer" class="sh-cloud-cover-control"
-                                            style="display: none;">
+                                        <div id="sliderCCSHStatsContainer" class="sh-cloud-cover-control" style="display: none;">
                                             <label>Porcentaje de nubosidad&nbsp; 0 - 100%</label>
                                             <div class="sh-cloud-slider-wrap">
                                                 <input id="sliderCCSHStats" data-slider-id="sliderCCSHStats" type="text"
@@ -852,15 +851,13 @@
                                             </div>
                                             <div class="sh-cloud-cover-values" aria-live="polite">
                                                 <div class="sh-cloud-cover-input">
-                                                    <input id="sliderCCSHStatsMinTxt" type="number" min="0" max="100"
-                                                        step="1" value="0"
+                                                    <input id="sliderCCSHStatsMinTxt" type="number" min="0" max="100" step="1" value="0"
                                                         aria-label="Porcentaje mínimo de nubosidad" />
                                                     <span>%</span>
                                                 </div>
                                                 <span class="sh-cloud-cover-separator">—</span>
                                                 <div class="sh-cloud-cover-input">
-                                                    <input id="sliderCCSHStatsMaxTxt" type="number" min="0" max="100"
-                                                        step="1" value="100"
+                                                    <input id="sliderCCSHStatsMaxTxt" type="number" min="0" max="100" step="1" value="100"
                                                         aria-label="Porcentaje máximo de nubosidad" />
                                                     <span>%</span>
                                                 </div>
@@ -990,6 +987,7 @@
                                             <option value="dl/dl_bosques/">Detección de bosques</option>
                                             <option value="dl/dl_cultivos/">Detección de cultivos</option>
                                             <option value="dl/dl_infraestructura/">Detección de infraestructura</option>
+                                            <option value="dl/dl_linderos/">Detección de linderos</option>
                                             <option value="dl/dl_vias/">Detección de vías</option>
                                         </select>
                                         <div id="prismaOpt" style="display: none;">
@@ -1016,7 +1014,7 @@
                                     <a class="panel-toggle icon-panel" href="#"
                                         style=" background-image: url('../images/iconos/Mapas base y capas.png');"></a>
                                     <a href="#" class="panel-toggle collapsed">
-                                        <span class="panel-label" id="panelSHAnalyticsTitle">Detección de
+                                        <span class="panel-label" id="panelSHAnalyticsTitle">Planet Analytics - Detección de
                                             cambios</span><span id="panelSHAnalyticsZoom" style="display: none;"></span>
                                     </a>
                                     <a class="panel-close" href="#" onclick="closeSHAnalytics();"><span
@@ -1036,16 +1034,13 @@
                                                 <input type="checkbox" id="chkSHAnalyticsBoundaries" checked>
                                                 Mostrar límites del área analizada
                                             </label>
-                                            <div id="shAnalyticsBoundaryStatus" class="sh-analytics-boundary-status">
-                                            </div>
+                                            <div id="shAnalyticsBoundaryStatus" class="sh-analytics-boundary-status"></div>
                                         </div>
-                                        <div id="shAnalyticsDateFilter" class="sh-analytics-date-filter"
-                                            style="display: none;">
+                                        <div id="shAnalyticsDateFilter" class="sh-analytics-date-filter" style="display: none;">
                                             <div class="sh-analytics-date-filter-fields">
                                                 <label for="shAnalyticsStartMonthBtn">Desde
                                                     <button type="button" id="shAnalyticsStartMonthBtn"
-                                                        class="sh-analytics-month-trigger"
-                                                        data-sh-analytics-month-field="start">
+                                                        class="sh-analytics-month-trigger" data-sh-analytics-month-field="start">
                                                         <span id="shAnalyticsStartMonthLabel"></span>
                                                         <span class="sh-analytics-month-trigger-icon">▾</span>
                                                     </button>
@@ -1053,44 +1048,37 @@
                                                 </label>
                                                 <label for="shAnalyticsEndMonthBtn">Hasta
                                                     <button type="button" id="shAnalyticsEndMonthBtn"
-                                                        class="sh-analytics-month-trigger"
-                                                        data-sh-analytics-month-field="end">
+                                                        class="sh-analytics-month-trigger" data-sh-analytics-month-field="end">
                                                         <span id="shAnalyticsEndMonthLabel"></span>
                                                         <span class="sh-analytics-month-trigger-icon">▾</span>
                                                     </button>
                                                     <input type="hidden" id="shAnalyticsEndMonth">
                                                 </label>
                                             </div>
-                                            <div id="shAnalyticsMonthPickerPopover"
-                                                class="sh-analytics-month-picker-popover" style="display: none;">
+                                            <div id="shAnalyticsMonthPickerPopover" class="sh-analytics-month-picker-popover" style="display: none;">
                                                 <div class="sh-analytics-month-picker-header">
                                                     <button id="shAnalyticsMonthPickerPrevYear" type="button">«</button>
                                                     <div id="shAnalyticsMonthPickerYear"></div>
                                                     <button id="shAnalyticsMonthPickerNextYear" type="button">»</button>
                                                 </div>
-                                                <div id="shAnalyticsMonthPickerGrid"
-                                                    class="sh-analytics-month-picker-grid"></div>
+                                                <div id="shAnalyticsMonthPickerGrid" class="sh-analytics-month-picker-grid"></div>
                                             </div>
-                                            <div id="shAnalyticsDateFilterStatus"
-                                                class="sh-analytics-date-filter-status"></div>
+                                            <div id="shAnalyticsDateFilterStatus" class="sh-analytics-date-filter-status"></div>
                                         </div>
                                         <div class="sh-analytics-municipality-control">
                                             <div class="sh-analytics-admin-tabs">
-                                                <button type="button" class="sh-analytics-admin-tab active"
-                                                    data-sh-analytics-admin-level="department">Departamentos</button>
-                                                <button type="button" class="sh-analytics-admin-tab"
-                                                    data-sh-analytics-admin-level="municipality">Municipios</button>
+                                                <button type="button" class="sh-analytics-admin-tab active" data-sh-analytics-admin-level="department">Departamentos</button>
+                                                <button type="button" class="sh-analytics-admin-tab" data-sh-analytics-admin-level="municipality">Municipios</button>
                                             </div>
                                             <div class="sh-analytics-municipality-search">
                                                 <span class="esri-icon esri-icon-search" aria-hidden="true"></span>
-                                                <input type="text" id="txtSHAnalyticsMunicipalitySearch"
-                                                    class="form-control" placeholder="Buscar departamento"
-                                                    autocomplete="off">
+                                                <input type="text" id="txtSHAnalyticsMunicipalitySearch" class="form-control"
+                                                    placeholder="Buscar departamento" autocomplete="off">
                                             </div>
                                             <div id="shAnalyticsMunicipalityResults"></div>
                                         </div>
                                         <br />
-
+                                        
                                         <label>Resultados</label>
                                         <div id="selectSHAnalyticsResults" class="list-group">
 
@@ -1107,8 +1095,7 @@
                                     <a class="panel-toggle icon-panel" href="#"
                                         style=" background-image: url('../images/iconos/Mapas base y capas.png');"></a>
                                     <a href="#" class="panel-toggle collapsed">
-                                        <span class="panel-label" id="panelRasterMosaicsTitle">Descarga imágenes insumo
-                                            mosaicos</span><span id="panelRasterMosaicsZoom"
+                                        <span class="panel-label" id="panelRasterMosaicsTitle">Descarga imágenes insumo mosaicos</span><span id="panelRasterMosaicsZoom"
                                             style="display: none;"></span>
                                     </a>
                                     <a class="panel-close" href="#" onclick="closeRasterMosaicsCatalog();"><span
@@ -1118,43 +1105,36 @@
                             <div id="collapseRasterMosaics" class="panel-collapse">
                                 <div class="panel-body">
                                     <div>
-                                        <label id="limpiarBtnRasterMosaics" style="font-size: 14px;float: right;"><a
-                                                href="#" onclick="limpiarAreaRasterMosaics(); return false;"
+                                        <label id="limpiarBtnRasterMosaics" style="font-size: 14px;float: right;"><a href="#"
+                                                onclick="limpiarAreaRasterMosaics(); return false;"
                                                 style="color: darkred;">Limpiar</a></label>
                                         <div>
                                             <label>Área a consultar</label>
                                         </div>
                                         <div class="btn-group" role="group" style="width: 101%;">
                                             <button id="drawTriangleBtnRasterMosaics" type="button"
-                                                onclick="modoDibujoRasterMosaics('triangle');"
+                                                onclick="modoDibujoRasterMosaics('triangle');" class="btn btn-default"></button>
+                                            <button id="drawCircleBtnRasterMosaics" type="button" onclick="modoDibujoRasterMosaics('circle');"
                                                 class="btn btn-default"></button>
-                                            <button id="drawCircleBtnRasterMosaics" type="button"
-                                                onclick="modoDibujoRasterMosaics('circle');"
+                                            <button id="drawEllipseBtnRasterMosaics" type="button" onclick="modoDibujoRasterMosaics('extent');"
                                                 class="btn btn-default"></button>
-                                            <button id="drawEllipseBtnRasterMosaics" type="button"
-                                                onclick="modoDibujoRasterMosaics('extent');"
-                                                class="btn btn-default"></button>
-                                            <button id="drawPolygonBtnRasterMosaics" type="button"
-                                                onclick="modoDibujoRasterMosaics('polygon');"
+                                            <button id="drawPolygonBtnRasterMosaics" type="button" onclick="modoDibujoRasterMosaics('polygon');"
                                                 class="btn btn-default"></button>
                                             <button id="drawFreehandPolygonBtnRasterMosaics" type="button"
                                                 onclick="modoDibujoRasterMosaics('freehandpolygon');"
                                                 class="btn btn-default"></button>
                                         </div>
                                         <label style="margin-top: 5px;"><strong>Área (GeoJSON):</strong></label>
-                                        <input name="areaFileRasterMosaics" id="areaFileRasterMosaics" type="file"
-                                            class="form-control" style="height: auto;">
+                                        <input name="areaFileRasterMosaics" id="areaFileRasterMosaics" type="file" class="form-control"
+                                            style="height: auto;">
                                         <hr style="margin-bottom: 0px;">
                                         <div>
                                             <label>Año(s) de imagen:</label>
                                         </div>
                                         <div class="raster-mosaic-years-panel">
-                                            <label><input type="checkbox" name="rasterMosaicYearPanel" value="2023">
-                                                2023</label>
-                                            <label><input type="checkbox" name="rasterMosaicYearPanel" value="2024">
-                                                2024</label>
-                                            <label><input type="checkbox" name="rasterMosaicYearPanel" value="2025">
-                                                2025</label>
+                                            <label><input type="checkbox" name="rasterMosaicYearPanel" value="2023"> 2023</label>
+                                            <label><input type="checkbox" name="rasterMosaicYearPanel" value="2024"> 2024</label>
+                                            <label><input type="checkbox" name="rasterMosaicYearPanel" value="2025"> 2025</label>
                                         </div>
                                         <hr style="margin-bottom: 0px;">
                                         <div>
@@ -1166,24 +1146,19 @@
                                             <option value="FalseColor">Falso color (False Color)</option>
                                             <option value="FullDataset8Bands">Dataset completo (8 Bandas)</option>
                                             <option value="NDVI">NDVI - Normalized Difference Vegetation Index</option>
-                                            <option value="GNDVI">GNDVI - Green Normalized Difference Vegetation Index
-                                            </option>
+                                            <option value="GNDVI">GNDVI - Green Normalized Difference Vegetation Index</option>
                                             <option value="EVI">EVI - Enhanced Vegetation Index</option>
                                             <option value="SAVI">SAVI - Soil Adjusted Vegetation Index</option>
                                             <option value="NDWI">NDWI - Normalized Difference Water Index</option>
                                             <option value="NDCI">NDCI - Normalized Difference Chlorophyll Index</option>
                                         </select>
                                         <br />
-                                        <button type="button" id="btnRasterMosaicsCatalog"
-                                            onclick="searchRasterMosaicCatalog();"
+                                        <button type="button" id="btnRasterMosaicsCatalog" onclick="searchRasterMosaicCatalog();"
                                             class="btn btn-default btn-primary btn-block">
-                                            <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
-                                            Consultar
+                                            <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span> Consultar
                                         </button>
-                                        <div id="rasterMosaicsCatalogLoader" class="raster-mosaic-loader"
-                                            style="display: none;">Consultando catálogo...</div>
-                                        <div id="rasterMosaicsCatalogResults" class="raster-mosaic-results">Los
-                                            resultados del catálogo aparecerán aquí...</div>
+                                        <div id="rasterMosaicsCatalogLoader" class="raster-mosaic-loader" style="display: none;">Consultando catálogo...</div>
+                                        <div id="rasterMosaicsCatalogResults" class="raster-mosaic-results">Los resultados del catálogo aparecerán aquí...</div>
                                     </div>
                                 </div>
                             </div>
@@ -1716,7 +1691,7 @@
 
     <div id="rasterMosaicCatalogDialog" class="raster-mosaic-dialog" style="display: none;">
         <div class="raster-mosaic-dialog-header">
-            <strong>Consultar catalogo Imágenes Mosaicos Anuales</strong>
+            <strong>Consultar catalogo Imagenes Planet Mosaicos Anuales</strong>
             <a href="#" onclick="closeRasterMosaicCatalog(); return false;" aria-label="Cerrar">&times;</a>
         </div>
         <div class="raster-mosaic-dialog-body">
@@ -1726,14 +1701,11 @@
                 <label><input type="checkbox" name="rasterMosaicYear" value="2024"> 2024</label>
                 <label><input type="checkbox" name="rasterMosaicYear" value="2025"> 2025</label>
             </div>
-            <button type="button" id="rasterMosaicCatalogSearchBtn" onclick="searchRasterMosaicCatalog();"
-                class="btn btn-default btn-primary btn-block">
+            <button type="button" id="rasterMosaicCatalogSearchBtn" onclick="searchRasterMosaicCatalog();" class="btn btn-default btn-primary btn-block">
                 <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span> Consultar
             </button>
-            <div id="rasterMosaicCatalogLoader" class="raster-mosaic-loader" style="display: none;">Consultando
-                cat&aacute;logo...</div>
-            <div id="rasterMosaicCatalogResults" class="raster-mosaic-results">Los resultados del cat&aacute;logo
-                aparecer&aacute;n aqu&iacute;...</div>
+            <div id="rasterMosaicCatalogLoader" class="raster-mosaic-loader" style="display: none;">Consultando cat&aacute;logo...</div>
+            <div id="rasterMosaicCatalogResults" class="raster-mosaic-results">Los resultados del cat&aacute;logo aparecer&aacute;n aqu&iacute;...</div>
         </div>
     </div>
 
