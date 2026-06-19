@@ -60,6 +60,7 @@ var currentServicio;
 var areaLayer;
 var areaLayer3;
 var areaLayer4;
+var fileLayer;
 var fileLayer2;
 var fileLayer3;
 var geojsonLayer;
@@ -1348,6 +1349,12 @@ $(document).ready(function () {
     syncSHCloudCoverageDisplay(getSliderValueSafe(sliderCCSHStats, "#sliderCCSHStats", [0, 100]));
     sliderCCSHStatsIndex = null;
     setSHStatsIndexThreshold(0.15);
+    $("#txtSHStatsIndexThreshold").on("input", function () {
+        var thresholdValue = parseFloat($(this).val());
+        if (!Number.isNaN(thresholdValue)) {
+            $("#sliderCCSHStatsIndex").val(thresholdValue);
+        }
+    });
     $("#txtSHStatsIndexThreshold").on("change blur", function () {
         setSHStatsIndexThreshold($(this).val());
     });
@@ -2731,9 +2738,11 @@ function getSHCloudCoverageMaxRatio() {
 }
 
 function getSHStatsIndexThresholdValue() {
-    var thresholdValue = parseFloat($("#sliderCCSHStatsIndex").val());
-    if (Number.isNaN(thresholdValue)) thresholdValue = parseFloat($("#txtSHStatsIndexThreshold").val());
-    return Number.isNaN(thresholdValue) ? 0.15 : thresholdValue;
+    var thresholdValue = parseFloat($("#txtSHStatsIndexThreshold").val());
+    if (Number.isNaN(thresholdValue)) thresholdValue = parseFloat($("#sliderCCSHStatsIndex").val());
+    if (Number.isNaN(thresholdValue)) thresholdValue = 0.15;
+    thresholdValue = Math.max(0.1, Math.min(0.25, thresholdValue));
+    return Math.round(thresholdValue * 100) / 100;
 }
 
 function setSHStatsIndexThreshold(value) {
@@ -2908,9 +2917,39 @@ function fetchSHTokenViaProxy(callback) {
     callback(false);
 }
 
+function shouldExportOnlyBurnStateFields(index) {
+    var normalizedIndex = (index || "").toString().toLowerCase();
+    return normalizedIndex == "nbr" || normalizedIndex == "nbr2" || normalizedIndex == "map_deforestation";
+}
+
+function normalizeSHStatsDownloadIndexState(index, indexState) {
+    var normalizedIndex = (index || "").toString().toLowerCase();
+    if (normalizedIndex == "nbr" || normalizedIndex == "nbr2") {
+        return "zonas quemadas";
+    }
+    return indexState;
+}
+
+function buildSHStatsDownloadPolygons(polygons, index) {
+    if (!polygons || !shouldExportOnlyBurnStateFields(index)) {
+        return polygons;
+    }
+    var downloadPolygons = JSON.parse(JSON.stringify(polygons));
+    if (downloadPolygons.features && Array.isArray(downloadPolygons.features)) {
+        downloadPolygons.features.forEach(function (feature) {
+            var props = feature.properties || {};
+            feature.properties = {
+                IndexState: normalizeSHStatsDownloadIndexState(index, props.IndexState),
+            };
+        });
+    }
+    return downloadPolygons;
+}
+
 function downloadSHStats() {
     if (lastProcessedSHResult && lastProcessedSHResult.polygons) {
-        var blob = new Blob([JSON.stringify(lastProcessedSHResult.polygons, null, 2)], { type: "application/geo+json" });
+        var polygons = buildSHStatsDownloadPolygons(lastProcessedSHResult.polygons, lastProcessedSHResult.index);
+        var blob = new Blob([JSON.stringify(polygons, null, 2)], { type: "application/geo+json" });
         var url = URL.createObjectURL(blob);
         var a = document.createElement("a");
         a.href = url;
@@ -5989,8 +6028,21 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         "</div>" +
         "<div id='burnsSwipePane' style='display:none;'>" +
             "<div id='burnsSwipeMapWrap' style='position:relative;height:420px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'>" +
-                "<div id='burnsSwipeMap' style='position:absolute;inset:0;'></div>" +
-                "<div id='burnsSwipeControl' style='position:absolute;inset:0;z-index:11;pointer-events:none;'></div>" +
+                "<div id='burnsSwipeMap' style='position:absolute;inset:0;z-index:1;'></div>" +
+                "<div id='burnsSwipeControl' style='position:absolute;inset:0;z-index:40;pointer-events:none;'><div id='burnsSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div></div>" +
+                "<div id='burnsCustomVerticalSwipe' style='display:none;position:absolute;left:0;right:0;top:50%;height:28px;margin-top:-14px;z-index:70;cursor:ns-resize;pointer-events:auto;'>" +
+                    "<div style='position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;background:#fff;border-top:1px solid rgba(0,0,0,0.55);border-bottom:1px solid rgba(0,0,0,0.55);box-shadow:0 0 7px rgba(0,0,0,0.75);'></div>" +
+                    "<div style='position:absolute;left:50%;top:50%;width:30px;height:24px;margin-left:-15px;margin-top:-12px;background:#fff;border:2px solid #4f6b5a;border-radius:4px;box-shadow:0 1px 7px rgba(0,0,0,0.55);color:#4f6b5a;font-size:15px;font-weight:700;line-height:20px;text-align:center;'>↕</div>" +
+                "</div>" +
+                "<div id='burnsSwipeToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:0;pointer-events:auto;'>" +
+                    "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" +
+                    "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" +
+                    "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" +
+                    "<div id='burnsSwipeOpacityPopover' style='display:none;position:absolute;bottom:30px;left:56px;z-index:17;width:112px;padding:7px 8px;background:#fff;border:1px solid #d5d5d5;border-radius:4px;box-shadow:0 7px 18px rgba(0,0,0,0.2);text-align:center;'>" +
+                        "<input id='burnsSwipeOpacityRange' type='range' min='0' max='1' step='0.05' value='0.5' style='width:100%;accent-color:#4f6b5a;'>" +
+                        "<div id='burnsSwipeOpacityLabel' style='margin-top:4px;color:#4f6b5a;font-size:13px;'>50%</div>" +
+                    "</div>" +
+                "</div>" +
                 "<div id='burnsSwipeLeftLabel' style='position:absolute;left:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:auto;display:flex;align-items:center;gap:8px;'>" +
                     "<span id='burnsSwipeLeftLabelText'></span>" +
                     "<button id='burnsSwipeMonthPickerBtn' type='button' style='border:0;background:#3d5e4f;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;line-height:1;cursor:pointer;' title='Seleccionar mes inicial'>▾</button>" +
@@ -6057,6 +6109,15 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             try { burnsCompareSwipe.destroy(); } catch (e) {}
             burnsCompareSwipe = null;
         }
+        $("#burnsCustomVerticalSwipe").hide();
+        $("#burnsSwipeMapWrap").off(".burnsCustomSwipe");
+        $(document).off(".burnsCustomSwipe");
+        if (burnsSwipeLeftLayer && burnsSwipeLeftLayer._div) {
+            burnsSwipeLeftLayer._div.style.clip = "auto";
+        }
+        burnsSwipeLeftLayer = null;
+        burnsSwipeRightLayer = null;
+        burnsSwipeReady = false;
     };
     clearBurnsFloatingMaps();
     var buildMosaicLayer = function (dateMoment) {
@@ -6103,6 +6164,205 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     var swipeCompareMoment = null;
     var swipeMinMoment = esri.moment("2021-01-01").startOf("month");
     var monthPickerYear = null;
+    var burnsSwipeViewMode = "horizontal";
+    var burnsSwipeOverlayOpacity = 0.5;
+    var burnsSwipeLeftLayer = null;
+    var burnsSwipeRightLayer = null;
+    var burnsSwipeReady = false;
+    var burnsCustomVerticalTop = null;
+    var updateBurnsSwipeModeButtons = function () {
+        $(".burns-swipe-mode-btn").each(function () {
+            var isActive = $(this).attr("data-burns-swipe-mode") === burnsSwipeViewMode;
+            $(this).css({
+                background: isActive ? "#4f6b5a" : "#fff",
+                color: isActive ? "#fff" : "#3d5e4f"
+            });
+        });
+        $("#burnsSwipeOpacityPopover").toggle(burnsSwipeViewMode === "overlay");
+    };
+    var setBurnsSwipeInteractiveNodes = function () {
+        if (!burnsCompareSwipe || !burnsCompareSwipe.domNode) return;
+        burnsCompareSwipe.domNode.style.pointerEvents = "none";
+        burnsCompareSwipe.domNode.style.zIndex = "2147483000";
+        if (burnsCompareSwipe._moveableNode) {
+            burnsCompareSwipe._moveableNode.style.pointerEvents = "auto";
+        }
+        var swipeInteractiveNodes = burnsCompareSwipe.domNode.querySelectorAll(".handle, .handleContainer, .bar, .vertical, .horizontal");
+        if (swipeInteractiveNodes && swipeInteractiveNodes.length > 0) {
+            swipeInteractiveNodes.forEach(function (node) {
+                node.style.pointerEvents = "auto";
+                if (burnsSwipeViewMode === "vertical") {
+                    node.style.background = "#fff";
+                    node.style.borderColor = "#335343";
+                    node.style.boxShadow = "0 0 8px rgba(0,0,0,0.8)";
+                }
+            });
+        } else if (burnsCompareSwipe.domNode.firstElementChild) {
+            burnsCompareSwipe.domNode.firstElementChild.style.pointerEvents = "auto";
+        }
+    };
+    var destroyBurnsCompareSwipe = function () {
+        if (burnsCompareSwipe) {
+            try { burnsCompareSwipe.destroy(); } catch (e) {}
+            burnsCompareSwipe = null;
+        }
+        $("#burnsSwipeControl").html("<div id='burnsSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div>");
+    };
+    var getBurnsLayerNode = function (layer) {
+        return layer && (layer._div || (layer._heatmapManager && layer._heatmapManager.imageLayer && layer._heatmapManager.imageLayer._div));
+    };
+    var getBurnsCustomVerticalSwipeNode = function () {
+        var mapWrap = document.getElementById("burnsSwipeMapWrap");
+        if (!mapWrap) return null;
+        var swipeNode = mapWrap.querySelector("#burnsCustomVerticalSwipe");
+        if (!swipeNode) {
+            swipeNode = document.createElement("div");
+            swipeNode.id = "burnsCustomVerticalSwipe";
+            mapWrap.appendChild(swipeNode);
+        }
+        if (!swipeNode.querySelector(".burns-custom-vertical-line") || !swipeNode.querySelector(".burns-custom-vertical-handle")) {
+            swipeNode.innerHTML = "<div class='burns-custom-vertical-line'></div><div class='burns-custom-vertical-handle'>↕</div>";
+        }
+        return swipeNode;
+    };
+    var styleBurnsCustomVerticalSwipeNode = function (swipeNode, top) {
+        if (!swipeNode) return;
+        swipeNode.style.setProperty("display", "block", "important");
+        swipeNode.style.setProperty("position", "absolute", "important");
+        swipeNode.style.setProperty("left", "0", "important");
+        swipeNode.style.setProperty("right", "0", "important");
+        swipeNode.style.setProperty("top", top + "px", "important");
+        swipeNode.style.setProperty("height", "32px", "important");
+        swipeNode.style.setProperty("margin-top", "-16px", "important");
+        swipeNode.style.setProperty("z-index", "2147483000", "important");
+        swipeNode.style.setProperty("cursor", "ns-resize", "important");
+        swipeNode.style.setProperty("pointer-events", "auto", "important");
+        var lineNode = swipeNode.querySelector(".burns-custom-vertical-line");
+        if (lineNode) {
+            lineNode.style.setProperty("position", "absolute", "important");
+            lineNode.style.setProperty("left", "0", "important");
+            lineNode.style.setProperty("right", "0", "important");
+            lineNode.style.setProperty("top", "50%", "important");
+            lineNode.style.setProperty("height", "5px", "important");
+            lineNode.style.setProperty("margin-top", "-2px", "important");
+            lineNode.style.setProperty("background", "#ffffff", "important");
+            lineNode.style.setProperty("border-top", "2px solid #335343", "important");
+            lineNode.style.setProperty("border-bottom", "2px solid #335343", "important");
+            lineNode.style.setProperty("box-shadow", "0 0 8px rgba(0,0,0,0.9)", "important");
+            lineNode.style.setProperty("pointer-events", "none", "important");
+        }
+        var handleNode = swipeNode.querySelector(".burns-custom-vertical-handle");
+        if (handleNode) {
+            handleNode.style.setProperty("position", "absolute", "important");
+            handleNode.style.setProperty("left", "50%", "important");
+            handleNode.style.setProperty("top", "50%", "important");
+            handleNode.style.setProperty("width", "34px", "important");
+            handleNode.style.setProperty("height", "26px", "important");
+            handleNode.style.setProperty("margin-left", "-17px", "important");
+            handleNode.style.setProperty("margin-top", "-13px", "important");
+            handleNode.style.setProperty("background", "#ffffff", "important");
+            handleNode.style.setProperty("border", "2px solid #335343", "important");
+            handleNode.style.setProperty("border-radius", "4px", "important");
+            handleNode.style.setProperty("box-shadow", "0 1px 8px rgba(0,0,0,0.75)", "important");
+            handleNode.style.setProperty("color", "#335343", "important");
+            handleNode.style.setProperty("font-size", "16px", "important");
+            handleNode.style.setProperty("font-weight", "700", "important");
+            handleNode.style.setProperty("line-height", "22px", "important");
+            handleNode.style.setProperty("text-align", "center", "important");
+            handleNode.style.setProperty("pointer-events", "none", "important");
+        }
+    };
+    var clearBurnsCustomVerticalSwipe = function () {
+        var swipeNode = getBurnsCustomVerticalSwipeNode();
+        if (swipeNode) {
+            swipeNode.style.display = "none";
+        }
+        $("#burnsSwipeMapWrap").off(".burnsCustomSwipe");
+        $(document).off(".burnsCustomSwipe");
+        var layerNode = getBurnsLayerNode(burnsSwipeLeftLayer);
+        if (layerNode) {
+            layerNode.style.clip = "auto";
+        }
+    };
+    var applyBurnsCustomVerticalClip = function (topValue) {
+        var mapNode = document.getElementById("burnsSwipeMap");
+        var layerNode = getBurnsLayerNode(burnsSwipeLeftLayer);
+        if (!mapNode) return;
+        var width = mapNode.offsetWidth || 0;
+        var height = mapNode.offsetHeight || 0;
+        var top = Math.max(0, Math.min(height, topValue));
+        burnsCustomVerticalTop = top;
+        styleBurnsCustomVerticalSwipeNode(getBurnsCustomVerticalSwipeNode(), top);
+        if (layerNode) {
+            layerNode.style.clip = "rect(0px, " + width + "px, " + top + "px, 0px)";
+        }
+    };
+    var initBurnsCustomVerticalSwipe = function () {
+        var mapNode = document.getElementById("burnsSwipeMap");
+        if (!mapNode) return;
+        var startTop = burnsCustomVerticalTop == null ? Math.round(mapNode.offsetHeight / 2) : burnsCustomVerticalTop;
+        applyBurnsCustomVerticalClip(startTop);
+        $(getBurnsCustomVerticalSwipeNode()).off(".burnsCustomSwipe").on("mousedown.burnsCustomSwipe touchstart.burnsCustomSwipe", function (evt) {
+            evt.preventDefault();
+            var mapOffset = $("#burnsSwipeMap").offset();
+            var moveHandler = function (moveEvt) {
+                var originalEvt = moveEvt.originalEvent || moveEvt;
+                var point = originalEvt.touches && originalEvt.touches.length ? originalEvt.touches[0] : originalEvt;
+                applyBurnsCustomVerticalClip(point.pageY - mapOffset.top);
+            };
+            $(document).on("mousemove.burnsCustomSwipe touchmove.burnsCustomSwipe", moveHandler);
+            $(document).one("mouseup.burnsCustomSwipe touchend.burnsCustomSwipe touchcancel.burnsCustomSwipe", function () {
+                $(document).off("mousemove.burnsCustomSwipe touchmove.burnsCustomSwipe");
+            });
+        });
+        if (burnsCompareMap) {
+            $("#burnsSwipeMapWrap").off("mouseleave.burnsCustomSwipe").on("mouseleave.burnsCustomSwipe", function () {
+                $(document).off("mousemove.burnsCustomSwipe touchmove.burnsCustomSwipe");
+            });
+        }
+    };
+    var applyBurnsSwipeViewMode = function () {
+        updateBurnsSwipeModeButtons();
+        if (!burnsCompareMap || !burnsSwipeLeftLayer || !burnsSwipeRightLayer || !burnsSwipeReady) {
+            return;
+        }
+        destroyBurnsCompareSwipe();
+        clearBurnsCustomVerticalSwipe();
+        burnsSwipeRightLayer.setOpacity(1);
+        if (burnsSwipeViewMode === "overlay") {
+            burnsSwipeLeftLayer.setOpacity(burnsSwipeOverlayOpacity);
+            return;
+        }
+        burnsSwipeLeftLayer.setOpacity(1);
+        if (burnsSwipeViewMode === "vertical") {
+            initBurnsCustomVerticalSwipe();
+            return;
+        }
+        var mapNode = document.getElementById("burnsSwipeMap");
+        var swipeOptions = {
+            type: "vertical",
+            map: burnsCompareMap,
+            layers: [burnsSwipeLeftLayer]
+        };
+        swipeOptions.left = mapNode ? Math.round(mapNode.offsetWidth / 2) : 360;
+        burnsCompareSwipe = new esri.LayerSwipe(swipeOptions, "burnsSwipeControlNode");
+        burnsCompareSwipe.startup();
+        setBurnsSwipeInteractiveNodes();
+    };
+    var setBurnsSwipeViewMode = function (mode) {
+        burnsSwipeViewMode = mode || "horizontal";
+        applyBurnsSwipeViewMode();
+    };
+    var setBurnsSwipeOverlayOpacity = function (value) {
+        var opacity = parseFloat(value);
+        if (Number.isNaN(opacity)) opacity = 0.5;
+        burnsSwipeOverlayOpacity = Math.max(0, Math.min(1, opacity));
+        $("#burnsSwipeOpacityRange").val(burnsSwipeOverlayOpacity);
+        $("#burnsSwipeOpacityLabel").text(Math.round(burnsSwipeOverlayOpacity * 100) + "%");
+        if (burnsSwipeLeftLayer && burnsSwipeViewMode === "overlay") {
+            burnsSwipeLeftLayer.setOpacity(burnsSwipeOverlayOpacity);
+        }
+    };
     var renderMonthPicker = function () {
         if (monthPickerYear === null) monthPickerYear = swipeCompareMoment.year();
         $("#burnsMonthPickerYear").text(monthPickerYear);
@@ -6125,10 +6385,9 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             burnsCompareMap.removeLayer(burnsCompareMap.getLayer("burnsSwipeLeftLayer"));
             var leftLayer = buildMosaicLayer(swipeCompareMoment);
             leftLayer.id = "burnsSwipeLeftLayer";
+            burnsSwipeLeftLayer = leftLayer;
             burnsCompareMap.addLayer(leftLayer);
-            if (burnsCompareSwipe) {
-                burnsCompareSwipe.layers = [leftLayer];
-            }
+            applyBurnsSwipeViewMode();
         }
         renderMonthPicker();
     };
@@ -6156,6 +6415,9 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         var leftLayer = buildMosaicLayer(swipeCompareMoment);
         leftLayer.id = "burnsSwipeLeftLayer";
         var rightLayer = buildMosaicLayer(finalMoment);
+        burnsSwipeLeftLayer = leftLayer;
+        burnsSwipeRightLayer = rightLayer;
+        burnsSwipeReady = false;
         burnsCompareMap.addLayer(rightLayer);
         burnsCompareMap.addLayer(leftLayer);
         var swipeStarted = false;
@@ -6168,27 +6430,8 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             burnsCompareMap.setExtent(targetExtent, true);
             burnsCompareMap.resize();
             burnsCompareMap.reposition();
-            var mapNode = document.getElementById("burnsSwipeMap");
-            var defaultLeft = mapNode ? Math.round(mapNode.offsetWidth / 2) : 360;
-            burnsCompareSwipe = new esri.LayerSwipe({
-                type: "vertical",
-                map: burnsCompareMap,
-                left: defaultLeft,
-                layers: [leftLayer]
-            }, "burnsSwipeControl");
-            burnsCompareSwipe.startup();
-            if (burnsCompareSwipe.domNode) {
-                // Permite navegar el mapa y dejar interactivo únicamente el control del swipe.
-                burnsCompareSwipe.domNode.style.pointerEvents = "none";
-                var swipeInteractiveNodes = burnsCompareSwipe.domNode.querySelectorAll(".handle, .bar, .vertical");
-                if (swipeInteractiveNodes && swipeInteractiveNodes.length > 0) {
-                    swipeInteractiveNodes.forEach(function (node) {
-                        node.style.pointerEvents = "auto";
-                    });
-                } else if (burnsCompareSwipe.domNode.firstElementChild) {
-                    burnsCompareSwipe.domNode.firstElementChild.style.pointerEvents = "auto";
-                }
-            }
+            burnsSwipeReady = true;
+            applyBurnsSwipeViewMode();
         });
         renderMonthPicker();
     };
@@ -6204,6 +6447,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         } else if (isSwipe && burnsCompareMap) {
             burnsCompareMap.resize();
             burnsCompareMap.reposition();
+            applyBurnsSwipeViewMode();
         }
     };
     if (hasSelectedPolygon) {
@@ -6212,6 +6456,14 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     }
     $("#burnsModeGallery").off("click").on("click", function () { setBurnsMode("gallery"); });
     $("#burnsModeSwipe").off("click").on("click", function () { setBurnsMode("swipe"); });
+    updateBurnsSwipeModeButtons();
+    setBurnsSwipeOverlayOpacity(burnsSwipeOverlayOpacity);
+    $(".burns-swipe-mode-btn").off("click").on("click", function () {
+        setBurnsSwipeViewMode($(this).attr("data-burns-swipe-mode"));
+    });
+    $("#burnsSwipeOpacityRange").off("input change").on("input change", function () {
+        setBurnsSwipeOverlayOpacity($(this).val());
+    });
     $("#burnsSwipeMonthPickerBtn").off("click").on("click", function (evt) {
         evt.preventDefault();
         evt.stopPropagation();
@@ -9775,6 +10027,230 @@ function setupMap() {
         }
     });
 
+    function readAreaFileAsText(file) {
+        return new Promise(function (resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = function (evt) {
+                resolve(evt.target.result);
+            };
+            reader.onerror = function () {
+                reject(new Error("No se pudo leer el archivo " + file.name));
+            };
+            reader.readAsText(file);
+        });
+    }
+
+    function readAreaFileAsArrayBuffer(file) {
+        return new Promise(function (resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = function (evt) {
+                resolve(evt.target.result);
+            };
+            reader.onerror = function () {
+                reject(new Error("No se pudo leer el archivo " + file.name));
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
+    function getAreaFileExtension(file) {
+        var name = file && file.name ? file.name.toLowerCase() : "";
+        var dotIndex = name.lastIndexOf(".");
+        return dotIndex >= 0 ? name.substring(dotIndex + 1) : "";
+    }
+
+    function normalizeAreaGeoJson(geojson) {
+        if (Array.isArray(geojson)) {
+            var features = [];
+            for (var i = 0; i < geojson.length; i++) {
+                var item = normalizeAreaGeoJson(geojson[i]);
+                if (item && item.features) {
+                    features = features.concat(item.features);
+                }
+            }
+            return {
+                type: "FeatureCollection",
+                features: features,
+            };
+        }
+        if (geojson && geojson.type == "FeatureCollection" && Array.isArray(geojson.features)) {
+            return geojson;
+        }
+        if (geojson && geojson.type == "Feature") {
+            return {
+                type: "FeatureCollection",
+                features: [geojson],
+            };
+        }
+        if (geojson && geojson.type && geojson.coordinates) {
+            return {
+                type: "FeatureCollection",
+                features: [
+                    {
+                        type: "Feature",
+                        properties: {},
+                        geometry: geojson,
+                    },
+                ],
+            };
+        }
+        throw new Error("El archivo no contiene geometrías válidas.");
+    }
+
+    function eachAreaCoordinate(coords, callback) {
+        if (!Array.isArray(coords)) return;
+        if (typeof coords[0] == "number" && typeof coords[1] == "number") {
+            callback(coords);
+            return;
+        }
+        for (var i = 0; i < coords.length; i++) {
+            eachAreaCoordinate(coords[i], callback);
+        }
+    }
+
+    function validateAreaGeoJsonWgs84(geojson, fileName) {
+        var invalid = false;
+        var hasCoordinate = false;
+        var features = geojson.features || [];
+        for (var i = 0; i < features.length; i++) {
+            if (!features[i].geometry) continue;
+            eachAreaCoordinate(features[i].geometry.coordinates, function (coord) {
+                hasCoordinate = true;
+                if (coord[0] < -180 || coord[0] > 180 || coord[1] < -90 || coord[1] > 90) {
+                    invalid = true;
+                }
+            });
+        }
+        if (!hasCoordinate) {
+            throw new Error("El archivo " + fileName + " no tiene coordenadas válidas.");
+        }
+        if (invalid) {
+            throw new Error("El archivo " + fileName + " debe estar en WGS84 (EPSG:4326).");
+        }
+    }
+
+    function parseAreaGeoJsonText(text, fileName) {
+        var geojson = normalizeAreaGeoJson(JSON.parse(text));
+        validateAreaGeoJsonWgs84(geojson, fileName);
+        return geojson;
+    }
+
+    function parseAreaKmlText(text, fileName) {
+        if (!window.toGeoJSON || !window.toGeoJSON.kml) {
+            throw new Error("No está disponible la librería para leer KML.");
+        }
+        var xml = new DOMParser().parseFromString(text, "text/xml");
+        if (xml.getElementsByTagName("parsererror").length > 0) {
+            throw new Error("El archivo " + fileName + " no es un KML válido.");
+        }
+        var geojson = normalizeAreaGeoJson(window.toGeoJSON.kml(xml));
+        validateAreaGeoJsonWgs84(geojson, fileName);
+        return geojson;
+    }
+
+    function parseAreaShapeFile(file) {
+        if (!window.shp) {
+            return Promise.reject(new Error("No está disponible la librería para leer SHP."));
+        }
+        var extension = getAreaFileExtension(file);
+        if (extension == "shp") {
+            return readAreaFileAsArrayBuffer(file).then(function (buffer) {
+                var geometries = window.shp.parseShp(buffer);
+                var features = [];
+                for (var i = 0; i < geometries.length; i++) {
+                    if (geometries[i]) {
+                        features.push({
+                            type: "Feature",
+                            properties: {},
+                            geometry: geometries[i],
+                        });
+                    }
+                }
+                var geojson = normalizeAreaGeoJson({
+                    type: "FeatureCollection",
+                    features: features,
+                });
+                validateAreaGeoJsonWgs84(geojson, file.name);
+                return geojson;
+            });
+        }
+        return readAreaFileAsArrayBuffer(file).then(function (buffer) {
+            return window.shp(buffer);
+        }).then(function (geojson) {
+            geojson = normalizeAreaGeoJson(geojson);
+            validateAreaGeoJsonWgs84(geojson, file.name);
+            return geojson;
+        });
+    }
+
+    function parseAreaFile(file) {
+        var extension = getAreaFileExtension(file);
+        if (extension == "geojson" || extension == "json") {
+            return readAreaFileAsText(file).then(function (text) {
+                return parseAreaGeoJsonText(text, file.name);
+            });
+        }
+        if (extension == "kml") {
+            return readAreaFileAsText(file).then(function (text) {
+                return parseAreaKmlText(text, file.name);
+            });
+        }
+        if (extension == "zip" || extension == "shp") {
+            return parseAreaShapeFile(file);
+        }
+        return Promise.reject(new Error("Formato no soportado. Use GeoJSON, KML, SHP o SHP comprimido en ZIP."));
+    }
+
+    function addAreaGeoJsonToLayer(geojson, layer, symbol) {
+        var dataJSON = Terraformer.ArcGIS.fromGeoJSON(geojson);
+        if (!Array.isArray(dataJSON)) {
+            dataJSON = [dataJSON];
+        }
+        for (var i = 0; i < dataJSON.length; i++) {
+            if (!dataJSON[i] || !dataJSON[i].geometry) continue;
+            var geometry = esri.jsonUtilsGeometry.fromJson(dataJSON[i].geometry);
+            var mapGeometry = esri.webMercatorUtils.geographicToWebMercator(geometry);
+            var g = new esri.Graphic(mapGeometry, symbol);
+            layer.add(g);
+        }
+    }
+
+    function loadAreaFilesToLayer(inputElement, layer, options) {
+        var files = inputElement.files || [];
+        if (!files.length) return;
+        options = options || {};
+
+        var cLineDef = esri.Color.fromArray([255, 0, 0, options.lineAlpha != null ? options.lineAlpha : 1.0]);
+        var cFillDef = esri.Color.fromArray([255, 0, 0, options.fillAlpha != null ? options.fillAlpha : 0]);
+        var symbol = new esri.SimpleFillSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, cLineDef, 2), cFillDef);
+        var tasks = [];
+
+        for (var i = 0; i < files.length; i++) {
+            tasks.push(parseAreaFile(files[i]));
+        }
+
+        Promise.all(tasks).then(function (geojsonList) {
+            if (typeof options.beforeAdd == "function") {
+                options.beforeAdd();
+            } else {
+                layer.clear();
+            }
+            for (var i = 0; i < geojsonList.length; i++) {
+                addAreaGeoJsonToLayer(geojsonList[i], layer, symbol);
+            }
+            if (layer.graphics.length > 0) {
+                map.setExtent(esri.graphicsUtils.graphicsExtent(layer.graphics).expand(2));
+            }
+            if (typeof options.afterAdd == "function") {
+                options.afterAdd();
+            }
+        }).catch(function (err) {
+            console.error("Area file load error", err);
+            showLoading(err.message || "No se pudo cargar el archivo de área.", null, "red", true);
+            inputElement.value = "";
+        });
+    }
+
     /* Area/GeoJSON */
     areaLayer = new esri.GraphicsLayer({
         id: "Area",
@@ -9824,24 +10300,9 @@ function setupMap() {
     map.addLayer(fileLayer);
 
     $("#file").change(function (e) {
-        var files = $("#file")[0].files;
-        for (var i = 0; i < files.length; i++) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var dataJSON = Terraformer.ArcGIS.fromGeoJSON(JSON.parse(e.target.result));
-                var cLineDef = esri.Color.fromArray([255, 0, 0, 1.0]);
-                var cFillDef = esri.Color.fromArray([255, 0, 0, 0.5]);
-                var symbol = new esri.SimpleFillSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, cLineDef, 2), cFillDef);
-
-                for (var i = 0; i < dataJSON.length; i++) {
-                    var _geometry = esri.webMercatorUtils.geographicToWebMercator(esri.jsonUtilsGeometry.fromJson(dataJSON[i].geometry));
-                    var g = new esri.Graphic(_geometry, symbol);
-                    fileLayer.add(g);
-                }
-                map.setExtent(esri.graphicsUtils.graphicsExtent(fileLayer.graphics).expand(2));
-            };
-            reader.readAsText(files[i]);
-        }
+        loadAreaFilesToLayer(this, fileLayer, {
+            fillAlpha: 0.5,
+        });
     });
 
     /* SH Stats */
@@ -9895,25 +10356,15 @@ function setupMap() {
     map.addLayer(fileLayer2);
 
     $("#areaFile2").change(function (e) {
-        var files = $("#areaFile2")[0].files;
-        for (var i = 0; i < files.length; i++) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var dataJSON = Terraformer.ArcGIS.fromGeoJSON(JSON.parse(e.target.result));
-                var cLineDef = esri.Color.fromArray([255, 0, 0, 1.0]);
-                var cFillDef = esri.Color.fromArray([255, 0, 0, 0]);
-                var symbol = new esri.SimpleFillSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, cLineDef, 2), cFillDef);
+        loadAreaFilesToLayer(this, fileLayer2, {
+            fillAlpha: 0,
+            beforeAdd: function () {
                 clearSHStatsWorkArea();
-                for (var i = 0; i < dataJSON.length; i++) {
-                    var _geometry = esri.webMercatorUtils.geographicToWebMercator(esri.jsonUtilsGeometry.fromJson(dataJSON[i].geometry));
-                    var g = new esri.Graphic(_geometry, symbol);
-                    fileLayer2.add(g);
-                }
+            },
+            afterAdd: function () {
                 ensureBurnPolygonsOnTop();
-                map.setExtent(esri.graphicsUtils.graphicsExtent(fileLayer2.graphics).expand(2));
-            };
-            reader.readAsText(files[i]);
-        }
+            },
+        });
     });
     $("#selectSHStats1").datepicker({
         format: "dd/mm/yyyy",
@@ -10013,25 +10464,13 @@ function setupMap() {
     map.addLayer(fileLayer3);
 
     $("#areaFile3").change(function (e) {
-        var files = $("#areaFile3")[0].files;
-        for (var i = 0; i < files.length; i++) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var dataJSON = Terraformer.ArcGIS.fromGeoJSON(JSON.parse(e.target.result));
-                var cLineDef = esri.Color.fromArray([255, 0, 0, 1.0]);
-                var cFillDef = esri.Color.fromArray([255, 0, 0, 0]);
-                var symbol = new esri.SimpleFillSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, cLineDef, 2), cFillDef);
+        loadAreaFilesToLayer(this, fileLayer3, {
+            fillAlpha: 0,
+            beforeAdd: function () {
                 areaLayer4.clear();
                 fileLayer3.clear();
-                for (var i = 0; i < dataJSON.length; i++) {
-                    var _geometry = esri.webMercatorUtils.geographicToWebMercator(esri.jsonUtilsGeometry.fromJson(dataJSON[i].geometry));
-                    var g = new esri.Graphic(_geometry, symbol);
-                    fileLayer3.add(g);
-                }
-                map.setExtent(esri.graphicsUtils.graphicsExtent(fileLayer3.graphics).expand(2));
-            };
-            reader.readAsText(files[i]);
-        }
+            },
+        });
     });
     $("#selectPrisma1").datepicker({
         format: "dd/mm/yyyy",
@@ -10098,26 +10537,14 @@ function setupMap() {
     map.addLayer(rasterMosaicFootprintLayer);
 
     $("#areaFileRasterMosaics").change(function (e) {
-        var files = $("#areaFileRasterMosaics")[0].files;
-        for (var i = 0; i < files.length; i++) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var dataJSON = Terraformer.ArcGIS.fromGeoJSON(JSON.parse(e.target.result));
-                var cLineDef = esri.Color.fromArray([255, 0, 0, 1.0]);
-                var cFillDef = esri.Color.fromArray([255, 0, 0, 0]);
-                var symbol = new esri.SimpleFillSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, cLineDef, 2), cFillDef);
+        loadAreaFilesToLayer(this, fileLayerRasterMosaics, {
+            fillAlpha: 0,
+            beforeAdd: function () {
                 areaLayerRasterMosaics.clear();
                 fileLayerRasterMosaics.clear();
                 clearRasterMosaicCatalogOverlays();
-                for (var i = 0; i < dataJSON.length; i++) {
-                    var _geometry = esri.webMercatorUtils.geographicToWebMercator(esri.jsonUtilsGeometry.fromJson(dataJSON[i].geometry));
-                    var g = new esri.Graphic(_geometry, symbol);
-                    fileLayerRasterMosaics.add(g);
-                }
-                map.setExtent(esri.graphicsUtils.graphicsExtent(fileLayerRasterMosaics.graphics).expand(2));
-            };
-            reader.readAsText(files[i]);
-        }
+            },
+        });
     });
 
     $("#selectRasterMosaicIdx").on("change", function (e) {
@@ -12041,9 +12468,20 @@ function getClassification(index) {
     return null;
 }
 
+function getGeoTiffApi() {
+    var geoTiffApi = window.GeoTIFF || window.geotiff;
+    if (geoTiffApi && typeof geoTiffApi.fromArrayBuffer == "function") {
+        return geoTiffApi;
+    }
+    showLoading("No se pudo cargar la librería GeoTIFF. Recargue la página e intente nuevamente.", null, "red", true);
+    return null;
+}
+
 function clasifyIndex(image, indice) {
     console.log("[CLASSIFY] Iniciando procesamiento de imagen TIFF, índice:", indice);
-    GeoTIFF.fromArrayBuffer(image).then(
+    var geoTiffApi = getGeoTiffApi();
+    if (!geoTiffApi) return;
+    geoTiffApi.fromArrayBuffer(image).then(
         function (imageTiff) {
             console.log("[CLASSIFY] GeoTIFF parseado");
             imageTiff.getImage().then(
@@ -12232,7 +12670,8 @@ function clasifyIndex(image, indice) {
                             polygons = filterClassifiedPolygons(polygons, indice);
 
                             // create blob file from the geojson
-                            var blob = new Blob([JSON.stringify(polygons)], { type: "application/json" });
+                            var downloadPolygons = buildSHStatsDownloadPolygons(polygons, indice);
+                            var blob = new Blob([JSON.stringify(downloadPolygons)], { type: "application/json" });
 
                             // create a URL to blob file
                             var url = URL.createObjectURL(blob);
@@ -12278,7 +12717,9 @@ function clasifyIndex(image, indice) {
 }
 
 function clasifyIndexDisplay(image, indice) {
-    GeoTIFF.fromArrayBuffer(image).then(
+    var geoTiffApi = getGeoTiffApi();
+    if (!geoTiffApi) return;
+    geoTiffApi.fromArrayBuffer(image).then(
         function (imageTiff) {
             imageTiff.getImage().then(
                 function (image1) {
