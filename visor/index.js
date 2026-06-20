@@ -2192,23 +2192,13 @@ function gotoSHStats() {
 }
 
 function updateSHStats() {
-    if (areaLayer3.graphics.length == 0 && fileLayer2.graphics.length == 0) {
+    var shArea = getSHStatsSearchArea();
+    if (!shArea) {
         showLoading("Debes seleccionar una area para la geneneración de la grafica", null, "red", true);
         return;
     }
-    if (areaLayer3.graphics.length > 0) {
-        if (areaLayer3.graphics[0].geometry.type == "extent") {
-            currentSearchArea = esri.Polygon.fromExtent(esri.webMercatorUtils.webMercatorToGeographic(areaLayer3.graphics[0].geometry));
-            currentSearchArea2 = esri.Polygon.fromExtent(areaLayer3.graphics[0].geometry);
-        } else {
-            currentSearchArea = esri.webMercatorUtils.webMercatorToGeographic(areaLayer3.graphics[0].geometry);
-            currentSearchArea2 = areaLayer3.graphics[0].geometry;
-        }
-    }
-    if (fileLayer2.graphics.length > 0) {
-        currentSearchArea = esri.webMercatorUtils.webMercatorToGeographic(fileLayer2.graphics[0].geometry);
-        currentSearchArea2 = fileLayer2.graphics[0].geometry;
-    }
+    currentSearchArea = shArea.currentSearchArea;
+    currentSearchArea2 = shArea.currentSearchArea2;
     if (esri.geometryEngine.geodesicArea(esri.webMercatorUtils.webMercatorToGeographic(currentSearchArea), "hectares") > 100) {
         showLoading("Le informamos que su polígono excede el límite de área permitido (100 hectáreas), por este motivo, no podrá realizar la consulta de uso de suelo para su área de estudio", null, "red", false);
         return;
@@ -2284,8 +2274,8 @@ function updateSHStats() {
                 of: $("#selectSHStatsAgg").val(),
                 lastIntervalBehavior: "SKIP",
             },
-            resx: 0.000269494697,
-            resy: 0.000269494697,
+            resx: getSHStatsResolutionDegrees(resolutionInfo, "x"),
+            resy: getSHStatsResolutionDegrees(resolutionInfo, "y"),
             evalscript: stats_idx[$("#selectSHStatsIdx").val()],
         },
         calculations: {
@@ -2371,7 +2361,7 @@ function updateSHStats() {
             });
             map.addLayer(currentSHDataLayers);
         },
-        timeout: 20000,
+        timeout: 60000,
         error: function (err) {
             loading.close();
             showLoading("Debes seleccionar una extension menor para la generacion de la grafica", null, "red", true);
@@ -2387,6 +2377,34 @@ function updateSHStats() {
         contentType: false,
         processData: false,
     });
+}
+
+function getSHStatsSearchArea() {
+    var layers = [areaLayer3, fileLayer2, areaLayer, fileLayer];
+    for (var i = 0; i < layers.length; i++) {
+        if (!layers[i] || !layers[i].graphics || layers[i].graphics.length == 0) continue;
+        var geometry = layers[i].graphics[0].geometry;
+        if (!geometry) continue;
+        if (geometry.type == "extent") {
+            return {
+                currentSearchArea: esri.Polygon.fromExtent(esri.webMercatorUtils.webMercatorToGeographic(geometry)),
+                currentSearchArea2: esri.Polygon.fromExtent(geometry),
+            };
+        }
+        return {
+            currentSearchArea: esri.webMercatorUtils.webMercatorToGeographic(geometry),
+            currentSearchArea2: geometry,
+        };
+    }
+    return null;
+}
+
+function getSHStatsResolutionDegrees(resolutionInfo, axis) {
+    var defaultResolution = 0.000269494697;
+    if (!resolutionInfo) return defaultResolution;
+    var calculatedResolution = axis == "y" ? resolutionInfo.resyDegrees : resolutionInfo.resxDegrees;
+    if (!calculatedResolution || Number.isNaN(calculatedResolution)) return defaultResolution;
+    return Math.max(defaultResolution, calculatedResolution);
 }
 
 function procesarSH() {
@@ -2947,6 +2965,7 @@ function buildSHStatsDownloadPolygons(polygons, index) {
 }
 
 function downloadSHStats() {
+    var selectedIndex = $("#selectSHStatsIdx").val();
     if (lastProcessedSHResult && lastProcessedSHResult.polygons) {
         var polygons = buildSHStatsDownloadPolygons(lastProcessedSHResult.polygons, lastProcessedSHResult.index);
         var blob = new Blob([JSON.stringify(polygons, null, 2)], { type: "application/geo+json" });
@@ -2960,8 +2979,14 @@ function downloadSHStats() {
         URL.revokeObjectURL(url);
         return;
     }
-    showLoading("Primero debes procesar un índice para poder descargarlo", null, "red", true);
-    return;
+    if (selectedIndex == "NBR" || selectedIndex == "NBR2" || selectedIndex == "MAP_DEFORESTATION") {
+        showLoading("Primero debes procesar un índice para poder descargarlo", null, "red", true);
+        return;
+    }
+    if (!currentSHStatsLabels || currentSHStatsLabels.length == 0) {
+        showLoading("Primero debes visualizar el índice para poder descargarlo", null, "red", true);
+        return;
+    }
 
     loading = $.confirm({
         title: "",
@@ -2977,19 +3002,17 @@ function downloadSHStats() {
         },
     });
     loading.open();
-    if (areaLayer3.graphics.length > 0) {
-        if (areaLayer3.graphics[0].geometry.type == "extent") {
-            currentSearchArea = esri.Polygon.fromExtent(esri.webMercatorUtils.webMercatorToGeographic(areaLayer3.graphics[0].geometry));
-            currentSearchArea2 = esri.Polygon.fromExtent(areaLayer3.graphics[0].geometry);
-        } else {
-            currentSearchArea = esri.webMercatorUtils.webMercatorToGeographic(areaLayer3.graphics[0].geometry);
-            currentSearchArea2 = areaLayer3.graphics[0].geometry;
-        }
+    var shArea = getSHStatsSearchArea();
+    if (shArea) {
+        currentSearchArea = shArea.currentSearchArea;
+        currentSearchArea2 = shArea.currentSearchArea2;
     }
-    if (fileLayer2.graphics.length > 0) {
-        currentSearchArea = esri.webMercatorUtils.webMercatorToGeographic(fileLayer2.graphics[0].geometry);
-        currentSearchArea2 = fileLayer2.graphics[0].geometry;
+    if (!currentSearchArea || !currentSearchArea.rings) {
+        loading.close();
+        showLoading("Debes seleccionar un área para descargar el índice", null, "red", true);
+        return;
     }
+    var resolutionInfo = calculateOptimalResolution(currentSearchArea);
     var params = null;
     if ($("#selectSHStatsIdx").val() == "NBR" || $("#selectSHStatsIdx").val() == "NBR2") {
         params = {
@@ -3015,8 +3038,8 @@ function downloadSHStats() {
                 ],
             },
             output: {
-                resx: 0.000269494697,
-                resy: 0.000269494697,
+                resx: getSHStatsResolutionDegrees(resolutionInfo, "x"),
+                resy: getSHStatsResolutionDegrees(resolutionInfo, "y"),
                 responses: [
                     {
                         identifier: "default",
@@ -3053,8 +3076,8 @@ function downloadSHStats() {
                 ],
             },
             output: {
-                resx: 0.000269494697,
-                resy: 0.000269494697,
+                resx: getSHStatsResolutionDegrees(resolutionInfo, "x"),
+                resy: getSHStatsResolutionDegrees(resolutionInfo, "y"),
                 responses: [
                     {
                         identifier: "default",
@@ -3106,8 +3129,8 @@ function downloadSHStats() {
                 ],
             },
             output: {
-                resx: 0.000269494697,
-                resy: 0.000269494697,
+                resx: getSHStatsResolutionDegrees(resolutionInfo, "x"),
+                resy: getSHStatsResolutionDegrees(resolutionInfo, "y"),
                 responses: [
                     {
                         identifier: "default",
@@ -3145,7 +3168,7 @@ function downloadSHStats() {
             xhrOverride.responseType = "arraybuffer";
             return xhrOverride;
         },
-        timeout: 20000,
+        timeout: 60000,
         error: function (err) {
             console.error("[SH_PROCESS] Error en petición:", {
                 status: err.status,
@@ -7136,6 +7159,18 @@ function clearRasterMosaicWorkArea() {
     clearRasterMosaicCatalogOverlays();
 }
 
+function clearMainSearchArea() {
+    if (areaLayer) {
+        areaLayer.clear();
+    }
+    if (fileLayer) {
+        fileLayer.clear();
+    }
+    if ($("#file").length) {
+        $("#file").val("");
+    }
+}
+
 function clearSHStatsWorkArea() {
     if (areaLayer3) {
         areaLayer3.clear();
@@ -10332,9 +10367,10 @@ function setupMap() {
     drawTool2.on("draw-end", function (evt) {
         map.enableMapNavigation();
         drawTool2.deactivate();
+        clearSHStatsWorkArea();
 
         var cLineDef = esri.Color.fromArray([255, 0, 0, 1.0]);
-        var cFillDef = esri.Color.fromArray([255, 0, 0, 0.5]);
+        var cFillDef = esri.Color.fromArray([255, 0, 0, 0]);
         var symbol = new esri.SimpleFillSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, cLineDef, 2), cFillDef);
 
         var g = new esri.Graphic(evt.geometry, symbol);
@@ -10349,7 +10385,7 @@ function setupMap() {
     });
     editTool2.on("activate", function (evt) {
         var cLineDef = esri.Color.fromArray([255, 0, 0, 1.0]);
-        var cFillDef = esri.Color.fromArray([255, 0, 0, 0.5]);
+        var cFillDef = esri.Color.fromArray([255, 0, 0, 0]);
         if (editTool2.getCurrentState().graphic.symbol.type == "simplefillsymbol") {
             editTool2.getCurrentState().graphic.setSymbol(new esri.SimpleFillSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, cLineDef, 2), cFillDef));
         }
@@ -10364,7 +10400,11 @@ function setupMap() {
 
     $("#file").change(function (e) {
         loadAreaFilesToLayer(this, fileLayer, {
-            fillAlpha: 0.5,
+            fillAlpha: 0,
+            beforeAdd: function () {
+                clearSHStatsWorkArea();
+                fileLayer.clear();
+            },
         });
     });
 
@@ -10386,6 +10426,7 @@ function setupMap() {
     drawTool3.on("draw-end", function (evt) {
         map.enableMapNavigation();
         drawTool3.deactivate();
+        clearMainSearchArea();
 
         var cLineDef = esri.Color.fromArray([255, 0, 0, 1.0]);
         var cFillDef = esri.Color.fromArray([255, 0, 0, 0]);
@@ -10422,6 +10463,7 @@ function setupMap() {
         loadAreaFilesToLayer(this, fileLayer2, {
             fillAlpha: 0,
             beforeAdd: function () {
+                clearMainSearchArea();
                 clearSHStatsWorkArea();
             },
             afterAdd: function () {
