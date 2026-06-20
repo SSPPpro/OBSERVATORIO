@@ -6034,7 +6034,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
                     "<div style='position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;background:#fff;border-top:1px solid rgba(0,0,0,0.55);border-bottom:1px solid rgba(0,0,0,0.55);box-shadow:0 0 7px rgba(0,0,0,0.75);'></div>" +
                     "<div style='position:absolute;left:50%;top:50%;width:30px;height:24px;margin-left:-15px;margin-top:-12px;background:#fff;border:2px solid #4f6b5a;border-radius:4px;box-shadow:0 1px 7px rgba(0,0,0,0.55);color:#4f6b5a;font-size:15px;font-weight:700;line-height:20px;text-align:center;'>↕</div>" +
                 "</div>" +
-                "<div id='burnsSwipeToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:0;pointer-events:auto;'>" +
+                "<div id='burnsSwipeToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:2147483001;display:flex;align-items:center;gap:0;pointer-events:auto;'>" +
                     "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" +
                     "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" +
                     "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" +
@@ -6069,6 +6069,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     $("#burnsFloatingDetail").html(panelHtml).show();
     $("#burnsFloatingClose").off("click").on("click", function (evt) {
         evt.preventDefault();
+        $("#burnsCustomVerticalSwipeFloating").hide();
         $("#burnsFloatingDetail").hide();
     });
     $(".sh-analytics-floating-download-btn").off("click").on("click", function (evt) {
@@ -6109,7 +6110,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             try { burnsCompareSwipe.destroy(); } catch (e) {}
             burnsCompareSwipe = null;
         }
-        $("#burnsCustomVerticalSwipe").hide();
+        $("#burnsCustomVerticalSwipe, #burnsCustomVerticalSwipeFloating").hide();
         $("#burnsSwipeMapWrap").off(".burnsCustomSwipe");
         $(document).off(".burnsCustomSwipe");
         if (burnsSwipeLeftLayer && burnsSwipeLeftLayer._div) {
@@ -6203,6 +6204,9 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     };
     var destroyBurnsCompareSwipe = function () {
         if (burnsCompareSwipe) {
+            if (burnsCompareSwipe.domNode && burnsCompareSwipe.domNode.parentNode) {
+                burnsCompareSwipe.domNode.parentNode.removeChild(burnsCompareSwipe.domNode);
+            }
             try { burnsCompareSwipe.destroy(); } catch (e) {}
             burnsCompareSwipe = null;
         }
@@ -6212,13 +6216,11 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         return layer && (layer._div || (layer._heatmapManager && layer._heatmapManager.imageLayer && layer._heatmapManager.imageLayer._div));
     };
     var getBurnsCustomVerticalSwipeNode = function () {
-        var mapWrap = document.getElementById("burnsSwipeMapWrap");
-        if (!mapWrap) return null;
-        var swipeNode = mapWrap.querySelector("#burnsCustomVerticalSwipe");
+        var swipeNode = document.getElementById("burnsCustomVerticalSwipeFloating");
         if (!swipeNode) {
             swipeNode = document.createElement("div");
-            swipeNode.id = "burnsCustomVerticalSwipe";
-            mapWrap.appendChild(swipeNode);
+            swipeNode.id = "burnsCustomVerticalSwipeFloating";
+            document.body.appendChild(swipeNode);
         }
         if (!swipeNode.querySelector(".burns-custom-vertical-line") || !swipeNode.querySelector(".burns-custom-vertical-handle")) {
             swipeNode.innerHTML = "<div class='burns-custom-vertical-line'></div><div class='burns-custom-vertical-handle'>↕</div>";
@@ -6227,28 +6229,33 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     };
     var styleBurnsCustomVerticalSwipeNode = function (swipeNode, top) {
         if (!swipeNode) return;
+        var mapWrap = document.getElementById("burnsSwipeMapWrap");
+        var mapRect = mapWrap ? mapWrap.getBoundingClientRect() : null;
+        if (!mapRect) return;
         swipeNode.style.setProperty("display", "block", "important");
-        swipeNode.style.setProperty("position", "absolute", "important");
-        swipeNode.style.setProperty("left", "0", "important");
-        swipeNode.style.setProperty("right", "0", "important");
-        swipeNode.style.setProperty("top", top + "px", "important");
-        swipeNode.style.setProperty("height", "32px", "important");
-        swipeNode.style.setProperty("margin-top", "-16px", "important");
-        swipeNode.style.setProperty("z-index", "2147483000", "important");
+        swipeNode.style.setProperty("position", "fixed", "important");
+        swipeNode.style.setProperty("left", mapRect.left + "px", "important");
+        swipeNode.style.setProperty("right", "auto", "important");
+        swipeNode.style.setProperty("top", (mapRect.top + top) + "px", "important");
+        swipeNode.style.setProperty("width", mapRect.width + "px", "important");
+        swipeNode.style.setProperty("height", "42px", "important");
+        swipeNode.style.setProperty("margin-top", "-21px", "important");
+        swipeNode.style.setProperty("z-index", "2147483647", "important");
         swipeNode.style.setProperty("cursor", "ns-resize", "important");
         swipeNode.style.setProperty("pointer-events", "auto", "important");
+        swipeNode.style.setProperty("user-select", "none", "important");
         var lineNode = swipeNode.querySelector(".burns-custom-vertical-line");
         if (lineNode) {
             lineNode.style.setProperty("position", "absolute", "important");
             lineNode.style.setProperty("left", "0", "important");
             lineNode.style.setProperty("right", "0", "important");
             lineNode.style.setProperty("top", "50%", "important");
-            lineNode.style.setProperty("height", "5px", "important");
-            lineNode.style.setProperty("margin-top", "-2px", "important");
+            lineNode.style.setProperty("height", "8px", "important");
+            lineNode.style.setProperty("margin-top", "-4px", "important");
             lineNode.style.setProperty("background", "#ffffff", "important");
-            lineNode.style.setProperty("border-top", "2px solid #335343", "important");
-            lineNode.style.setProperty("border-bottom", "2px solid #335343", "important");
-            lineNode.style.setProperty("box-shadow", "0 0 8px rgba(0,0,0,0.9)", "important");
+            lineNode.style.setProperty("border-top", "2px solid #244535", "important");
+            lineNode.style.setProperty("border-bottom", "2px solid #244535", "important");
+            lineNode.style.setProperty("box-shadow", "0 0 0 1px rgba(255,255,255,0.9), 0 2px 12px rgba(0,0,0,0.95)", "important");
             lineNode.style.setProperty("pointer-events", "none", "important");
         }
         var handleNode = swipeNode.querySelector(".burns-custom-vertical-handle");
@@ -6256,18 +6263,18 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             handleNode.style.setProperty("position", "absolute", "important");
             handleNode.style.setProperty("left", "50%", "important");
             handleNode.style.setProperty("top", "50%", "important");
-            handleNode.style.setProperty("width", "34px", "important");
-            handleNode.style.setProperty("height", "26px", "important");
-            handleNode.style.setProperty("margin-left", "-17px", "important");
-            handleNode.style.setProperty("margin-top", "-13px", "important");
+            handleNode.style.setProperty("width", "42px", "important");
+            handleNode.style.setProperty("height", "32px", "important");
+            handleNode.style.setProperty("margin-left", "-21px", "important");
+            handleNode.style.setProperty("margin-top", "-16px", "important");
             handleNode.style.setProperty("background", "#ffffff", "important");
-            handleNode.style.setProperty("border", "2px solid #335343", "important");
+            handleNode.style.setProperty("border", "3px solid #244535", "important");
             handleNode.style.setProperty("border-radius", "4px", "important");
-            handleNode.style.setProperty("box-shadow", "0 1px 8px rgba(0,0,0,0.75)", "important");
-            handleNode.style.setProperty("color", "#335343", "important");
-            handleNode.style.setProperty("font-size", "16px", "important");
+            handleNode.style.setProperty("box-shadow", "0 2px 12px rgba(0,0,0,0.9)", "important");
+            handleNode.style.setProperty("color", "#244535", "important");
+            handleNode.style.setProperty("font-size", "18px", "important");
             handleNode.style.setProperty("font-weight", "700", "important");
-            handleNode.style.setProperty("line-height", "22px", "important");
+            handleNode.style.setProperty("line-height", "26px", "important");
             handleNode.style.setProperty("text-align", "center", "important");
             handleNode.style.setProperty("pointer-events", "none", "important");
         }
@@ -6277,43 +6284,66 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         if (swipeNode) {
             swipeNode.style.display = "none";
         }
+        $("#burnsCustomVerticalSwipe").hide();
         $("#burnsSwipeMapWrap").off(".burnsCustomSwipe");
+        $(window).off(".burnsCustomSwipe");
         $(document).off(".burnsCustomSwipe");
         var layerNode = getBurnsLayerNode(burnsSwipeLeftLayer);
         if (layerNode) {
             layerNode.style.clip = "auto";
+            layerNode.style.clipPath = "";
+            layerNode.style.webkitClipPath = "";
         }
     };
     var applyBurnsCustomVerticalClip = function (topValue) {
         var mapNode = document.getElementById("burnsSwipeMap");
+        var mapWrap = document.getElementById("burnsSwipeMapWrap");
         var layerNode = getBurnsLayerNode(burnsSwipeLeftLayer);
-        if (!mapNode) return;
-        var width = mapNode.offsetWidth || 0;
-        var height = mapNode.offsetHeight || 0;
+        if (!mapNode || !mapWrap) return;
+        var width = mapWrap.offsetWidth || mapNode.offsetWidth || 0;
+        var height = mapWrap.offsetHeight || mapNode.offsetHeight || 0;
         var top = Math.max(0, Math.min(height, topValue));
         burnsCustomVerticalTop = top;
         styleBurnsCustomVerticalSwipeNode(getBurnsCustomVerticalSwipeNode(), top);
         if (layerNode) {
-            layerNode.style.clip = "rect(0px, " + width + "px, " + top + "px, 0px)";
+            var wrapRect = mapWrap.getBoundingClientRect();
+            var layerRect = layerNode.getBoundingClientRect();
+            var layerWidth = layerNode.offsetWidth || layerRect.width || width;
+            var layerHeight = layerNode.offsetHeight || layerRect.height || height;
+            var topInLayer = Math.max(0, Math.min(layerHeight, (wrapRect.top + top) - layerRect.top));
+            layerNode.style.clip = "rect(0px, " + layerWidth + "px, " + topInLayer + "px, 0px)";
+            layerNode.style.clipPath = "inset(0 0 " + Math.max(0, layerHeight - topInLayer) + "px 0)";
+            layerNode.style.webkitClipPath = "inset(0 0 " + Math.max(0, layerHeight - topInLayer) + "px 0)";
         }
     };
     var initBurnsCustomVerticalSwipe = function () {
         var mapNode = document.getElementById("burnsSwipeMap");
-        if (!mapNode) return;
-        var startTop = burnsCustomVerticalTop == null ? Math.round(mapNode.offsetHeight / 2) : burnsCustomVerticalTop;
+        var mapWrap = document.getElementById("burnsSwipeMapWrap");
+        if (!mapNode || !mapWrap) return;
+        var startTop = burnsCustomVerticalTop == null ? Math.round(mapWrap.offsetHeight / 2) : burnsCustomVerticalTop;
         applyBurnsCustomVerticalClip(startTop);
+        window.setTimeout(function () {
+            if (burnsSwipeViewMode === "vertical") {
+                applyBurnsCustomVerticalClip(burnsCustomVerticalTop == null ? startTop : burnsCustomVerticalTop);
+            }
+        }, 250);
         $(getBurnsCustomVerticalSwipeNode()).off(".burnsCustomSwipe").on("mousedown.burnsCustomSwipe touchstart.burnsCustomSwipe", function (evt) {
             evt.preventDefault();
-            var mapOffset = $("#burnsSwipeMap").offset();
             var moveHandler = function (moveEvt) {
                 var originalEvt = moveEvt.originalEvent || moveEvt;
                 var point = originalEvt.touches && originalEvt.touches.length ? originalEvt.touches[0] : originalEvt;
-                applyBurnsCustomVerticalClip(point.pageY - mapOffset.top);
+                var mapRect = mapWrap.getBoundingClientRect();
+                applyBurnsCustomVerticalClip(point.clientY - mapRect.top);
             };
             $(document).on("mousemove.burnsCustomSwipe touchmove.burnsCustomSwipe", moveHandler);
             $(document).one("mouseup.burnsCustomSwipe touchend.burnsCustomSwipe touchcancel.burnsCustomSwipe", function () {
                 $(document).off("mousemove.burnsCustomSwipe touchmove.burnsCustomSwipe");
             });
+        });
+        $(window).off("resize.burnsCustomSwipe scroll.burnsCustomSwipe").on("resize.burnsCustomSwipe scroll.burnsCustomSwipe", function () {
+            if (burnsSwipeViewMode === "vertical") {
+                applyBurnsCustomVerticalClip(burnsCustomVerticalTop == null ? startTop : burnsCustomVerticalTop);
+            }
         });
         if (burnsCompareMap) {
             $("#burnsSwipeMapWrap").off("mouseleave.burnsCustomSwipe").on("mouseleave.burnsCustomSwipe", function () {
@@ -6323,6 +6353,14 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     };
     var applyBurnsSwipeViewMode = function () {
         updateBurnsSwipeModeButtons();
+        if (burnsSwipeViewMode === "vertical") {
+            destroyBurnsCompareSwipe();
+            clearBurnsCustomVerticalSwipe();
+            burnsSwipeRightLayer && burnsSwipeRightLayer.setOpacity(1);
+            burnsSwipeLeftLayer && burnsSwipeLeftLayer.setOpacity(1);
+            initBurnsCustomVerticalSwipe();
+            return;
+        }
         if (!burnsCompareMap || !burnsSwipeLeftLayer || !burnsSwipeRightLayer || !burnsSwipeReady) {
             return;
         }
@@ -6334,10 +6372,6 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             return;
         }
         burnsSwipeLeftLayer.setOpacity(1);
-        if (burnsSwipeViewMode === "vertical") {
-            initBurnsCustomVerticalSwipe();
-            return;
-        }
         var mapNode = document.getElementById("burnsSwipeMap");
         var swipeOptions = {
             type: "vertical",
@@ -6348,6 +6382,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         burnsCompareSwipe = new esri.LayerSwipe(swipeOptions, "burnsSwipeControlNode");
         burnsCompareSwipe.startup();
         setBurnsSwipeInteractiveNodes();
+        window.setTimeout(setBurnsSwipeInteractiveNodes, 100);
     };
     var setBurnsSwipeViewMode = function (mode) {
         burnsSwipeViewMode = mode || "horizontal";
@@ -6391,6 +6426,35 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         }
         renderMonthPicker();
     };
+    var centerBurnsSwipeOnSelectedPolygon = function (callback) {
+        if (!burnsCompareMap || !selectedGraphic || !selectedGraphic.geometry || !selectedGraphic.geometry.getExtent) {
+            if (typeof callback == "function") callback();
+            return;
+        }
+        var polygonExtent = selectedGraphic.geometry.getExtent();
+        if (!polygonExtent) {
+            if (typeof callback == "function") callback();
+            return;
+        }
+        burnsCompareMap.resize();
+        burnsCompareMap.reposition();
+        var setExtentResult = burnsCompareMap.setExtent(polygonExtent.expand(3), true);
+        var centerPolygon = function () {
+            var centerResult = burnsCompareMap.centerAt(polygonExtent.getCenter());
+            if (centerResult && typeof centerResult.then == "function") {
+                centerResult.then(function () {
+                    if (typeof callback == "function") callback();
+                });
+            } else if (typeof callback == "function") {
+                callback();
+            }
+        };
+        if (setExtentResult && typeof setExtentResult.then == "function") {
+            setExtentResult.then(centerPolygon);
+        } else {
+            centerPolygon();
+        }
+    };
     var renderSwipe = function () {
         var finalMoment = endMoment.clone();
         var compareMoment = finalMoment.clone().add(-1, "month").startOf("month");
@@ -6427,11 +6491,10 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             if (selectedGraphic && selectedGraphic.geometry) {
                 burnsCompareMap.graphics.add(new esri.Graphic(selectedGraphic.geometry, createClassifiedPolygonPreviewSymbol()));
             }
-            burnsCompareMap.setExtent(targetExtent, true);
             burnsCompareMap.resize();
             burnsCompareMap.reposition();
             burnsSwipeReady = true;
-            applyBurnsSwipeViewMode();
+            centerBurnsSwipeOnSelectedPolygon(applyBurnsSwipeViewMode);
         });
         renderMonthPicker();
     };
@@ -6447,7 +6510,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         } else if (isSwipe && burnsCompareMap) {
             burnsCompareMap.resize();
             burnsCompareMap.reposition();
-            applyBurnsSwipeViewMode();
+            centerBurnsSwipeOnSelectedPolygon(applyBurnsSwipeViewMode);
         }
     };
     if (hasSelectedPolygon) {
