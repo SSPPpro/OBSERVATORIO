@@ -54,6 +54,10 @@
     prismaFallbackApiBaseUrl: prismaFallbackApiBaseUrl,
     prismaFallbackTokenProxyUrl: prismaFallbackTokenProxyUrl,
     planetAnalyticsBoundaryUrl: "data/planet-analytics-limites.geojson",
-    planetAnalyticsLocalUrl: "data/reportes/resultado_unido_total.geojson"
+    planetAnalyticsLocalUrl: "data/reportes/resultado_unido_total.geojson",
+    planetAnalyticsLocalUrls: {
+      building: "data/reportes/resultado_unido_construcciones.geojson",
+      road: "data/reportes/resultado_unido_vias.geojson"
+    }
   }, existingEnv);
 })(window);

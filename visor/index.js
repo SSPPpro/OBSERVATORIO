@@ -708,6 +708,10 @@ var planetApiKey = runtimeEnv.planetApiKey || "PLAKd9faf25449294d9d86096fe33d980
 var usePlanetDirect = planetApiKey != null && planetApiKey !== "";
 var planetAnalyticsBoundaryUrl = runtimeEnv.planetAnalyticsBoundaryUrl || "data/planet-analytics-limites.geojson";
 var planetAnalyticsLocalUrl = runtimeEnv.planetAnalyticsLocalUrl || "data/reportes/resultado_unido_total.geojson";
+var planetAnalyticsLocalUrls = Object.assign({
+    building: "data/reportes/resultado_unido_construcciones.geojson",
+    road: "data/reportes/resultado_unido_vias.geojson",
+}, runtimeEnv.planetAnalyticsLocalUrls || {});
 var planetAnalyticsMunicipalityUrl = runtimeEnv.planetAnalyticsMunicipalityUrl || "data/limite-municipal.geojson";
 var planetAnalyticsDepartmentUrl = runtimeEnv.planetAnalyticsDepartmentUrl || "data/limite-departamental.geojson";
 var planetTileProxyUrl = runtimeEnv.planetTileProxyUrl || null;
@@ -1104,6 +1108,7 @@ var currentSHUrl = null;
 var currentSHLayers = [];
 var currentSHData = [];
 var currentSHStatsLabels = null;
+var currentSHStatsIntervals = null;
 var currentSearchArea;
 var currentSearchArea2;
 var sliderSHStats;
@@ -1115,6 +1120,8 @@ var currentSHDataLayers = null;
 var currentSHAnalyticsSuscriptions = [];
 var currentSHAnalyticsLocalFeatures = null;
 var currentSHAnalyticsLocalFeaturesLoading = false;
+var currentSHAnalyticsLocalFeaturesByClass = {};
+var currentSHAnalyticsLocalFeaturesLoadingByClass = {};
 var currentSHAnalyticsData = [];
 var currentSHAnalyticsAllData = [];
 var currentSHAnalyticsNextUrl = null;
@@ -2315,27 +2322,38 @@ function updateSHStats() {
             $("#btnSHDownloadStats").removeAttr("disabled");
             var statisticsData = data;
             var labels = [];
+            var intervals = [];
             var p10Data = [];
             var meanData = [];
             var p90Data = [];
 
             statisticsData.data.forEach((interval) => {
                 labels.push(interval.interval.from);
+                intervals.push({
+                    from: interval.interval.from.substring(0, 10),
+                    to: interval.interval.to ? interval.interval.to.substring(0, 10) : null,
+                    label: interval.interval.from.substring(0, 10)
+                });
                 p10Data.push(interval.outputs.data.bands.B0.stats.percentiles["10.0"]);
                 meanData.push(interval.outputs.data.bands.B0.stats.mean);
                 p90Data.push(interval.outputs.data.bands.B0.stats.percentiles["90.0"]);
             });
+            currentSHStatsLabels = labels;
+            currentSHStatsIntervals = null;
+            currentSHStatsIntervals = intervals.map(function (interval, index) {
+                if (interval.to) return interval;
+                return getSHStatsIntervalByIndex(index);
+            });
             generateChart(labels, meanData, p10Data, p90Data);
-            var date_base = labels[0].substring(0, 10);
-            var new_date_base = labels[1].substring(0, 10);
+            var initialInterval = getSHStatsIntervalByIndex(0);
             currentSHDataLayers = new esri.WMSLayer(shStatsUrl, {
                 visibleLayers: [$("#selectSHStatsIdx").val()],
                 customParameters: {
-                    TIME: date_base + "/" + new_date_base,
+                    TIME: initialInterval.from + "/" + initialInterval.to,
+                    MAXCC: 100,
                     GEOMETRY: currentSearchArea2.rings,
                 },
             });
-            currentSHStatsLabels = labels;
             sliderSHStats.destroy();
             sliderSHStats = new Slider("#sliderSHStats", {
                 min: 0,
@@ -2351,12 +2369,7 @@ function updateSHStats() {
             });
             sliderSHStats.on("change", function (args) {
                 try {
-                    var date_base = currentSHStatsLabels[parseInt(args.newValue)].substring(0, 10);
-                    var new_date_base = currentSHStatsLabels[parseInt(args.newValue) + 1].substring(0, 10);
-                    currentSHDataLayers.setCustomParameters({
-                        TIME: date_base + "/" + new_date_base,
-                        GEOMETRY: currentSearchArea2.rings,
-                    });
+                    applySHStatsLayerSelection(args.newValue);
                 } catch (err) {}
             });
             map.addLayer(currentSHDataLayers);
@@ -2405,6 +2418,48 @@ function getSHStatsResolutionDegrees(resolutionInfo, axis) {
     var calculatedResolution = axis == "y" ? resolutionInfo.resyDegrees : resolutionInfo.resxDegrees;
     if (!calculatedResolution || Number.isNaN(calculatedResolution)) return defaultResolution;
     return Math.max(defaultResolution, calculatedResolution);
+}
+
+function getSHStatsIntervalByIndex(index) {
+    var safeIndex = parseInt(index, 10);
+    if (Number.isNaN(safeIndex)) safeIndex = 0;
+
+    if (Array.isArray(currentSHStatsIntervals) && currentSHStatsIntervals[safeIndex]) {
+        return currentSHStatsIntervals[safeIndex];
+    }
+
+    if (!Array.isArray(currentSHStatsLabels) || !currentSHStatsLabels[safeIndex]) {
+        return null;
+    }
+
+    var dateBase = currentSHStatsLabels[safeIndex].substring(0, 10);
+    var dateEnd = null;
+    if (currentSHStatsLabels[safeIndex + 1]) {
+        dateEnd = currentSHStatsLabels[safeIndex + 1].substring(0, 10);
+    } else if ($("#selectSHStatsAgg").val() == "P1M") {
+        dateEnd = esri.moment(dateBase, "YYYY-MM-DD").add(1, "month").format("YYYY-MM-DD");
+    } else if ($("#selectSHStatsAgg").val() == "P1W") {
+        dateEnd = esri.moment(dateBase, "YYYY-MM-DD").add(1, "week").format("YYYY-MM-DD");
+    } else {
+        dateEnd = esri.moment(dateBase, "YYYY-MM-DD").add(1, "day").format("YYYY-MM-DD");
+    }
+
+    return {
+        from: dateBase,
+        to: dateEnd,
+        label: dateBase
+    };
+}
+
+function applySHStatsLayerSelection(index) {
+    var interval = getSHStatsIntervalByIndex(index);
+    if (!interval || !currentSHDataLayers) return;
+
+    currentSHDataLayers.setCustomParameters({
+        TIME: interval.from + "/" + interval.to,
+        MAXCC: 100,
+        GEOMETRY: currentSearchArea2.rings,
+    });
 }
 
 function procesarSH() {
@@ -3092,17 +3147,7 @@ function downloadSHStats() {
     }
 
     if (params == null) {
-        var date_base = currentSHStatsLabels[sliderSHStats.getValue()].substring(0, 10);
-        var new_date_base = null;
-        if ($("#selectSHStatsAgg").val() == "P1M") {
-            new_date_base = esri.moment(date_base).endOf("month").format("YYYY-MM-DD");
-        }
-        if ($("#selectSHStatsAgg").val() == "P1W") {
-            new_date_base = esri.moment(date_base).endOf("week").format("YYYY-MM-DD");
-        }
-        if ($("#selectSHStatsAgg").val() == "P1D") {
-            new_date_base = esri.moment(date_base).endOf("day").format("YYYY-MM-DD");
-        }
+        var selectedInterval = getSHStatsIntervalByIndex(sliderSHStats.getValue());
 
         var evalScript = evalScripts_download[$("#selectSHStatsIdx").val()];
         var params = {
@@ -3120,8 +3165,8 @@ function downloadSHStats() {
                     {
                         dataFilter: {
                             timeRange: {
-                                from: date_base + "T00:00:00Z",
-                                to: new_date_base + "T00:00:00Z",
+                                from: selectedInterval.from + "T00:00:00Z",
+                                to: selectedInterval.to + "T00:00:00Z",
                             },
                         },
                         type: "sentinel-2-l2a",
@@ -3221,16 +3266,13 @@ function generateChart(labels, meanData, p10Data, p90Data) {
         options: {
             onClick: function (e, activeEls) {
                 try {
-                    var dataIndex = activeEls[0].index;
+                    if (!activeEls || activeEls.length == 0) return;
+                    var activeElement = activeEls[0];
+                    var dataIndex = activeElement.index;
+                    if (dataIndex === undefined) dataIndex = activeElement._index;
+                    if (dataIndex === undefined) return;
                     sliderSHStats.setValue(dataIndex);
-                    try {
-                        var date_base = currentSHStatsLabels[dataIndex].substring(0, 10);
-                        var new_date_base = esri.moment(date_base).endOf("month").format("YYYY-MM-DD");
-                        currentSHDataLayers.setCustomParameters({
-                            TIME: date_base + "/" + new_date_base,
-                            GEOMETRY: currentSearchArea2.rings,
-                        });
-                    } catch (err) {}
+                    applySHStatsLayerSelection(dataIndex);
                     //var label = e.chart.data.labels[dataIndex];
                 } catch (err) {}
             },
@@ -3600,18 +3642,18 @@ function getSHAnalyticsDateValue(properties) {
     return properties.date || properties.acquired || properties.published || properties.observed || "2000-01-01";
 }
 
-function normalizeSHAnalyticsLocalFeature(feature) {
+function normalizeSHAnalyticsLocalFeature(feature, defaultClassLabel) {
     feature = feature || {};
     feature.properties = feature.properties || {};
     feature.properties.date = getSHAnalyticsDateValue(feature.properties);
     feature.properties.published = feature.properties.published || feature.properties.date;
     feature.properties.object_area_m2 = feature.properties.object_area_m2 || feature.properties.area_m2 || 0;
     feature.properties.score = feature.properties.score || feature.properties.confidence || 0;
-    feature.properties.class_label = getSHAnalyticsClassLabel(feature.properties);
+    feature.properties.class_label = getSHAnalyticsClassLabel(feature.properties) || String(defaultClassLabel || "").trim().toLowerCase();
     return feature;
 }
 
-    function extractSHAnalyticsGeojsonFeatures(data) {
+function extractSHAnalyticsGeojsonFeatures(data) {
     if (Array.isArray(data)) {
         return data;
     }
@@ -3627,33 +3669,85 @@ function normalizeSHAnalyticsLocalFeature(feature) {
     return [];
 }
 
-function loadSHAnalyticsLocalFeatures(onSuccess, onError) {
-    if (Array.isArray(currentSHAnalyticsLocalFeatures)) {
+function getSHAnalyticsLocalUrl(subscriptionId) {
+    var selectedClass = String(subscriptionId || "").trim().toLowerCase();
+    return planetAnalyticsLocalUrls[selectedClass] || planetAnalyticsLocalUrl;
+}
+
+function getSHAnalyticsStaticLocalSubscriptions() {
+    var subscriptions = [];
+    if (planetAnalyticsLocalUrls.building) {
+        subscriptions.push({
+            id: "building",
+            title: getSHAnalyticsLocalSubscriptionTitle("building"),
+            description: "",
+            classLabel: "building",
+            raw: { source: planetAnalyticsLocalUrls.building },
+        });
+    }
+    if (planetAnalyticsLocalUrls.road) {
+        subscriptions.push({
+            id: "road",
+            title: getSHAnalyticsLocalSubscriptionTitle("road"),
+            description: "",
+            classLabel: "road",
+            raw: { source: planetAnalyticsLocalUrls.road },
+        });
+    }
+    return subscriptions;
+}
+
+function loadSHAnalyticsLocalFeatures(subscriptionId, onSuccess, onError) {
+    var selectedClass = String(subscriptionId || "").trim().toLowerCase();
+    var localUrl = getSHAnalyticsLocalUrl(selectedClass);
+    var cacheKey = selectedClass || "_all";
+
+    if (!selectedClass && Array.isArray(currentSHAnalyticsLocalFeatures)) {
         onSuccess(currentSHAnalyticsLocalFeatures);
         return;
     }
-    if (currentSHAnalyticsLocalFeaturesLoading) {
+    if (selectedClass && Array.isArray(currentSHAnalyticsLocalFeaturesByClass[cacheKey])) {
+        onSuccess(currentSHAnalyticsLocalFeaturesByClass[cacheKey]);
+        return;
+    }
+    if ((!selectedClass && currentSHAnalyticsLocalFeaturesLoading) || (selectedClass && currentSHAnalyticsLocalFeaturesLoadingByClass[cacheKey])) {
         window.setTimeout(function () {
-            loadSHAnalyticsLocalFeatures(onSuccess, onError);
+            loadSHAnalyticsLocalFeatures(selectedClass, onSuccess, onError);
         }, 120);
         return;
     }
-    currentSHAnalyticsLocalFeaturesLoading = true;
+    if (selectedClass) {
+        currentSHAnalyticsLocalFeaturesLoadingByClass[cacheKey] = true;
+    } else {
+        currentSHAnalyticsLocalFeaturesLoading = true;
+    }
     $.ajax({
-        url: planetAnalyticsLocalUrl,
+        url: localUrl,
         type: "GET",
         dataType: "json",
         cache: true,
         success: function (data) {
-            currentSHAnalyticsLocalFeaturesLoading = false;
-            currentSHAnalyticsLocalFeatures = extractSHAnalyticsGeojsonFeatures(data).map(normalizeSHAnalyticsLocalFeature).filter(function (feature) {
+            var normalizedFeatures = extractSHAnalyticsGeojsonFeatures(data).map(function (feature) {
+                return normalizeSHAnalyticsLocalFeature(feature, selectedClass);
+            }).filter(function (feature) {
                 return feature && feature.geometry && getSHAnalyticsClassLabel(feature.properties);
             });
-            onSuccess(currentSHAnalyticsLocalFeatures);
+            if (selectedClass) {
+                currentSHAnalyticsLocalFeaturesLoadingByClass[cacheKey] = false;
+                currentSHAnalyticsLocalFeaturesByClass[cacheKey] = normalizedFeatures;
+            } else {
+                currentSHAnalyticsLocalFeaturesLoading = false;
+                currentSHAnalyticsLocalFeatures = normalizedFeatures;
+            }
+            onSuccess(normalizedFeatures);
         },
         error: function (xhr) {
-            currentSHAnalyticsLocalFeaturesLoading = false;
-            console.error("Local Planet Analytics GeoJSON error", planetAnalyticsLocalUrl, xhr && xhr.status ? xhr.status : xhr);
+            if (selectedClass) {
+                currentSHAnalyticsLocalFeaturesLoadingByClass[cacheKey] = false;
+            } else {
+                currentSHAnalyticsLocalFeaturesLoading = false;
+            }
+            console.error("Local Planet Analytics GeoJSON error", localUrl, xhr && xhr.status ? xhr.status : xhr);
             if (onError) {
                 onError();
             } else {
@@ -3690,7 +3784,13 @@ function buildSHAnalyticsLocalSubscriptions(features) {
 }
 
 function loadAnalyticsSubscriptions(onSuccess, onError) {
+    var staticSubscriptions = getSHAnalyticsStaticLocalSubscriptions();
+    if (staticSubscriptions.length > 0) {
+        onSuccess(staticSubscriptions);
+        return;
+    }
     loadSHAnalyticsLocalFeatures(
+        null,
         function (features) {
             onSuccess(buildSHAnalyticsLocalSubscriptions(features));
         },
@@ -3738,6 +3838,7 @@ function loadAnalyticsChanges(subscriptionId, onSuccess, onError, pageUrl, retry
     retryCount = retryCount || 0;
     if (!pageUrl) {
         loadSHAnalyticsLocalFeatures(
+            subscriptionId,
             function (features) {
                 var selectedClass = String(subscriptionId || "").trim().toLowerCase();
                 var filteredFeatures = features.filter(function (feature) {
@@ -6600,12 +6701,8 @@ function shouldShowSentinelOverlayForIndex(index) {
     return normalizedIndex === "NBR" || normalizedIndex === "MAP_DEFORESTATION";
 }
 
-function shouldForceDissolveForIndex(index) {
-    var normalizedIndex = (index || "").toString().toUpperCase();
-    return normalizedIndex === "NBR" || normalizedIndex === "MAP_DEFORESTATION";
-}
-
 var CLASSIFIED_POLYGON_MIN_AREA_M2 = 2500;
+var CLASSIFIED_POLYGON_HOLE_MAX_AREA_M2 = CLASSIFIED_POLYGON_MIN_AREA_M2;
 var CLASSIFIED_POLYGON_BORDER_COLOR = [80, 210, 210, 0.95];
 var CLASSIFIED_POLYGON_BORDER_WIDTH = 0.75;
 
@@ -6637,15 +6734,8 @@ function createSHAnalyticsPolygonSymbol() {
 
 function dissolveRasterPolygonsByValue(geojson, index) {
     var featureCount = geojson && geojson.features ? geojson.features.length : 0;
-    var mustDissolve = shouldForceDissolveForIndex(index);
-    var maxFeaturesWithoutForcedDissolve = 5000;
 
     if (!featureCount) return geojson;
-
-    if (!mustDissolve && featureCount > maxFeaturesWithoutForcedDissolve) {
-        console.warn("Skipping turf.dissolve because the raster contains too many polygons:", featureCount);
-        return geojson;
-    }
 
     try {
         return turf.dissolve(geojson, { propertyName: "value" });
@@ -6739,6 +6829,218 @@ function filterClassifiedPolygons(polygons, index) {
         remaining: polygons.features.length,
     });
     return polygons;
+}
+
+function removeSmallClassifiedPolygonHoles(polygons) {
+    if (!polygons || !Array.isArray(polygons.features)) return polygons;
+    var removedHoles = 0;
+
+    function keepRelevantRings(rings) {
+        if (!Array.isArray(rings) || rings.length <= 1) return rings;
+        var cleanedRings = [rings[0]];
+        for (var i = 1; i < rings.length; i++) {
+            var holeArea = calculatePolygonPartAreaM2([rings[i]]);
+            if (holeArea > CLASSIFIED_POLYGON_HOLE_MAX_AREA_M2) {
+                cleanedRings.push(rings[i]);
+            } else {
+                removedHoles++;
+            }
+        }
+        return cleanedRings;
+    }
+
+    polygons.features.forEach(function (feature) {
+        if (!feature || !feature.geometry) return;
+        if (feature.geometry.type === "Polygon") {
+            feature.geometry.coordinates = keepRelevantRings(feature.geometry.coordinates);
+        }
+        if (feature.geometry.type === "MultiPolygon") {
+            feature.geometry.coordinates = feature.geometry.coordinates.map(function (rings) {
+                return keepRelevantRings(rings);
+            });
+        }
+    });
+
+    if (removedHoles > 0) {
+        console.log("[CLASSIFY] Huecos pequeños removidos en descarga:", {
+            removedHoles: removedHoles,
+            maxHoleAreaM2: CLASSIFIED_POLYGON_HOLE_MAX_AREA_M2,
+        });
+    }
+    return polygons;
+}
+
+function isValidGeoJsonCoordinate(coord) {
+    return Array.isArray(coord) &&
+        coord.length >= 2 &&
+        typeof coord[0] == "number" &&
+        typeof coord[1] == "number" &&
+        isFinite(coord[0]) &&
+        isFinite(coord[1]);
+}
+
+function cleanGeoJsonRing(ring) {
+    if (!Array.isArray(ring)) return null;
+    var cleanedRing = [];
+    for (var i = 0; i < ring.length; i++) {
+        if (!isValidGeoJsonCoordinate(ring[i])) continue;
+        var coord = [Number(ring[i][0]), Number(ring[i][1])];
+        var previous = cleanedRing.length ? cleanedRing[cleanedRing.length - 1] : null;
+        if (previous && previous[0] === coord[0] && previous[1] === coord[1]) continue;
+        cleanedRing.push(coord);
+    }
+    if (cleanedRing.length < 3) return null;
+    var first = cleanedRing[0];
+    var last = cleanedRing[cleanedRing.length - 1];
+    if (first[0] !== last[0] || first[1] !== last[1]) {
+        cleanedRing.push([first[0], first[1]]);
+    }
+    return cleanedRing.length >= 4 ? cleanedRing : null;
+}
+
+function cleanGeoJsonPolygonCoordinates(coordinates) {
+    if (!Array.isArray(coordinates) || coordinates.length == 0) return null;
+    var exteriorRing = cleanGeoJsonRing(coordinates[0]);
+    if (!exteriorRing) return null;
+    var cleanedCoordinates = [exteriorRing];
+    for (var i = 1; i < coordinates.length; i++) {
+        var holeRing = cleanGeoJsonRing(coordinates[i]);
+        if (holeRing && calculatePolygonPartAreaM2([holeRing]) > CLASSIFIED_POLYGON_HOLE_MAX_AREA_M2) {
+            cleanedCoordinates.push(holeRing);
+        }
+    }
+    if (calculatePolygonPartAreaM2([exteriorRing]) <= 0) return null;
+    return cleanedCoordinates;
+}
+
+function sanitizeClassifiedFeatureForDownload(feature) {
+    if (!feature || !feature.geometry) return [];
+    var properties = Object.assign({}, feature.properties || {});
+    delete properties._dissolveKey;
+    var polygonParts = [];
+
+    function addPolygonPart(coordinates) {
+        var cleanedCoordinates = cleanGeoJsonPolygonCoordinates(coordinates);
+        if (!cleanedCoordinates) return;
+        if (calculatePolygonPartAreaM2(cleanedCoordinates) > 0) {
+            polygonParts.push(cleanedCoordinates);
+        }
+    }
+
+    function addGeometryParts(geometry) {
+        if (!geometry) return;
+        if (geometry.type === "Polygon") {
+            addPolygonPart(geometry.coordinates);
+        } else if (geometry.type === "MultiPolygon") {
+            geometry.coordinates.forEach(addPolygonPart);
+        } else if (geometry.type === "GeometryCollection" && Array.isArray(geometry.geometries)) {
+            geometry.geometries.forEach(addGeometryParts);
+        }
+    }
+
+    addGeometryParts(feature.geometry);
+    if (polygonParts.length == 0) return [];
+
+    var sanitizedFeature = {
+        type: "Feature",
+        properties: properties,
+        geometry: polygonParts.length == 1
+            ? {
+                type: "Polygon",
+                coordinates: polygonParts[0],
+            }
+            : {
+                type: "MultiPolygon",
+                coordinates: polygonParts,
+            },
+    };
+
+    try {
+        if (turf.cleanCoords) sanitizedFeature = turf.cleanCoords(sanitizedFeature);
+        if (turf.rewind) sanitizedFeature = turf.rewind(sanitizedFeature, { reverse: false });
+    } catch (e) {
+        console.warn("Could not normalize polygon winding:", e);
+    }
+
+    if (sanitizedFeature.geometry.type === "Polygon") {
+        return calculatePolygonPartAreaM2(sanitizedFeature.geometry.coordinates) > 0 ? [sanitizedFeature] : [];
+    }
+    if (sanitizedFeature.geometry.type === "MultiPolygon") {
+        sanitizedFeature.geometry.coordinates = sanitizedFeature.geometry.coordinates.filter(function (coordinates) {
+            return calculatePolygonPartAreaM2(coordinates) > 0;
+        });
+        if (sanitizedFeature.geometry.coordinates.length == 0) return [];
+        if (sanitizedFeature.geometry.coordinates.length == 1) {
+            sanitizedFeature = {
+                type: "Feature",
+                properties: sanitizedFeature.properties,
+                geometry: {
+                    type: "Polygon",
+                    coordinates: sanitizedFeature.geometry.coordinates[0],
+                },
+            };
+        }
+        return [sanitizedFeature];
+    }
+    return [];
+}
+
+function sanitizeClassifiedGeoJsonForDownload(polygons) {
+    if (!polygons || !Array.isArray(polygons.features)) {
+        return {
+            type: "FeatureCollection",
+            features: [],
+        };
+    }
+    var sanitizedFeatures = [];
+    polygons.features.forEach(function (feature) {
+        sanitizedFeatures = sanitizedFeatures.concat(sanitizeClassifiedFeatureForDownload(feature));
+    });
+    return {
+        type: "FeatureCollection",
+        features: sanitizedFeatures,
+    };
+}
+
+function dissolveClassifiedPolygonsForDownload(polygons) {
+    if (!polygons || !Array.isArray(polygons.features) || polygons.features.length == 0) return polygons;
+
+    var propertiesByKey = {};
+    polygons.features.forEach(function (feature) {
+        if (!feature.properties) feature.properties = {};
+        var key = String(feature.properties.value) + "|" + String(feature.properties.IndexState || "");
+        feature.properties._dissolveKey = key;
+        if (!propertiesByKey[key]) {
+            propertiesByKey[key] = {
+                value: feature.properties.value,
+                IndexState: feature.properties.IndexState,
+                IndexRange: feature.properties.IndexRange,
+                IndexRangeMean: feature.properties.IndexRangeMean,
+            };
+        }
+    });
+
+    try {
+        var dissolved = turf.dissolve(polygons, { propertyName: "_dissolveKey" });
+        if (dissolved && Array.isArray(dissolved.features)) {
+            dissolved.features.forEach(function (feature) {
+                var key = feature.properties ? feature.properties._dissolveKey : null;
+                feature.properties = Object.assign({}, propertiesByKey[key] || feature.properties || {});
+            });
+            console.log("[CLASSIFY] Dissolve final de descarga:", {
+                before: polygons.features.length,
+                after: dissolved.features.length,
+            });
+            return sanitizeClassifiedGeoJsonForDownload(removeSmallClassifiedPolygonHoles(dissolved));
+        }
+    } catch (e) {
+        console.warn("Final classified polygon dissolve failed, using filtered polygons:", e);
+    }
+
+    polygons.features.forEach(function (feature) {
+        if (feature.properties) delete feature.properties._dissolveKey;
+    });
+    return sanitizeClassifiedGeoJsonForDownload(removeSmallClassifiedPolygonHoles(polygons));
 }
 
 function bindBurnsLayerClickHandler() {
@@ -12773,9 +13075,16 @@ function clasifyIndex(image, indice) {
                             });
                             //the polygons are filtered to eliminate null data and areas under 200 m²
                             polygons = filterClassifiedPolygons(polygons, indice);
+                            polygons = dissolveClassifiedPolygonsForDownload(polygons);
 
                             // create blob file from the geojson
                             var downloadPolygons = buildSHStatsDownloadPolygons(polygons, indice);
+                            downloadPolygons = sanitizeClassifiedGeoJsonForDownload(downloadPolygons);
+                            if (!downloadPolygons.features.length) {
+                                loading.close();
+                                showLoading("No se generaron polígonos válidos para descargar. Prueba otra fecha, índice o área.", null, "red", true);
+                                return;
+                            }
                             var blob = new Blob([JSON.stringify(downloadPolygons)], { type: "application/json" });
 
                             // create a URL to blob file
@@ -13009,6 +13318,12 @@ function clasifyIndexDisplay(image, indice) {
                             });
                             //the polygons are filtered to eliminate null data and areas under 200 m²
                             polygons = filterClassifiedPolygons(polygons, indice);
+                            polygons = dissolveClassifiedPolygonsForDownload(polygons);
+                            if (!polygons.features.length) {
+                                loading.close();
+                                showLoading("No se generaron polígonos válidos para visualizar. Prueba otra fecha, índice o área.", null, "red", true);
+                                return;
+                            }
 
                             var features = Terraformer.ArcGIS.convert(new Terraformer.Primitive(polygons));
                             for (var m = 0; m < features.length; m++) {
