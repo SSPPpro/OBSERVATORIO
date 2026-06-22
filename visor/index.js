@@ -12849,7 +12849,7 @@ var combined_state = {
 function getClassification(index) {
     if (index === "NDVI") {
         return combined_state.ndvi;
-    } else if (index === "GNDMI") {
+    } else if (index === "GNDVI") {
         return combined_state.gndvi;
     } else if (index === "EVI") {
         return combined_state.evi;
@@ -12873,6 +12873,26 @@ function getClassification(index) {
         return combined_state.map_deforestation;
     }
     return null;
+}
+
+function applyClassifiedIndexProperties(feature, indice, stateClasification, indexGroups) {
+    if (!feature || !feature.properties) return;
+    var normalizedIndex = (indice || "").toString().toLowerCase();
+    var val = Number(feature.properties.value);
+    var stateInfo = stateClasification && stateClasification[val] ? stateClasification[val] : null;
+    feature.properties.IndexState = stateInfo ? stateInfo[0] : "Sin clasificacion";
+    feature.properties.IndexRange = stateInfo ? stateInfo[1] : "Sin clasificacion";
+
+    var valuesArray = indexGroups[normalizedIndex] && indexGroups[normalizedIndex][val];
+    if (valuesArray && valuesArray.length > 0) {
+        var sum = valuesArray.reduce(function (sum, vals) {
+            return sum + vals;
+        }, 0);
+        var mean = sum / valuesArray.length;
+        feature.properties.IndexRangeMean = +(mean).toFixed(4);
+    } else {
+        feature.properties.IndexRangeMean = 0;
+    }
 }
 
 function getGeoTiffApi() {
@@ -13059,19 +13079,7 @@ function clasifyIndex(image, indice) {
                             var stateClasification = getClassification(indice);
                             // for each polygon you define the classification status and convert coordinates to wgs84
                             polygons.features.forEach(function (feature) {
-                                val = Number(feature.properties.value);
-                                feature.properties.IndexState = stateClasification[val][0] || "Sin clasificacion";
-                                feature.properties.IndexRange = stateClasification[val][1] || "Sin clasificacion";
-                                
-                                // Calcular media con validación
-                                var valuesArray = IndexGroups[indice.toLowerCase()] && IndexGroups[indice.toLowerCase()][val];
-                                if (valuesArray && valuesArray.length > 0) {
-                                    var sum = valuesArray.reduce((sum, vals) => sum + vals, 0);
-                                    var mean = sum / valuesArray.length;
-                                    feature.properties.IndexRangeMean = +(mean).toFixed(4);
-                                } else {
-                                    feature.properties.IndexRangeMean = 0;
-                                }
+                                applyClassifiedIndexProperties(feature, indice, stateClasification, IndexGroups);
                             });
                             //the polygons are filtered to eliminate null data and areas under 200 m²
                             polygons = filterClassifiedPolygons(polygons, indice);
@@ -13302,19 +13310,7 @@ function clasifyIndexDisplay(image, indice) {
                             var stateClasification = getClassification(indice);
                             // for each polygon you define the classification status and convert coordinates to wgs84
                             polygons.features.forEach(function (feature) {
-                                val = Number(feature.properties.value);
-                                feature.properties.IndexState = stateClasification[val][0] || "Sin clasificacion";
-                                feature.properties.IndexRange = stateClasification[val][1] || "Sin clasificacion";
-                                
-                                // Calcular media con validación
-                                var valuesArray = IndexGroups[indice.toLowerCase()] && IndexGroups[indice.toLowerCase()][val];
-                                if (valuesArray && valuesArray.length > 0) {
-                                    var sum = valuesArray.reduce((sum, vals) => sum + vals, 0);
-                                    var mean = sum / valuesArray.length;
-                                    feature.properties.IndexRangeMean = +(mean).toFixed(4);
-                                } else {
-                                    feature.properties.IndexRangeMean = 0;
-                                }
+                                applyClassifiedIndexProperties(feature, indice, stateClasification, IndexGroups);
                             });
                             //the polygons are filtered to eliminate null data and areas under 200 m²
                             polygons = filterClassifiedPolygons(polygons, indice);
