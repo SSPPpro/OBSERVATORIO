@@ -1,15 +1,7 @@
-// Si el backend se publica en el mismo dominio del
-//   frontend mediante un reverse proxy, las rutas relativas son suficientes.
-// - Si el backend queda en otro host, definir sentinelHubProxyBaseUrl o las URL
-//   completas de cada endpoint, por ejemplo:
-//   sentinelHubProxyBaseUrl: "https://pruebas.igac.gov.co/ott-api"
-//   prismaProxyBaseUrl: "https://pruebas.igac.gov.co/ott-api"
 (function (window) {
-  var currentLocation = window.location;
-  var isLocalFrontend = ["localhost", "127.0.0.1"].indexOf(currentLocation.hostname) !== -1;
-  var defaultProxyBaseUrl = isLocalFrontend
-    ? currentLocation.protocol + "//" + currentLocation.hostname + ":3000"
-    : "";
+
+  var defaultProxyBaseUrl = "https://ccg.igac.gov.co";
+  // var defaultProxyBaseUrl = "http://localhost:3000";
 
   function joinUrl(baseUrl, path) {
     if (!baseUrl) return path;
@@ -44,7 +36,7 @@
     sentinelHubCatalogProxyUrl: joinUrl(proxyBaseUrl, "/get-catalog"),
     sentinelHubProcessProxyUrl: joinUrl(proxyBaseUrl, "/get-image"),
     sentinelHubImageProxyUrl: joinUrl(proxyBaseUrl, "/get-image"),
-    planetTileProxyUrl: isLocalFrontend ? joinUrl(defaultProxyBaseUrl, "/planet-tile") : joinUrl(proxyBaseUrl, "/planet-tile"),
+    planetTileProxyUrl: joinUrl(proxyBaseUrl, "/planet-tile"),
     sentinelHubUseDirectToken: false,
     prismaProxyBaseUrl: prismaProxyBaseUrl,
     rasterMosaicByocCollection: "byoc-7c1511e7-42fd-41ee-925a-bedb3c24cc44",

@@ -703,7 +703,7 @@ var web_service = "https://serviciosgeovisor.igac.gov.co:8080/Geovisor";
 var web_service_proxy = "https://serviciosgeovisor.igac.gov.co:8080/Geovisor";
 var thumb_service = "https://mapas2.igac.gov.co/image/rest/services/ott/amazonas_alta/ImageServer";
 var runtimeEnv = window.__env || {};
-var isLocalHost = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
+// var isLocalHost = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
 var planetApiKey = runtimeEnv.planetApiKey || "PLAKd9faf25449294d9d86096fe33d980662";
 var usePlanetDirect = planetApiKey != null && planetApiKey !== "";
 var planetAnalyticsBoundaryUrl = runtimeEnv.planetAnalyticsBoundaryUrl || "data/planet-analytics-limites.geojson";
@@ -1181,7 +1181,7 @@ var burnsCompareSwipe = null;
 var burnsGallerySyncing = false;
 var burnsGallerySyncHandles = [];
 var cachePrisma;
-var LOCAL_NO_LOGIN = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
+// var LOCAL_NO_LOGIN = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
 
 $(document).ready(function () {
     //$("#modalMantenimiento").modal("show");
@@ -1190,33 +1190,33 @@ $(document).ready(function () {
     $("[data-toggle='popover']").popover();
     toggleMenu(currentEstado);
 
-    if (LOCAL_NO_LOGIN) {
-        currentUser = {
-            displayName: "Modo local",
-            email: "Login deshabilitado",
-            photoURL: "../images/login_1.png"
-        };
-        currentAccessToken = "";
-        $("#loginContainer").hide();
-        $("#logoutContainer").hide();
-        $("#userName,#userName2").html("Modo local</br><span style='font-style:italic;'>Login deshabilitado</span>");
-        $("#userPhoto,#userPhoto2").attr("src", "../images/login_1.png");
-        $(".calcite-map").show();
-        $.ajax({
-            url: web_service + "/config?cmd=config_imagenes&t=" + new Date().getTime(),
-            type: "POST",
-            success: function (data) {
-                if (data.status) {
-                    initData(data);
-                }
-            },
-            timeout: 20000,
-            error: function (err) {
-                console.error(err);
-            },
-        });
-        return;
-    }
+    // if (LOCAL_NO_LOGIN) {
+    //     currentUser = {
+    //         displayName: "Modo local",
+    //         email: "Login deshabilitado",
+    //         photoURL: "../images/login_1.png"
+    //     };
+    //     currentAccessToken = "";
+    //     $("#loginContainer").hide();
+    //     $("#logoutContainer").hide();
+    //     $("#userName,#userName2").html("Modo local</br><span style='font-style:italic;'>Login deshabilitado</span>");
+    //     $("#userPhoto,#userPhoto2").attr("src", "../images/login_1.png");
+    //     $(".calcite-map").show();
+    //     $.ajax({
+    //         url: web_service + "/config?cmd=config_imagenes&t=" + new Date().getTime(),
+    //         type: "POST",
+    //         success: function (data) {
+    //             if (data.status) {
+    //                 initData(data);
+    //             }
+    //         },
+    //         timeout: 20000,
+    //         error: function (err) {
+    //             console.error(err);
+    //         },
+    //     });
+    //     return;
+    // }
 
     var config = {
         apiKey: "AIzaSyCLSp_Qbaohj8owxrpZxvrmxUSkVw0ukig",
@@ -1422,7 +1422,7 @@ function acceptLicencia() {
                                 title: "Observatorio de la tierra y el territorio",
                                 content: "No se pudieron enviar los datos",
                                 buttons: {
-                                    Ok: function () {},
+                                    Ok: function () { },
                                 },
                             });
                         }
@@ -1432,7 +1432,7 @@ function acceptLicencia() {
                             title: "Observatorio de la tierra y el territorio",
                             content: "No se pudieron enviar los datos",
                             buttons: {
-                                Ok: function () {},
+                                Ok: function () { },
                             },
                         });
                     },
@@ -1443,7 +1443,7 @@ function acceptLicencia() {
                     title: "Observatorio de la tierra y el territorio",
                     content: "No se pudieron enviar los datos",
                     buttons: {
-                        Ok: function () {},
+                        Ok: function () { },
                     },
                 });
             });
@@ -1501,7 +1501,7 @@ function acceptLicencia2() {
                                 title: "Observatorio de la tierra y el territorio",
                                 content: "No se pudieron enviar los datos",
                                 buttons: {
-                                    Ok: function () {},
+                                    Ok: function () { },
                                 },
                             });
                         }
@@ -1511,7 +1511,7 @@ function acceptLicencia2() {
                             title: "Observatorio de la tierra y el territorio",
                             content: "No se pudieron enviar los datos",
                             buttons: {
-                                Ok: function () {},
+                                Ok: function () { },
                             },
                         });
                     },
@@ -1522,7 +1522,7 @@ function acceptLicencia2() {
                     title: "Observatorio de la tierra y el territorio",
                     content: "No se pudieron enviar los datos",
                     buttons: {
-                        Ok: function () {},
+                        Ok: function () { },
                     },
                 });
             });
@@ -1609,7 +1609,7 @@ function signOut() {
     closeLogin();
 }
 
-function validate() {}
+function validate() { }
 
 function toggleMain(tipo) {
     clearRasterMosaicWorkArea();
@@ -1821,9 +1821,9 @@ function toggleMenu(param) {
 }
 
 function gotoLogin() {
-    if (LOCAL_NO_LOGIN) {
-        return;
-    }
+    // if (LOCAL_NO_LOGIN) {
+    //     return;
+    // }
 
     minAll();
     if (currentUser == null) {
@@ -2069,7 +2069,7 @@ function updateSHList() {
             if (currentSHData[i].description.length > 0) {
                 strHTML = strHTML + "<strong>Descripci&oacute;n: </strong>" + currentSHData[i].description + "</br >";
             }
-        } catch (err) {}
+        } catch (err) { }
         try {
             if (currentSHData[i].datasourceDefaults != null) {
                 if (currentSHData[i].datasourceDefaults.timeRange != null) {
@@ -2077,7 +2077,7 @@ function updateSHList() {
                     strHTML = strHTML + "<strong>Fecha final: </strong>" + esri.moment(currentSHData[i].datasourceDefaults.timeRange.endTime.value).toString() + "</br >";
                 }
             }
-        } catch (err) {}
+        } catch (err) { }
         strHTML = strHTML + "</div>";
         strHTML = strHTML + "</div>";
         strHTML = strHTML + "</div>";
@@ -2180,7 +2180,7 @@ function gotoSHStats() {
             buttons: {},
             closeIcon: true,
             lazyOpen: true,
-            onContentReady: function () {},
+            onContentReady: function () { },
             onOpenBefore: function () {
                 loading.buttons.ok.hide();
                 loading.buttons.close.hide();
@@ -2210,7 +2210,7 @@ function updateSHStats() {
         showLoading("Le informamos que su polígono excede el límite de área permitido (100 hectáreas), por este motivo, no podrá realizar la consulta de uso de suelo para su área de estudio", null, "red", false);
         return;
     }
-    
+
     // Calculate optimal resolution to fit within 2500x2500 pixel limit
     var resolutionInfo = calculateOptimalResolution(currentSearchArea);
     if (resolutionInfo.maxResolution) {
@@ -2245,7 +2245,7 @@ function updateSHStats() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -2370,7 +2370,7 @@ function updateSHStats() {
             sliderSHStats.on("change", function (args) {
                 try {
                     applySHStatsLayerSelection(args.newValue);
-                } catch (err) {}
+                } catch (err) { }
             });
             map.addLayer(currentSHDataLayers);
         },
@@ -2471,14 +2471,14 @@ function procesarSH() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
             //loading.showLoading();
         },
     });
-   loading.open();
+    loading.open();
     // Forzar basemap de imágenes satelitales mientras se procesa
     try {
         currentBasemap = 'imagery';
@@ -2488,13 +2488,13 @@ function procesarSH() {
         console.warn('[PROCESS] No fue posible forzar basemap imagery:', e);
     }
     var params = {};
-    
+
     // Calculate optimal resolution based on area size
     var resolutionInfo = calculateOptimalResolution(currentSearchArea);
     if (resolutionInfo.maxResolution) {
         console.warn("Large area detected. Using resolution:", resolutionInfo.resx + "m");
     }
-    
+
     var maxCloudCoveragePercent = getSHCloudCoverageMaxPercent();
     var cloudCoverageValue = getSHCloudCoverageMaxRatio();
     var indexThresholdValue = getSHStatsIndexThresholdValue();
@@ -2636,21 +2636,21 @@ function procesarSH() {
             headers: processHeaders,
             contentType: "application/json; charset=utf-8",
             processData: true,
-        beforeSend: function () {
-            if (debugIndices) {
-                console.info("[INDICES] Solicitud enviada a Sentinel Hub /process", {
-                    idx: $("#selectSHStatsIdx").val(),
-                    fechaInicio: $("#selectSHStats1").val(),
-                    fechaFin: $("#selectSHStats2").val(),
-                    cloudCoverage: cloudCoverageValue,
-                });
-            }
-            window.__shProcessStart = Date.now();
+            beforeSend: function () {
+                if (debugIndices) {
+                    console.info("[INDICES] Solicitud enviada a Sentinel Hub /process", {
+                        idx: $("#selectSHStatsIdx").val(),
+                        fechaInicio: $("#selectSHStats1").val(),
+                        fechaFin: $("#selectSHStats2").val(),
+                        cloudCoverage: cloudCoverageValue,
+                    });
+                }
+                window.__shProcessStart = Date.now();
             },
             success: function (data) {
                 try {
                     var promise = clasifyIndexDisplay(data, $("#selectSHStatsIdx").val());
-                     if ($("#selectSHStatsIdx").val() == "NBR") {
+                    if ($("#selectSHStatsIdx").val() == "NBR") {
                         openMonthlyMosaicFloatingWindowFromDates($("#selectSHStats1").val(), $("#selectSHStats2").val(), "Zonas de quema (NBR)");
                     }
                     if ($("#selectSHStatsIdx").val() == "MAP_DEFORESTATION") {
@@ -2669,12 +2669,12 @@ function procesarSH() {
                     console.error(err);
                 }
             },
-        xhr: function () {
-            var xhrOverride = new XMLHttpRequest();
-            xhrOverride.responseType = "arraybuffer";
-            return xhrOverride;
-        },
-        timeout: 120000,
+            xhr: function () {
+                var xhrOverride = new XMLHttpRequest();
+                xhrOverride.responseType = "arraybuffer";
+                return xhrOverride;
+            },
+            timeout: 120000,
             error: function (err) {
                 if (sentinelHubProcessProxyUrl && (!err.status || err.status === 0)) {
                     console.warn("[INDICES] Proxy Sentinel Hub no disponible, reintentando con API directa", sentinelHubProcessProxyUrl, err);
@@ -2751,7 +2751,7 @@ function getSliderValueSafe(sliderInstance, inputSelector, fallbackValue) {
                 return sliderInstance.val();
             }
         }
-    } catch (e) {}
+    } catch (e) { }
     var inputValue = $(inputSelector).val();
     if (typeof inputValue === "string" && inputValue.indexOf(",") > -1) {
         var rangeValues = inputValue.split(",").map(function (value) {
@@ -2835,7 +2835,7 @@ function calculateOptimalResolution(geometryGeo) {
     try {
         var areaKm2 = esri.geometryEngine.geodesicArea(geometryGeo, "square-kilometers");
         var areaM2 = areaKm2 * 1000000;
-        
+
         var extent = geometryGeo.getExtent();
         var horizontalMeter = esri.geometryEngine.geodesicLength(new esri.Polyline({
             paths: [[[extent.xmin, extent.ymin], [extent.xmax, extent.ymin]]],
@@ -2845,15 +2845,15 @@ function calculateOptimalResolution(geometryGeo) {
             paths: [[[extent.xmin, extent.ymin], [extent.xmin, extent.ymax]]],
             spatialReference: geometryGeo.spatialReference,
         }), "meters");
-        
+
         // Maximum pixels we can handle
         var maxPixels = 2500;
-        
+
         var resolutionM = 10; // Default to 10m (Sentinel-2 resolution)
         var minResolutionForWidth = Math.ceil((horizontalMeter / maxPixels) / 5) * 5;
         var minResolutionForHeight = Math.ceil((verticalMeter / maxPixels) / 5) * 5;
         var minResolutionByShape = Math.max(minResolutionForWidth, minResolutionForHeight, 10);
-        
+
         // If area exceeds max or the bounding box is too large, calculate required resolution
         if (areaM2 > maxPixels * maxPixels * 10 * 10 || minResolutionByShape > 10) {
             resolutionM = Math.max(
@@ -2861,15 +2861,15 @@ function calculateOptimalResolution(geometryGeo) {
                 minResolutionByShape
             );
         }
-        
+
         // Convert to degrees (approximation: 1 degree ≈ 111 km)
         var resolutionDegrees = resolutionM / 111000;
-        
+
         var estimatedPixelCount = Math.max(
             Math.round(horizontalMeter / resolutionM),
             Math.round(verticalMeter / resolutionM)
         );
-        
+
         return {
             resx: resolutionM,
             resy: resolutionM,
@@ -3049,7 +3049,7 @@ function downloadSHStats() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -3274,7 +3274,7 @@ function generateChart(labels, meanData, p10Data, p90Data) {
                     sliderSHStats.setValue(dataIndex);
                     applySHStatsLayerSelection(dataIndex);
                     //var label = e.chart.data.labels[dataIndex];
-                } catch (err) {}
+                } catch (err) { }
             },
         },
     });
@@ -3312,7 +3312,7 @@ function gotoPrisma() {
                     title: "Observatorio de la tierra y el territorio",
                     content: message || "Funcionalidad no disponible. Intente nuevamente",
                     buttons: {
-                        Ok: function () {},
+                        Ok: function () { },
                     },
                 });
             }
@@ -3434,7 +3434,7 @@ function updatePrisma() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -3497,7 +3497,7 @@ function extractPrismaAccessToken(tokenValue) {
     if ((tokenText.charAt(0) === "{" && tokenText.charAt(tokenText.length - 1) === "}") || (tokenText.charAt(0) === "[" && tokenText.charAt(tokenText.length - 1) === "]")) {
         try {
             return extractPrismaAccessToken(JSON.parse(tokenText));
-        } catch (err) {}
+        } catch (err) { }
     }
 
     tokenText = tokenText.replace(/^"(.*)"$/, "$1").trim();
@@ -3607,7 +3607,7 @@ function getPrismaErrorMessage(xhr) {
         var response = xhr && xhr.responseJSON ? xhr.responseJSON : JSON.parse(xhr.responseText);
         if (response && response.detail) return response.detail;
         if (response && response.error) return response.error;
-    } catch (err) {}
+    } catch (err) { }
     if (xhr && xhr.status === 401) return "Token de Prisma inválido o vencido";
     if (xhr && xhr.status === 400) return "Prisma rechazó los parámetros de la solicitud";
     return fallback;
@@ -4705,7 +4705,7 @@ function captureSHAnalyticsVisiblePdfGalleryItems() {
         try {
             miniMap.resize();
             miniMap.reposition();
-        } catch (e) {}
+        } catch (e) { }
     });
 
     var restorePanelState = function () {
@@ -4811,25 +4811,25 @@ function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems) {
         galleryHtml += "<div class='sh-pdf-gallery-item'>" +
             "<img class='sh-pdf-map-image' src='" + item.image + "' />" +
             "<div class='sh-pdf-caption'>" + escapeSHAnalyticsHtml(item.label) + "</div>" +
-        "</div>";
+            "</div>";
     });
     if (!galleryHtml) {
         galleryHtml = "<div class='sh-pdf-empty'>No hay mosaicos disponibles para incluir en el reporte.</div>";
     }
     return "<div id='shAnalyticsPdfReport' class='sh-analytics-pdf-report'>" +
         "<div class='sh-pdf-header'>" +
-            "<div><div class='sh-pdf-kicker'>Observatorio de la Tierra y el Territorio</div><h1>Reporte de Detalle — Cambios</h1><div class='sh-pdf-subtitle'>" + escapeSHAnalyticsHtml(subscriptionLabel) + "</div></div>" +
-            "<img src='../images/logo_igac.png' onerror='this.style.display=\"none\"' />" +
+        "<div><div class='sh-pdf-kicker'>Observatorio de la Tierra y el Territorio</div><h1>Reporte de Detalle — Cambios</h1><div class='sh-pdf-subtitle'>" + escapeSHAnalyticsHtml(subscriptionLabel) + "</div></div>" +
+        "<img src='../images/logo_igac.png' onerror='this.style.display=\"none\"' />" +
         "</div>" +
         "<div class='sh-pdf-metrics'>" +
-            "<div><strong>" + escapeSHAnalyticsHtml(detectionDate) + "</strong><span>Fecha de detección</span></div>" +
-            "<div><strong>" + escapeSHAnalyticsHtml(municipalityDepartmentName) + "</strong><span>Municipio</span></div>" +
-            "<div><strong>" + escapeSHAnalyticsHtml(centroid9377Text) + "</strong><span>Centroide EPSG:9377</span></div>" +
+        "<div><strong>" + escapeSHAnalyticsHtml(detectionDate) + "</strong><span>Fecha de detección</span></div>" +
+        "<div><strong>" + escapeSHAnalyticsHtml(municipalityDepartmentName) + "</strong><span>Municipio</span></div>" +
+        "<div><strong>" + escapeSHAnalyticsHtml(centroid9377Text) + "</strong><span>Centroide EPSG:9377</span></div>" +
         "</div>" +
         "<h2>Galería — Mosaicos mensuales</h2>" +
         "<div class='sh-pdf-gallery'>" + galleryHtml + "</div>" +
         "<div class='sh-pdf-footnote'>Mosaicos mensuales Planet · vista centrada en el polígono seleccionado</div>" +
-    "</div>";
+        "</div>";
 }
 
 function downloadSHAnalyticsPolygonPdf(dataIndex) {
@@ -5287,8 +5287,8 @@ function updateSHAnalyticsBoundaryVisibility() {
 function showSHAnalyticsResultsLoader(message) {
     $("#selectSHAnalyticsResults").html(
         "<div class='sh-analytics-results-loader'>" +
-            "<img src='/images/ig124.gif' alt='Cargando' />" +
-            "<div>" + (message || "Cargando resultados...") + "</div>" +
+        "<img src='/images/ig124.gif' alt='Cargando' />" +
+        "<div>" + (message || "Cargando resultados...") + "</div>" +
         "</div>"
     );
 }
@@ -5300,7 +5300,7 @@ function createSHAnalyticsLoadingDialog() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             shAnalyticsLoadingDialog.buttons.ok.hide();
             shAnalyticsLoadingDialog.buttons.close.hide();
@@ -5356,7 +5356,7 @@ function gotoSHAnalytics() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             if (shAnalyticsLoading.buttons && shAnalyticsLoading.buttons.ok) {
                 shAnalyticsLoading.buttons.ok.hide();
@@ -5419,7 +5419,7 @@ function updateSHAnalytics() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             shAnalyticsResultsLoading.buttons.ok.hide();
             shAnalyticsResultsLoading.buttons.close.hide();
@@ -6000,7 +6000,7 @@ function loadMoreSHAnalytics() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -6144,43 +6144,43 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         "</table>" +
         "<div id='burnsSelectPolygonMessage' style='display:" + (hasSelectedPolygon ? "none" : "block") + ";margin:8px 0 0;padding:9px 10px;border:1px solid #d9e2dc;background:#f6faf7;color:#3d5e4f;font-weight:600;text-align:center;border-radius:4px;'>Seleccione poligono en el mapa para desplegar los mosaicos</div>" +
         "<div style='display:flex;gap:8px;margin-top:8px;margin-bottom:10px;'>" +
-            "<button id='burnsModeGallery' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#4f6b5a;color:#fff;border-radius:4px;font-weight:600;'>Galería</button>" +
-            "<button id='burnsModeSwipe' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#fff;color:#3d5e4f;border-radius:4px;font-weight:600;'>Swipe</button>" +
+        "<button id='burnsModeGallery' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#4f6b5a;color:#fff;border-radius:4px;font-weight:600;'>Galería</button>" +
+        "<button id='burnsModeSwipe' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#fff;color:#3d5e4f;border-radius:4px;font-weight:600;'>Swipe</button>" +
         "</div>" +
         "<div id='burnsGalleryPane' style='margin-top:8px;'>" +
-            "<div id='burnsGalleryGrid' style='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;'></div>" +
+        "<div id='burnsGalleryGrid' style='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;'></div>" +
         "</div>" +
         "<div id='burnsSwipePane' style='display:none;'>" +
-            "<div id='burnsSwipeMapWrap' style='position:relative;height:420px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'>" +
-                "<div id='burnsSwipeMap' style='position:absolute;inset:0;z-index:1;'></div>" +
-                "<div id='burnsSwipeControl' style='position:absolute;inset:0;z-index:40;pointer-events:none;'><div id='burnsSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div></div>" +
-                "<div id='burnsCustomVerticalSwipe' style='display:none;position:absolute;left:0;right:0;top:50%;height:28px;margin-top:-14px;z-index:70;cursor:ns-resize;pointer-events:auto;'>" +
-                    "<div style='position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;background:#fff;border-top:1px solid rgba(0,0,0,0.55);border-bottom:1px solid rgba(0,0,0,0.55);box-shadow:0 0 7px rgba(0,0,0,0.75);'></div>" +
-                    "<div style='position:absolute;left:50%;top:50%;width:30px;height:24px;margin-left:-15px;margin-top:-12px;background:#fff;border:2px solid #4f6b5a;border-radius:4px;box-shadow:0 1px 7px rgba(0,0,0,0.55);color:#4f6b5a;font-size:15px;font-weight:700;line-height:20px;text-align:center;'>↕</div>" +
-                "</div>" +
-                "<div id='burnsSwipeToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:2147483001;display:flex;align-items:center;gap:0;pointer-events:auto;'>" +
-                    "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" +
-                    "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" +
-                    "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" +
-                    "<div id='burnsSwipeOpacityPopover' style='display:none;position:absolute;bottom:30px;left:56px;z-index:17;width:112px;padding:7px 8px;background:#fff;border:1px solid #d5d5d5;border-radius:4px;box-shadow:0 7px 18px rgba(0,0,0,0.2);text-align:center;'>" +
-                        "<input id='burnsSwipeOpacityRange' type='range' min='0' max='1' step='0.05' value='0.5' style='width:100%;accent-color:#4f6b5a;'>" +
-                        "<div id='burnsSwipeOpacityLabel' style='margin-top:4px;color:#4f6b5a;font-size:13px;'>50%</div>" +
-                    "</div>" +
-                "</div>" +
-                "<div id='burnsSwipeLeftLabel' style='position:absolute;left:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:auto;display:flex;align-items:center;gap:8px;'>" +
-                    "<span id='burnsSwipeLeftLabelText'></span>" +
-                    "<button id='burnsSwipeMonthPickerBtn' type='button' style='border:0;background:#3d5e4f;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;line-height:1;cursor:pointer;' title='Seleccionar mes inicial'>▾</button>" +
-                "</div>" +
-                "<div id='burnsSwipeRightLabel' style='position:absolute;right:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:none;'></div>" +
-                "<div id='burnsMonthPickerPopover' style='display:none;position:absolute;left:80px;bottom:62px;z-index:13;background:#fff;border:1px solid #d5d5d5;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.18);padding:10px;width:220px;'>" +
-                    "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;'>" +
-                        "<button id='burnsMonthPickerPrevYear' type='button' style='border:0;background:transparent;color:#3d5e4f;font-size:18px;line-height:1;cursor:pointer;'>«</button>" +
-                        "<div id='burnsMonthPickerYear' style='font-weight:700;color:#3d5e4f;'></div>" +
-                        "<button id='burnsMonthPickerNextYear' type='button' style='border:0;background:transparent;color:#3d5e4f;font-size:18px;line-height:1;cursor:pointer;'>»</button>" +
-                    "</div>" +
-                    "<div id='burnsMonthPickerGrid' style='display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;'></div>" +
-                "</div>" +
-            "</div>" +
+        "<div id='burnsSwipeMapWrap' style='position:relative;height:420px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'>" +
+        "<div id='burnsSwipeMap' style='position:absolute;inset:0;z-index:1;'></div>" +
+        "<div id='burnsSwipeControl' style='position:absolute;inset:0;z-index:40;pointer-events:none;'><div id='burnsSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div></div>" +
+        "<div id='burnsCustomVerticalSwipe' style='display:none;position:absolute;left:0;right:0;top:50%;height:28px;margin-top:-14px;z-index:70;cursor:ns-resize;pointer-events:auto;'>" +
+        "<div style='position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;background:#fff;border-top:1px solid rgba(0,0,0,0.55);border-bottom:1px solid rgba(0,0,0,0.55);box-shadow:0 0 7px rgba(0,0,0,0.75);'></div>" +
+        "<div style='position:absolute;left:50%;top:50%;width:30px;height:24px;margin-left:-15px;margin-top:-12px;background:#fff;border:2px solid #4f6b5a;border-radius:4px;box-shadow:0 1px 7px rgba(0,0,0,0.55);color:#4f6b5a;font-size:15px;font-weight:700;line-height:20px;text-align:center;'>↕</div>" +
+        "</div>" +
+        "<div id='burnsSwipeToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:2147483001;display:flex;align-items:center;gap:0;pointer-events:auto;'>" +
+        "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" +
+        "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" +
+        "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" +
+        "<div id='burnsSwipeOpacityPopover' style='display:none;position:absolute;bottom:30px;left:56px;z-index:17;width:112px;padding:7px 8px;background:#fff;border:1px solid #d5d5d5;border-radius:4px;box-shadow:0 7px 18px rgba(0,0,0,0.2);text-align:center;'>" +
+        "<input id='burnsSwipeOpacityRange' type='range' min='0' max='1' step='0.05' value='0.5' style='width:100%;accent-color:#4f6b5a;'>" +
+        "<div id='burnsSwipeOpacityLabel' style='margin-top:4px;color:#4f6b5a;font-size:13px;'>50%</div>" +
+        "</div>" +
+        "</div>" +
+        "<div id='burnsSwipeLeftLabel' style='position:absolute;left:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:auto;display:flex;align-items:center;gap:8px;'>" +
+        "<span id='burnsSwipeLeftLabelText'></span>" +
+        "<button id='burnsSwipeMonthPickerBtn' type='button' style='border:0;background:#3d5e4f;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;line-height:1;cursor:pointer;' title='Seleccionar mes inicial'>▾</button>" +
+        "</div>" +
+        "<div id='burnsSwipeRightLabel' style='position:absolute;right:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:none;'></div>" +
+        "<div id='burnsMonthPickerPopover' style='display:none;position:absolute;left:80px;bottom:62px;z-index:13;background:#fff;border:1px solid #d5d5d5;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.18);padding:10px;width:220px;'>" +
+        "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;'>" +
+        "<button id='burnsMonthPickerPrevYear' type='button' style='border:0;background:transparent;color:#3d5e4f;font-size:18px;line-height:1;cursor:pointer;'>«</button>" +
+        "<div id='burnsMonthPickerYear' style='font-weight:700;color:#3d5e4f;'></div>" +
+        "<button id='burnsMonthPickerNextYear' type='button' style='border:0;background:transparent;color:#3d5e4f;font-size:18px;line-height:1;cursor:pointer;'>»</button>" +
+        "</div>" +
+        "<div id='burnsMonthPickerGrid' style='display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;'></div>" +
+        "</div>" +
+        "</div>" +
         "</div>" +
         "</div>";
     if ($("#burnsFloatingDetail").length === 0) {
@@ -6220,18 +6220,18 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     }
     var clearBurnsFloatingMaps = function () {
         burnsGallerySyncHandles.forEach(function (handle) {
-            try { handle.remove(); } catch (e) {}
+            try { handle.remove(); } catch (e) { }
         });
         burnsGallerySyncHandles = [];
         burnsGallerySyncing = false;
-        burnsGalleryMaps.forEach(function (m) { try { m.destroy(); } catch (e) {} });
+        burnsGalleryMaps.forEach(function (m) { try { m.destroy(); } catch (e) { } });
         burnsGalleryMaps = [];
         if (burnsCompareMap) {
-            try { burnsCompareMap.destroy(); } catch (e) {}
+            try { burnsCompareMap.destroy(); } catch (e) { }
             burnsCompareMap = null;
         }
         if (burnsCompareSwipe) {
-            try { burnsCompareSwipe.destroy(); } catch (e) {}
+            try { burnsCompareSwipe.destroy(); } catch (e) { }
             burnsCompareSwipe = null;
         }
         $("#burnsCustomVerticalSwipe, #burnsCustomVerticalSwipeFloating").hide();
@@ -6251,7 +6251,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     };
     var bindBurnsGallerySync = function () {
         burnsGallerySyncHandles.forEach(function (handle) {
-            try { handle.remove(); } catch (e) {}
+            try { handle.remove(); } catch (e) { }
         });
         burnsGallerySyncHandles = [];
         burnsGalleryMaps.forEach(function (miniMap) {
@@ -6262,7 +6262,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
                     if (targetMap === miniMap) return;
                     try {
                         targetMap.setExtent(evt.extent, true);
-                    } catch (e) {}
+                    } catch (e) { }
                 });
                 burnsGallerySyncing = false;
             });
@@ -6331,7 +6331,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             if (burnsCompareSwipe.domNode && burnsCompareSwipe.domNode.parentNode) {
                 burnsCompareSwipe.domNode.parentNode.removeChild(burnsCompareSwipe.domNode);
             }
-            try { burnsCompareSwipe.destroy(); } catch (e) {}
+            try { burnsCompareSwipe.destroy(); } catch (e) { }
             burnsCompareSwipe = null;
         }
         $("#burnsSwipeControl").html("<div id='burnsSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div>");
@@ -7061,20 +7061,20 @@ function clearBurnsMonthlyMosaicWindow() {
             burnsLayerClickHandle = null;
         }
         burnsGallerySyncHandles.forEach(function (handle) {
-            try { handle.remove(); } catch (e) {}
+            try { handle.remove(); } catch (e) { }
         });
         burnsGallerySyncHandles = [];
         burnsGallerySyncing = false;
         burnsGalleryMaps.forEach(function (m) {
-            try { m.destroy(); } catch (e) {}
+            try { m.destroy(); } catch (e) { }
         });
         burnsGalleryMaps = [];
         if (burnsCompareMap) {
-            try { burnsCompareMap.destroy(); } catch (e) {}
+            try { burnsCompareMap.destroy(); } catch (e) { }
             burnsCompareMap = null;
         }
         if (burnsCompareSwipe) {
-            try { burnsCompareSwipe.destroy(); } catch (e) {}
+            try { burnsCompareSwipe.destroy(); } catch (e) { }
             burnsCompareSwipe = null;
         }
         $("#burnsFloatingDetail").hide().empty();
@@ -7589,13 +7589,13 @@ function showRasterMosaicFootprint(button) {
 function buildRasterMosaicProcessBody(itemId, imageDate, outputType) {
     var aoi = rasterMosaicCurrentAoi || getRasterMosaicAoi();
     if (!aoi) return null;
-    
+
     // Get the evalscript based on the selected index
     var evalscript = rasterMosaicIdxScripts[rasterMosaicCurrentIdx];
     if (rasterMosaicCurrentIdx === rasterMosaicFullDatasetIdx && outputType == "image/tiff") {
         evalscript = rasterMosaicFullDatasetDownloadScript;
     }
-    
+
     // Default to TrueColor if index not found
     if (!evalscript) {
         evalscript = rasterMosaicIdxScripts.TrueColor;
@@ -8075,7 +8075,7 @@ function updateImagenDetalle() {
                 if (tempStr.length > 0) {
                     strHTML = strHTML + "<tr><td><label><b>Municipios:&nbsp;</b></label></td><td>" + tempStr.join(", ") + "</td></tr>";
                 }
-            } catch (err) {}
+            } catch (err) { }
         }
     }
 
@@ -8115,7 +8115,7 @@ function updateImagenDetalle() {
                         searchImageLayerDetalle.setMosaicRule(mosaicRule);
                         searchImageLayerDetalle.refresh();
                     }
-                } catch (err) {}
+                } catch (err) { }
             }
         }
     }
@@ -8199,7 +8199,7 @@ function updateImagenes() {
                         }
                     }
                     var searchCloudValue2 = getSliderValueSafe(slider, "#searchImagenesCloud", 50);
-                    if (searchCloudValue2 != null && searchCloudValue2 != "50") {
+                    if (searchCloudValue2 != null && searchCloudValue2 != "100") {
                         var cValue = parseInt(searchCloudValue2) / 100.0;
                         d.cloud = cValue;
                     }
@@ -8218,7 +8218,7 @@ function updateImagenes() {
                         buttons: {},
                         closeIcon: true,
                         lazyOpen: true,
-                        onContentReady: function () {},
+                        onContentReady: function () { },
                         onOpenBefore: function () {
                             loading.buttons.ok.hide();
                             loading.buttons.close.hide();
@@ -8237,7 +8237,7 @@ function updateImagenes() {
                     return dataRow.imagenes;
                 },
             },
-            fnInitComplete: function () {},
+            fnInitComplete: function () { },
             drawCallback: function (settings) {
                 var api = this.api();
                 $("#searchImagenesList").html("");
@@ -8314,7 +8314,7 @@ function updateImagenes() {
                                 } else {
                                     searchGraphicsLayer.graphics[i].setSymbol(searchImagenSymbol);
                                 }
-                            } catch (err) {}
+                            } catch (err) { }
                         }
                     });
                 $("#tableSearchBniTable tr")
@@ -8330,7 +8330,7 @@ function updateImagenes() {
                                 }
                             }
                         },
-                        function () {},
+                        function () { },
                     );
                 var PageInfo = tableSearchBni.page.info();
                 tableSearchBni
@@ -8428,7 +8428,7 @@ function updateImagenes2() {
                         }
                     }
                     var searchCloudValue = getSliderValueSafe(slider, "#searchImagenesCloud", 50);
-                    if (searchCloudValue != null && searchCloudValue != "50") {
+                    if (searchCloudValue != null && searchCloudValue != "100") {
                         var cValue = parseInt(searchCloudValue) / 100.0;
                         d.cloud = cValue;
                     }
@@ -8441,7 +8441,7 @@ function updateImagenes2() {
                         buttons: {},
                         closeIcon: true,
                         lazyOpen: true,
-                        onContentReady: function () {},
+                        onContentReady: function () { },
                         onOpenBefore: function () {
                             loading.buttons.ok.hide();
                             loading.buttons.close.hide();
@@ -8460,7 +8460,7 @@ function updateImagenes2() {
                     return dataRow.imagenes;
                 },
             },
-            fnInitComplete: function () {},
+            fnInitComplete: function () { },
             drawCallback: function (settings) {
                 var api = this.api();
                 $("#searchImagenesList2").html("");
@@ -8532,7 +8532,7 @@ function updateImagenes2() {
                                 } else {
                                     searchGraphicsLayer.graphics[i].setSymbol(searchImagenSymbol);
                                 }
-                            } catch (err) {}
+                            } catch (err) { }
                         }
                     });
                 $("#tableSearchBniTable2 tr")
@@ -8548,7 +8548,7 @@ function updateImagenes2() {
                                 }
                             }
                         },
-                        function () {},
+                        function () { },
                     );
                 var PageInfo = tableSearchBni2.page.info();
                 tableSearchBni2
@@ -8691,7 +8691,7 @@ function updateCoordenada(evt) {
             labelLongitudSM = "W: ";
         }
         $("#coordinatesDiv").html(labelLatitudSM + coordTextY + ", " + labelLongitudSM + coordTextX + " (" + $("#querySearchConsultaFormat").val() + ")");
-    } catch (err) {}
+    } catch (err) { }
 }
 
 function toggleViewImagenes() {
@@ -8779,7 +8779,7 @@ function buscarCoordenada() {
             );
             map.centerAndZoom(esri.graphicsUtils.graphicsExtent(coordsLayer.graphics).getCenter(), 14);
         }
-    } catch (err) {}
+    } catch (err) { }
 }
 
 function closeCoordenadas() {
@@ -9121,7 +9121,7 @@ function updateEditMeasure(g) {
             if ($("#measureLengthUnit").val() == "yards") {
                 strHTML2 = strHTML2 + "Longitud: " + esri.geometryEngine.geodesicLength(currentMeasureGraphic.geometry, "yards").toFixed(2) + " Yardas";
             }
-        } catch (err) {}
+        } catch (err) { }
     } else {
         if (currentMeasureGraphic.geometry.type == "triangle" || currentMeasureGraphic.geometry.type == "circle" || currentMeasureGraphic.geometry.type == "ellipse" || currentMeasureGraphic.geometry.type == "polygon" || currentMeasureGraphic.geometry.type == "freehandpolygon") {
             $("#measureDivAreaUnits").show();
@@ -9147,7 +9147,7 @@ function updateEditMeasure(g) {
                 if ($("#measureAreaUnit").val() == "square-yards") {
                     strHTML = strHTML + "&Aacute;rea: " + esri.geometryEngine.geodesicArea(currentMeasureGraphic.geometry, "square-yards").toFixed(2) + " Yardas cuadradas";
                 }
-            } catch (err) {}
+            } catch (err) { }
             try {
                 if ($("#measureLengthUnit").val() == "kilometers") {
                     strHTML2 = strHTML2 + "Per&iacute;metro: " + esri.geometryEngine.geodesicLength(currentMeasureGraphic.geometry, "kilometers").toFixed(2) + " Kilómetros";
@@ -9164,7 +9164,7 @@ function updateEditMeasure(g) {
                 if ($("#measureLengthUnit").val() == "yards") {
                     strHTML2 = strHTML2 + "Per&iacute;metro: " + esri.geometryEngine.geodesicLength(currentMeasureGraphic.geometry, "yards").toFixed(2) + " Yardas";
                 }
-            } catch (err) {}
+            } catch (err) { }
         } else {
             $("#measureDivContainer").hide();
         }
@@ -9639,10 +9639,10 @@ function quitarServicio() {
 function removeLayer(id) {
     try {
         map.removeLayer(map.getLayer(id));
-    } catch (err) {}
+    } catch (err) { }
     try {
         activeLayers = activeLayers.filter((e) => e !== id);
-    } catch (err) {}
+    } catch (err) { }
     if (currentServicio != null) {
         if (currentServicio.NOMBRE == id) {
             $("#detalleServicioBtn").show();
@@ -10082,7 +10082,7 @@ function setupMap() {
                 }),
             );
             extentInicial = extent_value;
-        } catch (err) {}
+        } catch (err) { }
         map = new esri.Map("mapViewDiv", {
             basemap: currentBasemap,
             sliderPosition: "bottom-right",
@@ -10105,7 +10105,7 @@ function setupMap() {
         map.setZoom(5);
     }
 
-    map.on("load", function () {});
+    map.on("load", function () { });
     map.on("click", function (event) {
         if (event.graphic != null) {
             if (event.graphic.getLayer() != dibujoLayer) {
@@ -10133,7 +10133,7 @@ function setupMap() {
     map.on("extent-change", function () {
         $("#panelLayersZoom").html(" - Zoom: " + map.getZoom());
     });
-    map.on("click", function (event) {});
+    map.on("click", function (event) { });
 
     overviewMap = new esri.OverviewMap({
         map: map,
@@ -10211,9 +10211,9 @@ function setupMap() {
         }
     });
 
-    map.on("extent-change", function (evt) {});
+    map.on("extent-change", function (evt) { });
 
-    map.on("zoom-end", function (evt) {});
+    map.on("zoom-end", function (evt) { });
 
     /* Coordenadas */
     hoverHandle = map.on("mouse-move", function (evt) {
@@ -11066,7 +11066,7 @@ function setupMap() {
                 $("#drawOptFillColor").colorpicker("setValue", evt.graphic.symbol.color.toString());
                 $("#drawOptsLine").show();
                 $("#drawOptLineColor").colorpicker("setValue", evt.graphic.symbol.outline.color.toString());
-            } catch (err) {}
+            } catch (err) { }
         }
         updateLock = false;
         updateEditGraphic();
@@ -11197,7 +11197,7 @@ function getDataLocal() {
         success: function (data) {
             initData(data);
         },
-        error: function (_data) {},
+        error: function (_data) { },
     });
 }
 
@@ -11908,7 +11908,7 @@ function gotoVideo() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -12011,7 +12011,7 @@ function updateVideoFrame() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -12075,7 +12075,7 @@ function generarVideo() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -12160,7 +12160,7 @@ function getItemtoText(feature) {
     var objectidc;
     try {
         _layer = feature.getLayer();
-    } catch (err) {}
+    } catch (err) { }
     if (feature.attributes == null) {
         if (feature.properties != null) {
             feature.attributes = feature.properties;
@@ -12268,7 +12268,7 @@ function getItemtoText(feature) {
                 }
                 $("#popupAttachment").html(attachmentHTML);
             });
-        } catch (err) {}
+        } catch (err) { }
     }
     return sHTML;
 }
@@ -13762,7 +13762,7 @@ function getLayerDomNode(layer) {
     if (typeof layer.getNode === "function") {
         try {
             return layer.getNode();
-        } catch (e) {}
+        } catch (e) { }
     }
     if (layer.id) {
         return document.getElementById(layer.id) || document.querySelector("[id$='" + layer.id + "']");
@@ -13990,7 +13990,7 @@ function fetchBurnsSentinelOverlay() {
                     properties: { crs: "http://www.opengis.net/def/crs/EPSG/0/4326" },
                 },
                 data: [{
-                     dataFilter: {
+                    dataFilter: {
                         timeRange: { from: dateStart + "T00:00:00Z", to: dateEnd + "T23:59:59Z" },
                         maxCloudCoverage: maxCloudCoveragePercent,
                         mosaickingOrder: "mostRecent"
