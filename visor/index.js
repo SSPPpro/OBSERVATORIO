@@ -167,6 +167,7 @@ var dataRaster = [
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto0colombia8b2024/ImageServer", text: "Colombia", Año: "2024" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto81arauca8b/ImageServer", text: "Arauca", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto81arauca8b2024/ImageServer", text: "Arauca", Año: "2024" },
+    { id: "https://mapas2.igac.gov.co/image2/rest/services/orto/orto81arauca8b2025/ImageServer", text: "Arauca", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto08atlantico8b/ImageServer", text: "Atlántico", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto08atlantico8b2024/ImageServer", text: "Atlántico", Año: "2024" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto08atlantico8b2025/ImageServer", text: "Atlántico", Año: "2025" },
@@ -174,6 +175,7 @@ var dataRaster = [
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto91amazonas8b2024/ImageServer", text: "Amazonas", Año: "2024" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto05antioquia8b/ImageServer", text: "Antioquia", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto05antioquia8b2024/ImageServer", text: "Antioquia", Año: "2024" },
+    { id: "https://mapas2.igac.gov.co/image2/rest/services/orto/orto05antioquia8b2025/ImageServer", text: "Antioquia", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto13bolivar8b/ImageServer", text: "Bolívar", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto13bolivar8b2024/ImageServer", text: "Bolívar", Año: "2024" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto13bolivar8b2025/ImageServer", text: "Bolívar", Año: "2025" },
@@ -190,6 +192,7 @@ var dataRaster = [
     { id: "https://mapas2.igac.gov.co/image2/rest/services/orto/orto85casanare8b2025/ImageServer", text: "Casanare", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto19cauca8b/ImageServer", text: "Cauca", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto19cauca8b2024/ImageServer", text: "Cauca", Año: "2024" },
+    { id: "https://mapas2.igac.gov.co/image2/rest/services/orto/orto19cauca8b2025/ImageServer", text: "Cauca", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto20cesar8b/ImageServer", text: "Cesar", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto20cesar8b2024/ImageServer", text: "Cesar", Año: "2024" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto20cesar8b2025/ImageServer", text: "Cesar", Año: "2025" },
@@ -200,6 +203,7 @@ var dataRaster = [
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto23cordoba8b2025/ImageServer", text: "Córdoba", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto25cundinamarca8b/ImageServer", text: "Cundinamarca", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto25cundinamarca8b2024/ImageServer", text: "Cundinamarca", Año: "2024" },
+    { id: "https://mapas2.igac.gov.co/image2/rest/services/orto/orto25cundinamarca8b2025/ImageServer", text: "Cundinamarca", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto94guainia8b/ImageServer", text: "Guainía", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto94guainia8b2024/ImageServer", text: "Guainía", Año: "2024" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto94guainia8b2025/ImageServer", text: "Guainía", Año: "2025" },
@@ -208,6 +212,7 @@ var dataRaster = [
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto95guaviare8b2025/ImageServer", text: "Guaviare", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto41huila8b/ImageServer", text: "Huila", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto41huila8b2024/ImageServer", text: "Huila", Año: "2024" },
+    { id: "https://mapas2.igac.gov.co/image2/rest/services/orto/orto41huila8b2025/ImageServer", text: "Huila", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto44laguajira8b/ImageServer", text: "La Guajira", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto44laguajira8b2024/ImageServer", text: "La Guajira", Año: "2024" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto44laguajira8b2025/ImageServer", text: "La Guajira", Año: "2025" },
@@ -219,12 +224,15 @@ var dataRaster = [
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto50meta8b2025/ImageServer", text: "Meta", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto52narino8b/ImageServer", text: "Nariño", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto52narino8b2024/ImageServer", text: "Nariño", Año: "2024" },
+    { id: "https://mapas2.igac.gov.co/image2/rest/services/orto/orto52narino8b2025/ImageServer", text: "Nariño", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto54nortedesantander8b/ImageServer", text: "Norte de Santander", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto54nortedesantander8b2024/ImageServer", text: "Norte de Santander", Año: "2024" },
+    { id: "https://mapas2.igac.gov.co/image2/rest/services/orto/orto54nortedesantander8b2025/ImageServer", text: "Norte de Santander", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto86putumayo8b/ImageServer", text: "Putumayo", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto86putumayo8b2024/ImageServer", text: "Putumayo", Año: "2024" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto63quindio8b/ImageServer", text: "Quindio", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto63quindio8b2024/ImageServer", text: "Quindio", Año: "2024" },
+    { id: "https://mapas2.igac.gov.co/image2/rest/services/orto/orto63quindio8b2025/ImageServer", text: "Quindio", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto66risaralda8b/ImageServer", text: "Risaralda", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto66risaralda8b2024/ImageServer", text: "Risaralda", Año: "2024" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto88sanandres8b/ImageServer", text: "San Andrés y Providencia", Año: "2023" },
@@ -238,10 +246,13 @@ var dataRaster = [
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto70sucre8b2025/ImageServer", text: "Sucre", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto73tolima8b/ImageServer", text: "Tolima", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto73tolima8b2024/ImageServer", text: "Tolima", Año: "2024" },
+    { id: "https://mapas2.igac.gov.co/image2/rest/services/orto/orto73tolima8b2025/ImageServer", text: "Tolima", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto76valledelcauca8b/ImageServer", text: "Valle del Cauca", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto76valledelcauca8b2024/ImageServer", text: "Valle del Cauca", Año: "2024" },
+    { id: "https://mapas2.igac.gov.co/image2/rest/services/orto/orto76valledelcauca8b2025/ImageServer", text: "Valle del Cauca", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto97vaupes8b/ImageServer", text: "Vaupés", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto97vaupes8b2024/ImageServer", text: "Vaupés", Año: "2024" },
+    { id: "https://mapas2.igac.gov.co/image2/rest/services/orto/orto97vaupes8b2025/ImageServer", text: "Vaupés", Año: "2025" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto99vichada8b/ImageServer", text: "Vichada", Año: "2023" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto99vichada8b2024/ImageServer", text: "Vichada", Año: "2024" },
     { id: "https://mapas2.igac.gov.co/image/rest/services/orto/orto99vichada8b2025/ImageServer", text: "Vichada", Año: "2025" },
@@ -703,15 +714,18 @@ var web_service = "https://serviciosgeovisor.igac.gov.co:8080/Geovisor";
 var web_service_proxy = "https://serviciosgeovisor.igac.gov.co:8080/Geovisor";
 var thumb_service = "https://mapas2.igac.gov.co/image/rest/services/ott/amazonas_alta/ImageServer";
 var runtimeEnv = window.__env || {};
-var isLocalHost = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
+// var isLocalHost = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
 var planetApiKey = runtimeEnv.planetApiKey || "PLAKd9faf25449294d9d86096fe33d980662";
 var usePlanetDirect = planetApiKey != null && planetApiKey !== "";
 var planetAnalyticsBoundaryUrl = runtimeEnv.planetAnalyticsBoundaryUrl || "data/planet-analytics-limites.geojson";
 var planetAnalyticsLocalUrl = runtimeEnv.planetAnalyticsLocalUrl || "data/reportes/resultado_unido_total.geojson";
-var planetAnalyticsLocalUrls = Object.assign({
-    building: "data/reportes/resultado_unido_construcciones.geojson",
-    road: "data/reportes/resultado_unido_vias.geojson",
-}, runtimeEnv.planetAnalyticsLocalUrls || {});
+var planetAnalyticsLocalUrls = Object.assign(
+    {
+        building: "data/reportes/resultado_unido_construcciones.geojson",
+        road: "data/reportes/resultado_unido_vias.geojson",
+    },
+    runtimeEnv.planetAnalyticsLocalUrls || {},
+);
 var planetAnalyticsMunicipalityUrl = runtimeEnv.planetAnalyticsMunicipalityUrl || "data/limite-municipal.geojson";
 var planetAnalyticsDepartmentUrl = runtimeEnv.planetAnalyticsDepartmentUrl || "data/limite-departamental.geojson";
 var planetTileProxyUrl = runtimeEnv.planetTileProxyUrl || null;
@@ -1033,7 +1047,7 @@ var rasterMosaicIdxScripts = {
     function evaluatePixel(sample) {
       if (sample.dataMask === 0 || isNoData(sample.rededge) || isNoData(sample.red)) return { default: [0, 0, 0, 0] };
       return { default: chlorophyllRamp(normalizedDifference(sample.rededge, sample.red)) };
-    }`
+    }`,
 };
 
 function getPlanetAuthorizationHeader() {
@@ -1182,7 +1196,7 @@ var burnsCompareSwipe = null;
 var burnsGallerySyncing = false;
 var burnsGallerySyncHandles = [];
 var cachePrisma;
-var LOCAL_NO_LOGIN = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
+// var LOCAL_NO_LOGIN = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
 
 $(document).ready(function () {
     //$("#modalMantenimiento").modal("show");
@@ -1191,33 +1205,33 @@ $(document).ready(function () {
     $("[data-toggle='popover']").popover();
     toggleMenu(currentEstado);
 
-    if (LOCAL_NO_LOGIN) {
-        currentUser = {
-            displayName: "Modo local",
-            email: "Login deshabilitado",
-            photoURL: "../images/login_1.png"
-        };
-        currentAccessToken = "";
-        $("#loginContainer").hide();
-        $("#logoutContainer").hide();
-        $("#userName,#userName2").html("Modo local</br><span style='font-style:italic;'>Login deshabilitado</span>");
-        $("#userPhoto,#userPhoto2").attr("src", "../images/login_1.png");
-        $(".calcite-map").show();
-        $.ajax({
-            url: web_service + "/config?cmd=config_imagenes&t=" + new Date().getTime(),
-            type: "POST",
-            success: function (data) {
-                if (data.status) {
-                    initData(data);
-                }
-            },
-            timeout: 20000,
-            error: function (err) {
-                console.error(err);
-            },
-        });
-        return;
-    }
+    // if (LOCAL_NO_LOGIN) {
+    //     currentUser = {
+    //         displayName: "Modo local",
+    //         email: "Login deshabilitado",
+    //         photoURL: "../images/login_1.png"
+    //     };
+    //     currentAccessToken = "";
+    //     $("#loginContainer").hide();
+    //     $("#logoutContainer").hide();
+    //     $("#userName,#userName2").html("Modo local</br><span style='font-style:italic;'>Login deshabilitado</span>");
+    //     $("#userPhoto,#userPhoto2").attr("src", "../images/login_1.png");
+    //     $(".calcite-map").show();
+    //     $.ajax({
+    //         url: web_service + "/config?cmd=config_imagenes&t=" + new Date().getTime(),
+    //         type: "POST",
+    //         success: function (data) {
+    //             if (data.status) {
+    //                 initData(data);
+    //             }
+    //         },
+    //         timeout: 20000,
+    //         error: function (err) {
+    //             console.error(err);
+    //         },
+    //     });
+    //     return;
+    // }
 
     var config = {
         apiKey: "AIzaSyCLSp_Qbaohj8owxrpZxvrmxUSkVw0ukig",
@@ -1822,9 +1836,9 @@ function toggleMenu(param) {
 }
 
 function gotoLogin() {
-    if (LOCAL_NO_LOGIN) {
-        return;
-    }
+    // if (LOCAL_NO_LOGIN) {
+    //     return;
+    // }
 
     minAll();
     if (currentUser == null) {
@@ -2211,7 +2225,7 @@ function updateSHStats() {
         showLoading("Le informamos que su polígono excede el límite de área permitido (100 hectáreas), por este motivo, no podrá realizar la consulta de uso de suelo para su área de estudio", null, "red", false);
         return;
     }
-    
+
     // Calculate optimal resolution to fit within 2500x2500 pixel limit
     var resolutionInfo = calculateOptimalResolution(currentSearchArea);
     if (resolutionInfo.maxResolution) {
@@ -2333,7 +2347,7 @@ function updateSHStats() {
                 intervals.push({
                     from: interval.interval.from.substring(0, 10),
                     to: interval.interval.to ? interval.interval.to.substring(0, 10) : null,
-                    label: interval.interval.from.substring(0, 10)
+                    label: interval.interval.from.substring(0, 10),
                 });
                 p10Data.push(interval.outputs.data.bands.B0.stats.percentiles["10.0"]);
                 meanData.push(interval.outputs.data.bands.B0.stats.mean);
@@ -2448,7 +2462,7 @@ function getSHStatsIntervalByIndex(index) {
     return {
         from: dateBase,
         to: dateEnd,
-        label: dateBase
+        label: dateBase,
     };
 }
 
@@ -2479,23 +2493,23 @@ function procesarSH() {
             //loading.showLoading();
         },
     });
-   loading.open();
+    loading.open();
     // Forzar basemap de imágenes satelitales mientras se procesa
     try {
-        currentBasemap = 'imagery';
-        map.setBasemap('imagery');
+        currentBasemap = "imagery";
+        map.setBasemap("imagery");
         $("#selectBasemapPanel").val(currentBasemap);
     } catch (e) {
-        console.warn('[PROCESS] No fue posible forzar basemap imagery:', e);
+        console.warn("[PROCESS] No fue posible forzar basemap imagery:", e);
     }
     var params = {};
-    
+
     // Calculate optimal resolution based on area size
     var resolutionInfo = calculateOptimalResolution(currentSearchArea);
     if (resolutionInfo.maxResolution) {
         console.warn("Large area detected. Using resolution:", resolutionInfo.resx + "m");
     }
-    
+
     var maxCloudCoveragePercent = getSHCloudCoverageMaxPercent();
     var cloudCoverageValue = getSHCloudCoverageMaxRatio();
     var indexThresholdValue = getSHStatsIndexThresholdValue();
@@ -2517,7 +2531,7 @@ function procesarSH() {
                                 to: esri.moment($("#selectSHStats2").val(), "DD/MM/yyyy").format("yyyy-MM-DD") + "T00:00:00Z",
                             },
                             maxCloudCoverage: maxCloudCoveragePercent,
-                            mosaickingOrder: "mostRecent"
+                            mosaickingOrder: "mostRecent",
                         },
                         type: "sentinel-2-l2a",
                     },
@@ -2556,7 +2570,7 @@ function procesarSH() {
                                 to: esri.moment($("#selectSHStats2").val(), "DD/MM/yyyy").format("yyyy-MM-DD") + "T00:00:00Z",
                             },
                             maxCloudCoverage: maxCloudCoveragePercent,
-                            mosaickingOrder: "mostRecent"
+                            mosaickingOrder: "mostRecent",
                         },
                         type: "sentinel-2-l2a",
                     },
@@ -2637,21 +2651,21 @@ function procesarSH() {
             headers: processHeaders,
             contentType: "application/json; charset=utf-8",
             processData: true,
-        beforeSend: function () {
-            if (debugIndices) {
-                console.info("[INDICES] Solicitud enviada a Sentinel Hub /process", {
-                    idx: $("#selectSHStatsIdx").val(),
-                    fechaInicio: $("#selectSHStats1").val(),
-                    fechaFin: $("#selectSHStats2").val(),
-                    cloudCoverage: cloudCoverageValue,
-                });
-            }
-            window.__shProcessStart = Date.now();
+            beforeSend: function () {
+                if (debugIndices) {
+                    console.info("[INDICES] Solicitud enviada a Sentinel Hub /process", {
+                        idx: $("#selectSHStatsIdx").val(),
+                        fechaInicio: $("#selectSHStats1").val(),
+                        fechaFin: $("#selectSHStats2").val(),
+                        cloudCoverage: cloudCoverageValue,
+                    });
+                }
+                window.__shProcessStart = Date.now();
             },
             success: function (data) {
                 try {
                     var promise = clasifyIndexDisplay(data, $("#selectSHStatsIdx").val());
-                     if ($("#selectSHStatsIdx").val() == "NBR") {
+                    if ($("#selectSHStatsIdx").val() == "NBR") {
                         openMonthlyMosaicFloatingWindowFromDates($("#selectSHStats1").val(), $("#selectSHStats2").val(), "Zonas de quema (NBR)");
                     }
                     if ($("#selectSHStatsIdx").val() == "MAP_DEFORESTATION") {
@@ -2670,12 +2684,12 @@ function procesarSH() {
                     console.error(err);
                 }
             },
-        xhr: function () {
-            var xhrOverride = new XMLHttpRequest();
-            xhrOverride.responseType = "arraybuffer";
-            return xhrOverride;
-        },
-        timeout: 120000,
+            xhr: function () {
+                var xhrOverride = new XMLHttpRequest();
+                xhrOverride.responseType = "arraybuffer";
+                return xhrOverride;
+            },
+            timeout: 120000,
             error: function (err) {
                 if (sentinelHubProcessProxyUrl && (!err.status || err.status === 0)) {
                     console.warn("[INDICES] Proxy Sentinel Hub no disponible, reintentando con API directa", sentinelHubProcessProxyUrl, err);
@@ -2789,10 +2803,7 @@ function syncSHCloudCoverageDisplay(value) {
 }
 
 function setSHCloudCoverageRangeFromInputs() {
-    var rangeValue = normalizeSHCloudCoverageRange([
-        $("#sliderCCSHStatsMinTxt").val(),
-        $("#sliderCCSHStatsMaxTxt").val()
-    ]);
+    var rangeValue = normalizeSHCloudCoverageRange([$("#sliderCCSHStatsMinTxt").val(), $("#sliderCCSHStatsMaxTxt").val()]);
     if (sliderCCSHStats && typeof sliderCCSHStats.setValue === "function") {
         sliderCCSHStats.setValue(rangeValue, true, true);
     }
@@ -2836,41 +2847,51 @@ function calculateOptimalResolution(geometryGeo) {
     try {
         var areaKm2 = esri.geometryEngine.geodesicArea(geometryGeo, "square-kilometers");
         var areaM2 = areaKm2 * 1000000;
-        
+
         var extent = geometryGeo.getExtent();
-        var horizontalMeter = esri.geometryEngine.geodesicLength(new esri.Polyline({
-            paths: [[[extent.xmin, extent.ymin], [extent.xmax, extent.ymin]]],
-            spatialReference: geometryGeo.spatialReference,
-        }), "meters");
-        var verticalMeter = esri.geometryEngine.geodesicLength(new esri.Polyline({
-            paths: [[[extent.xmin, extent.ymin], [extent.xmin, extent.ymax]]],
-            spatialReference: geometryGeo.spatialReference,
-        }), "meters");
-        
+        var horizontalMeter = esri.geometryEngine.geodesicLength(
+            new esri.Polyline({
+                paths: [
+                    [
+                        [extent.xmin, extent.ymin],
+                        [extent.xmax, extent.ymin],
+                    ],
+                ],
+                spatialReference: geometryGeo.spatialReference,
+            }),
+            "meters",
+        );
+        var verticalMeter = esri.geometryEngine.geodesicLength(
+            new esri.Polyline({
+                paths: [
+                    [
+                        [extent.xmin, extent.ymin],
+                        [extent.xmin, extent.ymax],
+                    ],
+                ],
+                spatialReference: geometryGeo.spatialReference,
+            }),
+            "meters",
+        );
+
         // Maximum pixels we can handle
         var maxPixels = 2500;
-        
+
         var resolutionM = 10; // Default to 10m (Sentinel-2 resolution)
-        var minResolutionForWidth = Math.ceil((horizontalMeter / maxPixels) / 5) * 5;
-        var minResolutionForHeight = Math.ceil((verticalMeter / maxPixels) / 5) * 5;
+        var minResolutionForWidth = Math.ceil(horizontalMeter / maxPixels / 5) * 5;
+        var minResolutionForHeight = Math.ceil(verticalMeter / maxPixels / 5) * 5;
         var minResolutionByShape = Math.max(minResolutionForWidth, minResolutionForHeight, 10);
-        
+
         // If area exceeds max or the bounding box is too large, calculate required resolution
         if (areaM2 > maxPixels * maxPixels * 10 * 10 || minResolutionByShape > 10) {
-            resolutionM = Math.max(
-                Math.ceil(Math.sqrt(areaM2) / maxPixels / 5) * 5,
-                minResolutionByShape
-            );
+            resolutionM = Math.max(Math.ceil(Math.sqrt(areaM2) / maxPixels / 5) * 5, minResolutionByShape);
         }
-        
+
         // Convert to degrees (approximation: 1 degree ≈ 111 km)
         var resolutionDegrees = resolutionM / 111000;
-        
-        var estimatedPixelCount = Math.max(
-            Math.round(horizontalMeter / resolutionM),
-            Math.round(verticalMeter / resolutionM)
-        );
-        
+
+        var estimatedPixelCount = Math.max(Math.round(horizontalMeter / resolutionM), Math.round(verticalMeter / resolutionM));
+
         return {
             resx: resolutionM,
             resy: resolutionM,
@@ -2878,7 +2899,7 @@ function calculateOptimalResolution(geometryGeo) {
             resyDegrees: resolutionDegrees,
             pixelCount: estimatedPixelCount,
             areaKm2: areaKm2,
-            maxResolution: resolutionM > 100
+            maxResolution: resolutionM > 100,
         };
     } catch (e) {
         console.error("Error calculating resolution:", e);
@@ -2889,7 +2910,7 @@ function calculateOptimalResolution(geometryGeo) {
             resyDegrees: 0.000269494697,
             pixelCount: 0,
             areaKm2: 0,
-            maxResolution: false
+            maxResolution: false,
         };
     }
 }
@@ -2937,7 +2958,7 @@ function fetchSHToken(callback) {
                     ajaxError: error,
                 });
                 callback(false);
-            }
+            },
         });
     };
 
@@ -2972,18 +2993,15 @@ function fetchSHToken(callback) {
                     ajaxStatus: status,
                     ajaxError: error,
                 });
-                fallbackCallback();
+                if (sentinelHubTokenProxyUrl) {
+                    getTokenWithProxy();
+                } else {
+                    callback(false);
+                }
             }
         });
-    };
-
-    var getTokenWithLocalProxy = function () {
-        if (sentinelHubFallbackTokenProxyUrl && sentinelHubFallbackTokenProxyUrl !== sentinelHubTokenProxyUrl) {
-            getTokenWithProxy(sentinelHubFallbackTokenProxyUrl, getTokenDirect);
-            return;
-        }
-        getTokenDirect();
-    };
+        return;
+    }
 
     getTokenWithProxy(sentinelHubTokenProxyUrl, getTokenWithLocalProxy);
 }
@@ -3092,7 +3110,7 @@ function downloadSHStats() {
                                 to: esri.moment($("#selectSHStats2").val(), "DD/MM/yyyy").format("yyyy-MM-DD") + "T00:00:00Z",
                             },
                             maxCloudCoverage: getSHCloudCoverageMaxPercent(),
-                            mosaickingOrder: "mostRecent"
+                            mosaickingOrder: "mostRecent",
                         },
                         type: "sentinel-2-l2a",
                     },
@@ -3130,7 +3148,7 @@ function downloadSHStats() {
                                 to: esri.moment($("#selectSHStats2").val(), "DD/MM/yyyy").format("yyyy-MM-DD") + "T00:00:00Z",
                             },
                             maxCloudCoverage: getSHCloudCoverageMaxPercent(),
-                            mosaickingOrder: "mostRecent"
+                            mosaickingOrder: "mostRecent",
                         },
                         type: "sentinel-2-l2a",
                     },
@@ -3225,7 +3243,7 @@ function downloadSHStats() {
                 status: err.status,
                 statusText: err.statusText,
                 error: err.error,
-                responseText: err.responseText ? String(err.responseText).substring(0, 500) : null
+                responseText: err.responseText ? String(err.responseText).substring(0, 500) : null,
             });
             loading.close();
             showLoading("No se pudo descargar el archivo GeoJSON (error " + err.status + ")", null, "red", true);
@@ -3359,12 +3377,8 @@ function fetchPrismaToken(callback) {
 
     if (prismaTokenProxyUrl) {
         var primaryTokenAttempt = { tokenUrl: prismaTokenProxyUrl, apiBaseUrl: prismaApiBaseUrl };
-        var fallbackTokenAttempt = prismaFallbackTokenProxyUrl && prismaFallbackTokenProxyUrl !== prismaTokenProxyUrl
-            ? { tokenUrl: prismaFallbackTokenProxyUrl, apiBaseUrl: prismaFallbackApiBaseUrl || prismaFallbackTokenProxyUrl.replace(/\/prisma-token\/?$/, "/prisma-proxy") }
-            : null;
-        var tokenAttempts = prismaActiveApiBaseUrl === prismaFallbackApiBaseUrl && fallbackTokenAttempt
-            ? [fallbackTokenAttempt]
-            : [primaryTokenAttempt];
+        var fallbackTokenAttempt = prismaFallbackTokenProxyUrl && prismaFallbackTokenProxyUrl !== prismaTokenProxyUrl ? { tokenUrl: prismaFallbackTokenProxyUrl, apiBaseUrl: prismaFallbackApiBaseUrl || prismaFallbackTokenProxyUrl.replace(/\/prisma-token\/?$/, "/prisma-proxy") } : null;
+        var tokenAttempts = prismaActiveApiBaseUrl === prismaFallbackApiBaseUrl && fallbackTokenAttempt ? [fallbackTokenAttempt] : [primaryTokenAttempt];
         if (fallbackTokenAttempt && tokenAttempts[0].tokenUrl !== fallbackTokenAttempt.tokenUrl) {
             tokenAttempts.push(fallbackTokenAttempt);
         }
@@ -3482,7 +3496,7 @@ function getPrismaApiUrl(path, baseUrl) {
 function getPrismaAuthHeaders() {
     return {
         Authorization: "Bearer " + getPrismaAccessToken(),
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     };
 }
 
@@ -3530,7 +3544,7 @@ function requestPrismaAnalysis(paramsData) {
         data: JSON.stringify({
             geoJson: paramsData.geoJson,
             initial_date: paramsData.initial_date,
-            final_date: paramsData.final_date
+            final_date: paramsData.final_date,
         }),
         headers: getPrismaAuthHeaders(),
         dataType: "json",
@@ -3561,7 +3575,7 @@ function requestPrismaAnalysis(paramsData) {
             loading.close();
             showLoading(getPrismaErrorMessage(xhr), null, "red", true);
             console.error("[PRISMA] Error creando solicitud", xhr);
-        }
+        },
     });
 }
 
@@ -3591,7 +3605,7 @@ function pollPrismaResult(code, attempt) {
             loading.close();
             showLoading(getPrismaErrorMessage(xhr), null, "red", true);
             console.error("[PRISMA] Error consultando resultado", xhr);
-        }
+        },
     });
 }
 
@@ -3629,11 +3643,15 @@ function closePrisma() {
 
 function getSHAnalyticsClassLabel(properties) {
     properties = properties || {};
-    return String(properties.class_label || properties.object_class_label || properties.class || "").trim().toLowerCase();
+    return String(properties.class_label || properties.object_class_label || properties.class || "")
+        .trim()
+        .toLowerCase();
 }
 
 function getSHAnalyticsLocalSubscriptionTitle(classLabel) {
-    var normalizedClass = String(classLabel || "").trim().toLowerCase();
+    var normalizedClass = String(classLabel || "")
+        .trim()
+        .toLowerCase();
     if (normalizedClass === "building") {
         return "Detección de Construcciones";
     }
@@ -3655,7 +3673,11 @@ function normalizeSHAnalyticsLocalFeature(feature, defaultClassLabel) {
     feature.properties.published = feature.properties.published || feature.properties.date;
     feature.properties.object_area_m2 = feature.properties.object_area_m2 || feature.properties.area_m2 || 0;
     feature.properties.score = feature.properties.score || feature.properties.confidence || 0;
-    feature.properties.class_label = getSHAnalyticsClassLabel(feature.properties) || String(defaultClassLabel || "").trim().toLowerCase();
+    feature.properties.class_label =
+        getSHAnalyticsClassLabel(feature.properties) ||
+        String(defaultClassLabel || "")
+            .trim()
+            .toLowerCase();
     return feature;
 }
 
@@ -3676,7 +3698,9 @@ function extractSHAnalyticsGeojsonFeatures(data) {
 }
 
 function getSHAnalyticsLocalUrl(subscriptionId) {
-    var selectedClass = String(subscriptionId || "").trim().toLowerCase();
+    var selectedClass = String(subscriptionId || "")
+        .trim()
+        .toLowerCase();
     return planetAnalyticsLocalUrls[selectedClass] || planetAnalyticsLocalUrl;
 }
 
@@ -3704,7 +3728,9 @@ function getSHAnalyticsStaticLocalSubscriptions() {
 }
 
 function loadSHAnalyticsLocalFeatures(subscriptionId, onSuccess, onError) {
-    var selectedClass = String(subscriptionId || "").trim().toLowerCase();
+    var selectedClass = String(subscriptionId || "")
+        .trim()
+        .toLowerCase();
     var localUrl = getSHAnalyticsLocalUrl(selectedClass);
     var cacheKey = selectedClass || "_all";
 
@@ -3733,11 +3759,13 @@ function loadSHAnalyticsLocalFeatures(subscriptionId, onSuccess, onError) {
         dataType: "json",
         cache: true,
         success: function (data) {
-            var normalizedFeatures = extractSHAnalyticsGeojsonFeatures(data).map(function (feature) {
-                return normalizeSHAnalyticsLocalFeature(feature, selectedClass);
-            }).filter(function (feature) {
-                return feature && feature.geometry && getSHAnalyticsClassLabel(feature.properties);
-            });
+            var normalizedFeatures = extractSHAnalyticsGeojsonFeatures(data)
+                .map(function (feature) {
+                    return normalizeSHAnalyticsLocalFeature(feature, selectedClass);
+                })
+                .filter(function (feature) {
+                    return feature && feature.geometry && getSHAnalyticsClassLabel(feature.properties);
+                });
             if (selectedClass) {
                 currentSHAnalyticsLocalFeaturesLoadingByClass[cacheKey] = false;
                 currentSHAnalyticsLocalFeaturesByClass[cacheKey] = normalizedFeatures;
@@ -3800,7 +3828,7 @@ function loadAnalyticsSubscriptions(onSuccess, onError) {
         function (features) {
             onSuccess(buildSHAnalyticsLocalSubscriptions(features));
         },
-        onError
+        onError,
     );
 }
 
@@ -3846,7 +3874,9 @@ function loadAnalyticsChanges(subscriptionId, onSuccess, onError, pageUrl, retry
         loadSHAnalyticsLocalFeatures(
             subscriptionId,
             function (features) {
-                var selectedClass = String(subscriptionId || "").trim().toLowerCase();
+                var selectedClass = String(subscriptionId || "")
+                    .trim()
+                    .toLowerCase();
                 var filteredFeatures = features.filter(function (feature) {
                     return getSHAnalyticsClassLabel(feature.properties) === selectedClass;
                 });
@@ -3858,7 +3888,7 @@ function loadAnalyticsChanges(subscriptionId, onSuccess, onError, pageUrl, retry
                 } else {
                     onSuccess([], null, null);
                 }
-            }
+            },
         );
         return;
     }
@@ -3961,16 +3991,8 @@ function setSHAnalyticsBoundaryStatus(message, isError) {
 }
 
 function createSHAnalyticsBoundarySymbol() {
-    var borderSymbol = new esri.SimpleLineSymbol(
-        esri.SimpleLineSymbol.STYLE_SOLID,
-        new esri.Color([255, 224, 0, 1]),
-        2.4
-    );
-    return new esri.SimpleFillSymbol(
-        esri.SimpleFillSymbol.STYLE_NULL,
-        borderSymbol,
-        new esri.Color([255, 224, 0, 0.08])
-    );
+    var borderSymbol = new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color([255, 224, 0, 1]), 2.4);
+    return new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_NULL, borderSymbol, new esri.Color([255, 224, 0, 0.08]));
 }
 
 function bringSHAnalyticsBoundariesToFront() {
@@ -4151,9 +4173,7 @@ function renderSHAnalyticsMonthPicker() {
         return;
     }
     var field = shAnalyticsMonthPickerState.field || "start";
-    var selectedKey = field === "end"
-        ? (currentSHAnalyticsDateFilter.end || currentSHAnalyticsDateFilter.max)
-        : (currentSHAnalyticsDateFilter.start || currentSHAnalyticsDateFilter.min);
+    var selectedKey = field === "end" ? currentSHAnalyticsDateFilter.end || currentSHAnalyticsDateFilter.max : currentSHAnalyticsDateFilter.start || currentSHAnalyticsDateFilter.min;
     var selectedMoment = getSHAnalyticsMonthMoment(selectedKey) || getSHAnalyticsMonthMoment(currentSHAnalyticsDateFilter.min);
     if (shAnalyticsMonthPickerState.year === null && selectedMoment) {
         shAnalyticsMonthPickerState.year = selectedMoment.year();
@@ -4167,10 +4187,7 @@ function renderSHAnalyticsMonthPicker() {
     var html = "";
     for (var monthIdx = 0; monthIdx < 12; monthIdx++) {
         var monthMoment = esri.moment({ year: pickerYear, month: monthIdx, day: 1 });
-        var isDisabled = (minMoment && monthMoment.isBefore(minMoment, "month")) ||
-            (maxMoment && monthMoment.isAfter(maxMoment, "month")) ||
-            (field === "start" && endMoment && monthMoment.isAfter(endMoment, "month")) ||
-            (field === "end" && startMoment && monthMoment.isBefore(startMoment, "month"));
+        var isDisabled = (minMoment && monthMoment.isBefore(minMoment, "month")) || (maxMoment && monthMoment.isAfter(maxMoment, "month")) || (field === "start" && endMoment && monthMoment.isAfter(endMoment, "month")) || (field === "end" && startMoment && monthMoment.isBefore(startMoment, "month"));
         var isActive = selectedMoment && selectedMoment.year() === pickerYear && selectedMoment.month() === monthIdx;
         html += "<button type='button' class='sh-analytics-month-option" + (isActive ? " active" : "") + "' data-month='" + monthIdx + "'" + (isDisabled ? " disabled" : "") + ">" + monthShortNamesEs[monthIdx] + "</button>";
     }
@@ -4180,9 +4197,7 @@ function renderSHAnalyticsMonthPicker() {
 
 function showSHAnalyticsMonthPicker(field) {
     shAnalyticsMonthPickerState.field = field;
-    var selectedKey = field === "end"
-        ? (currentSHAnalyticsDateFilter.end || currentSHAnalyticsDateFilter.max)
-        : (currentSHAnalyticsDateFilter.start || currentSHAnalyticsDateFilter.min);
+    var selectedKey = field === "end" ? currentSHAnalyticsDateFilter.end || currentSHAnalyticsDateFilter.max : currentSHAnalyticsDateFilter.start || currentSHAnalyticsDateFilter.min;
     var selectedMoment = getSHAnalyticsMonthMoment(selectedKey);
     shAnalyticsMonthPickerState.year = selectedMoment ? selectedMoment.year() : null;
     $(".sh-analytics-month-trigger").removeClass("active");
@@ -4253,11 +4268,7 @@ function updateSHAnalyticsDateFilterStatus() {
     if (!status.length || !currentSHAnalyticsDateFilter.min || !currentSHAnalyticsDateFilter.max) {
         return;
     }
-    status.html(
-        "Publicación: " + formatSHAnalyticsMonthLabel(currentSHAnalyticsDateFilter.start) +
-        " - " + formatSHAnalyticsMonthLabel(currentSHAnalyticsDateFilter.end) +
-        " (" + currentSHAnalyticsData.length + " de " + currentSHAnalyticsAllData.length + " registro(s))."
-    );
+    status.html("Publicación: " + formatSHAnalyticsMonthLabel(currentSHAnalyticsDateFilter.start) + " - " + formatSHAnalyticsMonthLabel(currentSHAnalyticsDateFilter.end) + " (" + currentSHAnalyticsData.length + " de " + currentSHAnalyticsAllData.length + " registro(s)).");
 }
 
 function applySHAnalyticsDateFilter() {
@@ -4316,25 +4327,7 @@ function normalizeSHAnalyticsMunicipalityText(value) {
 
 function getSHAnalyticsMunicipalityName(properties) {
     properties = properties || {};
-    var nameFields = [
-        "DeNombre",
-        "denombre",
-        "DENOMBRE",
-        "MpNombre",
-        "mpnombre",
-        "MPNOMBRE",
-        "MPIO_CNMBR",
-        "NOMBRE_MPI",
-        "NOMBRE_MPIO",
-        "NOM_MPIO",
-        "MUNICIPIO",
-        "municipio",
-        "Municipio",
-        "nombre",
-        "NOMBRE",
-        "name",
-        "Name",
-    ];
+    var nameFields = ["DeNombre", "denombre", "DENOMBRE", "MpNombre", "mpnombre", "MPNOMBRE", "MPIO_CNMBR", "NOMBRE_MPI", "NOMBRE_MPIO", "NOM_MPIO", "MUNICIPIO", "municipio", "Municipio", "nombre", "NOMBRE", "name", "Name"];
     for (var i = 0; i < nameFields.length; i++) {
         var fieldValue = properties[nameFields[i]];
         if (fieldValue != null && String(fieldValue).trim() !== "") {
@@ -4488,11 +4481,13 @@ function downloadSHAnalyticsAdminData(adminLevel, adminIndex) {
             showLoading("No se encontraron datos para descargar", null, "red", true);
             return;
         }
-        features = (stat.indexes || []).map(function (dataIndex) {
-            return currentSHAnalyticsData[dataIndex];
-        }).filter(function (feature) {
-            return !!feature;
-        });
+        features = (stat.indexes || [])
+            .map(function (dataIndex) {
+                return currentSHAnalyticsData[dataIndex];
+            })
+            .filter(function (feature) {
+                return !!feature;
+            });
         fileLabel = adminConfig.level + "_" + stat.name;
     }
     downloadSHAnalyticsFeatureCollection(features, slugifySHAnalyticsFileName(fileLabel) + ".geojson");
@@ -4709,16 +4704,12 @@ function buildSHAnalyticsPlanetTileProxyUrl(mosaicId, z, x, y) {
         return null;
     }
     var separator = planetTileProxyUrl.indexOf("?") === -1 ? "?" : "&";
-    return planetTileProxyUrl + separator +
-        "mosaicId=" + encodeURIComponent(mosaicId) +
-        "&z=" + encodeURIComponent(z) +
-        "&x=" + encodeURIComponent(x) +
-        "&y=" + encodeURIComponent(y);
+    return planetTileProxyUrl + separator + "mosaicId=" + encodeURIComponent(mosaicId) + "&z=" + encodeURIComponent(z) + "&x=" + encodeURIComponent(x) + "&y=" + encodeURIComponent(y);
 }
 
 function projectLonLatToTileFraction(lon, lat) {
     var safeLat = Math.max(Math.min(lat, 85.05112878), -85.05112878);
-    var sinLat = Math.sin(safeLat * Math.PI / 180);
+    var sinLat = Math.sin((safeLat * Math.PI) / 180);
     return {
         x: (lon + 180) / 360,
         y: 0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI),
@@ -4804,12 +4795,7 @@ function createSHAnalyticsPdfMosaicSnapshot(feature, dateMoment, options) {
     }
     var bboxWidth = Math.max(bbox[2] - bbox[0], 0.00025);
     var bboxHeight = Math.max(bbox[3] - bbox[1], 0.00025);
-    bbox = [
-        bbox[0] - bboxWidth * 0.9,
-        bbox[1] - bboxHeight * 0.9,
-        bbox[2] + bboxWidth * 0.9,
-        bbox[3] + bboxHeight * 0.9,
-    ];
+    bbox = [bbox[0] - bboxWidth * 0.9, bbox[1] - bboxHeight * 0.9, bbox[2] + bboxWidth * 0.9, bbox[3] + bboxHeight * 0.9];
     var zoom = chooseSHAnalyticsPdfTileZoom(bbox, width, height);
     var scale = 256 * Math.pow(2, zoom);
     var centerLon = (bbox[0] + bbox[2]) / 2;
@@ -4841,11 +4827,13 @@ function createSHAnalyticsPdfMosaicSnapshot(feature, dateMoment, options) {
                 if (!tileUrl) {
                     return;
                 }
-                tilePromises.push(loadSHAnalyticsTileImage(tileUrl).then(function (image) {
-                    if (image) {
-                        ctx.drawImage(image, x * 256 - topLeftPx.x, y * 256 - topLeftPx.y, 256, 256);
-                    }
-                }));
+                tilePromises.push(
+                    loadSHAnalyticsTileImage(tileUrl).then(function (image) {
+                        if (image) {
+                            ctx.drawImage(image, x * 256 - topLeftPx.x, y * 256 - topLeftPx.y, 256, 256);
+                        }
+                    }),
+                );
             })(tileX, tileY);
         }
     }
@@ -4872,14 +4860,16 @@ function createSHAnalyticsPdfMosaicSnapshots(dataIndex) {
     for (var i = 5; i >= 0; i--) {
         snapshots.push(createSHAnalyticsPdfMosaicSnapshot(feature, detectionMoment.clone().add(-i, "month")));
     }
-    return Promise.all(snapshots).then(function (items) {
-        return items.filter(function (item) {
-            return !!(item && item.image);
+    return Promise.all(snapshots)
+        .then(function (items) {
+            return items.filter(function (item) {
+                return !!(item && item.image);
+            });
+        })
+        .catch(function (err) {
+            console.warn("No se pudieron crear las miniaturas del PDF con teselas Planet", err);
+            return [];
         });
-    }).catch(function (err) {
-        console.warn("No se pudieron crear las miniaturas del PDF con teselas Planet", err);
-        return [];
-    });
 }
 
 function createSHAnalyticsHexPdfMosaicSnapshots(hexInfo) {
@@ -4959,46 +4949,54 @@ function captureSHAnalyticsVisiblePdfGalleryItems() {
                     return;
                 }
                 captures.push(
-                    html2pdf().set({
-                        margin: 0,
-                        image: { type: "jpeg", quality: 0.95 },
-                        html2canvas: {
-                            backgroundColor: "#f7f7f7",
-                            logging: false,
-                            scale: 1.5,
-                            useCORS: true,
-                            allowTaint: true,
-                            scrollX: 0,
-                            scrollY: 0,
-                        },
-                        jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
-                    }).from(mapNode[0]).toCanvas().get("canvas").then(function (canvas) {
-                        var image = null;
-                        try {
-                            image = canvas.toDataURL("image/png");
-                        } catch (err) {
-                            console.warn("No se pudo convertir un mosaico a imagen para el PDF", err);
-                        }
-                        return {
-                            label: label,
-                            image: image,
-                        };
-                    }).catch(function (err) {
-                        console.warn("No se pudo capturar un mosaico para el PDF", err, cardNode);
-                        return {
-                            label: label,
-                            image: null,
-                        };
-                    })
+                    html2pdf()
+                        .set({
+                            margin: 0,
+                            image: { type: "jpeg", quality: 0.95 },
+                            html2canvas: {
+                                backgroundColor: "#f7f7f7",
+                                logging: false,
+                                scale: 1.5,
+                                useCORS: true,
+                                allowTaint: true,
+                                scrollX: 0,
+                                scrollY: 0,
+                            },
+                            jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+                        })
+                        .from(mapNode[0])
+                        .toCanvas()
+                        .get("canvas")
+                        .then(function (canvas) {
+                            var image = null;
+                            try {
+                                image = canvas.toDataURL("image/png");
+                            } catch (err) {
+                                console.warn("No se pudo convertir un mosaico a imagen para el PDF", err);
+                            }
+                            return {
+                                label: label,
+                                image: image,
+                            };
+                        })
+                        .catch(function (err) {
+                            console.warn("No se pudo capturar un mosaico para el PDF", err, cardNode);
+                            return {
+                                label: label,
+                                image: null,
+                            };
+                        }),
                 );
             });
-            Promise.all(captures).then(function (items) {
-                restorePanelState();
-                resolve(items);
-            }).catch(function (err) {
-                restorePanelState();
-                reject(err);
-            });
+            Promise.all(captures)
+                .then(function (items) {
+                    restorePanelState();
+                    resolve(items);
+                })
+                .catch(function (err) {
+                    restorePanelState();
+                    reject(err);
+                });
         }, 650);
     });
 }
@@ -5319,27 +5317,22 @@ function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems, cadastralResult)
     var municipality = findSHAnalyticsAdminForPoint(centroid, "municipality");
     var departmentName = department && department.name ? department.name : "No identificado";
     var municipalityName = municipality && municipality.name ? municipality.name : "No identificado";
-    var municipalityDepartmentName = municipalityName !== "No identificado" && departmentName !== "No identificado"
-        ? municipalityName + ", " + departmentName
-        : municipalityName;
+    var municipalityDepartmentName = municipalityName !== "No identificado" && departmentName !== "No identificado" ? municipalityName + ", " + departmentName : municipalityName;
     var centroid9377Text = formatSHAnalyticsCentroid9377(centroid);
     var galleryHtml = "";
     (galleryItems || []).forEach(function (item) {
         if (!item || !item.image) {
             return;
         }
-        galleryHtml += "<div class='sh-pdf-gallery-item'>" +
-            "<img class='sh-pdf-map-image' src='" + item.image + "' />" +
-            "<div class='sh-pdf-caption'>" + escapeSHAnalyticsHtml(item.label) + "</div>" +
-        "</div>";
+        galleryHtml += "<div class='sh-pdf-gallery-item'>" + "<img class='sh-pdf-map-image' src='" + item.image + "' />" + "<div class='sh-pdf-caption'>" + escapeSHAnalyticsHtml(item.label) + "</div>" + "</div>";
     });
     if (!galleryHtml) {
         galleryHtml = "<div class='sh-pdf-empty'>No hay mosaicos disponibles para incluir en el reporte.</div>";
     }
     return "<div id='shAnalyticsPdfReport' class='sh-analytics-pdf-report'>" +
         "<div class='sh-pdf-header'>" +
-            "<div><img class='sh-pdf-header-logo' src='data/Logo_OBS.png' /><h1>Reporte de Detalle — Cambios</h1><div class='sh-pdf-subtitle'>" + escapeSHAnalyticsHtml(subscriptionLabel) + "</div></div>" +
-            "<img class='sh-pdf-right-logo' src='data/logos_cm.png' />" +
+            "<div><div class='sh-pdf-kicker'>Observatorio de la Tierra y el Territorio</div><h1>Reporte de Detalle — Cambios</h1><div class='sh-pdf-subtitle'>" + escapeSHAnalyticsHtml(subscriptionLabel) + "</div></div>" +
+            "<img src='../images/logo_igac.png' onerror='this.style.display=\"none\"' />" +
         "</div>" +
         "<div class='sh-pdf-metrics'>" +
             "<div><strong>" + escapeSHAnalyticsHtml(detectionDate) + "</strong><span>Fecha de detección</span></div>" +
@@ -5349,7 +5342,6 @@ function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems, cadastralResult)
         "<h2>Galería — Mosaicos mensuales</h2>" +
         "<div class='sh-pdf-gallery'>" + galleryHtml + "</div>" +
         "<div class='sh-pdf-footnote'>Mosaicos mensuales Planet · vista centrada en el polígono seleccionado</div>" +
-        buildSHAnalyticsCadastralReportHtml(cadastralResult) +
     "</div>";
 }
 
@@ -5364,28 +5356,22 @@ function downloadSHAnalyticsPolygonPdf(dataIndex) {
             ensureSHAnalyticsAdminLevelLoaded("department"),
             ensureSHAnalyticsAdminLevelLoaded("municipality"),
         ]).then(function () {
-            return Promise.all([
-                captureSHAnalyticsPdfGalleryItems(dataIndex),
-                loadSHAnalyticsCadastralReportRows(dataIndex),
-            ]);
-        }).then(function (reportData) {
-            var galleryItems = reportData[0];
-            var cadastralResult = reportData[1];
-            var reportHtml = buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems, cadastralResult);
+            return captureSHAnalyticsPdfGalleryItems(dataIndex);
+        }).then(function (galleryItems) {
+            var reportHtml = buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems);
             var reportNode = document.createElement("div");
             reportNode.style.position = "fixed";
             reportNode.style.left = "-12000px";
             reportNode.style.top = "0";
             reportNode.innerHTML = reportHtml;
             document.body.appendChild(reportNode);
-            var fileName = "Reporte_OTT_analytics_poligono_" + dataIndex + ".pdf";
+            var fileName = "reporte_planet_analytics_poligono_" + dataIndex + ".pdf";
             return html2pdf().set({
                 margin: 8,
                 filename: fileName,
                 image: { type: "jpeg", quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true, allowTaint: true },
                 jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
-                pagebreak: { mode: ["css", "legacy"], before: [".sh-pdf-cadastral-page"] },
             }).from(reportNode.firstChild).save().then(function () {
                 document.body.removeChild(reportNode);
                 closeLoading();
@@ -5446,8 +5432,7 @@ function renderSHAnalyticsMunicipalityTable() {
     }
 
     var total = currentSHAnalyticsData ? currentSHAnalyticsData.length : 0;
-    var html = "<div class='sh-analytics-municipality-table-wrap'><table class='sh-analytics-municipality-table'>" +
-        "<thead><tr><th>" + adminConfig.title + "</th><th># registros</th><th>Descarga</th></tr></thead><tbody>";
+    var html = "<div class='sh-analytics-municipality-table-wrap'><table class='sh-analytics-municipality-table'>" + "<thead><tr><th>" + adminConfig.title + "</th><th># registros</th><th>Descarga</th></tr></thead><tbody>";
     for (var i = 0; i < rows.length; i++) {
         html += "<tr class='sh-analytics-municipality-row' data-admin-level='" + adminConfig.level + "' data-municipality-index='" + rows[i].index + "' title='Acercar al " + adminConfig.singular + "'><td>" + escapeSHAnalyticsHtml(rows[i].name) + "</td><td>" + rows[i].count + "</td><td><button type='button' class='sh-analytics-download-btn' title='Descargar datos' data-admin-level='" + adminConfig.level + "' data-admin-index='" + rows[i].index + "'><span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span></button></td></tr>";
     }
@@ -5470,16 +5455,8 @@ function getSHAnalyticsMunicipalityByIndex(index) {
 }
 
 function createSHAnalyticsAdminSelectionSymbol() {
-    var border = new esri.SimpleLineSymbol(
-        esri.SimpleLineSymbol.STYLE_SOLID,
-        new esri.Color([95, 95, 95, 0.95]),
-        1.2
-    );
-    return new esri.SimpleFillSymbol(
-        esri.SimpleFillSymbol.STYLE_NULL,
-        border,
-        new esri.Color([95, 95, 95, 0])
-    );
+    var border = new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color([95, 95, 95, 0.95]), 1.2);
+    return new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_NULL, border, new esri.Color([95, 95, 95, 0]));
 }
 
 function showSHAnalyticsSelectedAdminFeature(adminFeature) {
@@ -5812,12 +5789,7 @@ function updateSHAnalyticsBoundaryVisibility() {
 }
 
 function showSHAnalyticsResultsLoader(message) {
-    $("#selectSHAnalyticsResults").html(
-        "<div class='sh-analytics-results-loader'>" +
-            "<img src='/images/ig124.gif' alt='Cargando' />" +
-            "<div>" + (message || "Cargando resultados...") + "</div>" +
-        "</div>"
-    );
+    $("#selectSHAnalyticsResults").html("<div class='sh-analytics-results-loader'>" + "<img src='/images/ig124.gif' alt='Cargando' />" + "<div>" + (message || "Cargando resultados...") + "</div>" + "</div>");
 }
 
 function createSHAnalyticsLoadingDialog() {
@@ -5911,7 +5883,7 @@ function gotoSHAnalytics() {
         function () {
             shAnalyticsLoading.close();
             $("#selectSHAnalyticsSubs").html("<option value=''>No se pudieron cargar las suscripciones</option>");
-        }
+        },
     );
 }
 
@@ -6060,7 +6032,7 @@ function loadSHAnalyticsPage(subscriptionId, pageUrl, append, loadingDialog, loa
             hideSHAnalyticsLegend();
             $("#selectSHAnalyticsResults").html("<div class='panel panel-default panel-list'><div style='padding:8px;'>No se pudieron consultar los cambios.</div></div>");
         },
-        pageUrl
+        pageUrl,
     );
 }
 
@@ -6130,7 +6102,7 @@ function createSHAnalyticsHexPolygon(center) {
     var size = SH_ANALYTICS_HEX_SIDE_METERS;
     var ring = [];
     for (var i = 0; i < 6; i++) {
-        var angle = Math.PI / 180 * (60 * i - 30);
+        var angle = (Math.PI / 180) * (60 * i - 30);
         ring.push([center.x + size * Math.cos(angle), center.y + size * Math.sin(angle)]);
     }
     ring.push(ring[0]);
@@ -6178,7 +6150,9 @@ function getSHAnalyticsHexClassNames() {
 }
 
 function getSHAnalyticsSelectedClassLabel() {
-    return String($("#selectSHAnalyticsSubs").val() || "building").trim().toLowerCase();
+    return String($("#selectSHAnalyticsSubs").val() || "building")
+        .trim()
+        .toLowerCase();
 }
 
 function getSHAnalyticsHexClasses() {
@@ -6190,7 +6164,9 @@ function getSHAnalyticsHexClassBreaks(hexBins) {
     Object.keys(hexBins).forEach(function (key) {
         counts.push(hexBins[key].count);
     });
-    counts.sort(function (a, b) { return a - b; });
+    counts.sort(function (a, b) {
+        return a - b;
+    });
     if (counts.length === 0) {
         return [0, 0, 0, 0];
     }
@@ -6199,12 +6175,7 @@ function getSHAnalyticsHexClassBreaks(hexBins) {
         index = Math.max(0, Math.min(index, counts.length - 1));
         return counts[index];
     };
-    return [
-        getPercentileCount(0.25),
-        getPercentileCount(0.45),
-        getPercentileCount(0.60),
-        getPercentileCount(0.75),
-    ];
+    return [getPercentileCount(0.25), getPercentileCount(0.45), getPercentileCount(0.6), getPercentileCount(0.75)];
 }
 
 function getSHAnalyticsColorCss(color) {
@@ -6236,9 +6207,7 @@ function getSHAnalyticsHexClassRangeLabel(className, classBreaksOrMaxCount) {
     var classNames = getSHAnalyticsHexClassNames();
     var classIndex = classNames.indexOf(className);
     var start = Math.floor((classIndex / classNames.length) * maxCount) + 1;
-    var end = classIndex === classNames.length - 1
-        ? maxCount
-        : Math.floor(((classIndex + 1) / classNames.length) * maxCount);
+    var end = classIndex === classNames.length - 1 ? maxCount : Math.floor(((classIndex + 1) / classNames.length) * maxCount);
     start = Math.max(1, Math.min(start, maxCount));
     end = Math.max(start, Math.min(end, maxCount));
     if (start === end) {
@@ -6253,18 +6222,18 @@ function getSHAnalyticsHexFillColor(count, classBreaksOrMaxCount) {
 
 function renderSHAnalyticsLegend(classBreaksOrMaxCount) {
     var hexClasses = getSHAnalyticsHexClasses();
-    var legendItems = getSHAnalyticsHexClassNames().map(function (className) {
-        var currentClass = hexClasses[className];
-        var swatchColor = getSHAnalyticsColorCss(currentClass.color);
-        var rangeLabel = getSHAnalyticsHexClassRangeLabel(className, classBreaksOrMaxCount);
-        return "<span class='sh-analytics-legend-swatch' style='background:" + swatchColor + ";' title='" + escapeSHAnalyticsHtml(rangeLabel) + "'></span>";
-    }).join("");
+    var legendItems = getSHAnalyticsHexClassNames()
+        .map(function (className) {
+            var currentClass = hexClasses[className];
+            var swatchColor = getSHAnalyticsColorCss(currentClass.color);
+            var rangeLabel = getSHAnalyticsHexClassRangeLabel(className, classBreaksOrMaxCount);
+            return "<span class='sh-analytics-legend-swatch' style='background:" + swatchColor + ";' title='" + escapeSHAnalyticsHtml(rangeLabel) + "'></span>";
+        })
+        .join("");
 
-    $("#shAnalyticsLegendBottom").html(
-        "<div class='sh-analytics-legend-title'>Leyenda de cambios</div>" +
-        "<div class='sh-analytics-legend-ramp'>" + legendItems + "</div>" +
-        "<div class='sh-analytics-legend-scale'><span>Menor</span><span>Mayor</span></div>"
-    ).show();
+    $("#shAnalyticsLegendBottom")
+        .html("<div class='sh-analytics-legend-title'>Leyenda de cambios</div>" + "<div class='sh-analytics-legend-ramp'>" + legendItems + "</div>" + "<div class='sh-analytics-legend-scale'><span>Menor</span><span>Mayor</span></div>")
+        .show();
 }
 
 function hideSHAnalyticsLegend() {
@@ -6272,16 +6241,8 @@ function hideSHAnalyticsLegend() {
 }
 
 function createSHAnalyticsHexSymbol(count, classBreaksOrMaxCount) {
-    var border = new esri.SimpleLineSymbol(
-        esri.SimpleLineSymbol.STYLE_SOLID,
-        new esri.Color([35, 35, 35, 0.65]),
-        0.9
-    );
-    return new esri.SimpleFillSymbol(
-        esri.SimpleFillSymbol.STYLE_SOLID,
-        border,
-        new esri.Color(getSHAnalyticsHexFillColor(count, classBreaksOrMaxCount))
-    );
+    var border = new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color([35, 35, 35, 0.65]), 0.9);
+    return new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_SOLID, border, new esri.Color(getSHAnalyticsHexFillColor(count, classBreaksOrMaxCount)));
 }
 
 function renderSHAnalyticsHexHeatmap(summary) {
@@ -6342,8 +6303,7 @@ function showSHAnalyticsHexPopup(graphic, mapPoint) {
         return;
     }
     var count = graphic.attributes.count || 0;
-    var content = "<b>" + count + " cambios</b><br/>" +
-        "Haz clic para ver los poligonos de cambio";
+    var content = "<b>" + count + " cambios</b><br/>" + "Haz clic para ver los poligonos de cambio";
     map.infoWindow.setTitle("");
     map.infoWindow.setContent(content);
     map.infoWindow.show(mapPoint || graphic.geometry.getExtent().getCenter());
@@ -6359,16 +6319,8 @@ function showSHAnalyticsPolygonInstructionPopup(graphic, mapPoint) {
 }
 
 function createSHAnalyticsSelectedHexSymbol() {
-    var border = new esri.SimpleLineSymbol(
-        esri.SimpleLineSymbol.STYLE_SOLID,
-        new esri.Color([255, 255, 255, 1]),
-        3
-    );
-    return new esri.SimpleFillSymbol(
-        esri.SimpleFillSymbol.STYLE_SOLID,
-        border,
-        new esri.Color([255, 255, 255, 0.08])
-    );
+    var border = new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color([255, 255, 255, 1]), 3);
+    return new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_SOLID, border, new esri.Color([255, 255, 255, 0.08]));
 }
 
 function resetSHAnalyticsHexSymbols(selectedGraphic) {
@@ -6677,7 +6629,6 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         "<table style='width:100%;border-collapse:collapse;background:#fff;border:1px solid #ddd;'>" +
         "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Índice</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='burns-index-label'>" + indexLabel + "</span>" + shAnalyticsDownloadHtml + shAnalyticsPdfHtml + indexInfoHtml + "</td></tr>" +
         (detectionDateLabel ? "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Fecha de detección</td><td style='padding:8px;border-bottom:1px solid #eee;'>" + detectionDateLabel + "</td></tr>" : "") +
-        shAnalyticsHexHtml +
         "</table>" +
         "<div id='burnsSelectPolygonMessage' style='display:" + (hasSelectedPolygon ? "none" : "block") + ";margin:8px 0 0;padding:9px 10px;border:1px solid #d9e2dc;background:#f6faf7;color:#3d5e4f;font-weight:600;text-align:center;border-radius:4px;'>Seleccione poligono en el mapa para desplegar los mosaicos</div>" +
         "<div style='display:flex;gap:8px;margin-top:8px;margin-bottom:10px;'>" +
@@ -6725,7 +6676,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     }
     $("#burnsFloatingDetail").css({
         width: "780px",
-        maxWidth: "calc(100vw - 40px)"
+        maxWidth: "calc(100vw - 40px)",
     });
     $("#burnsFloatingDetail").html(panelHtml).show();
     $("#burnsFloatingClose").off("click").on("click", function (evt) {
@@ -6740,14 +6691,6 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     $(".sh-analytics-floating-pdf-btn").off("click").on("click", function (evt) {
         evt.preventDefault();
         downloadSHAnalyticsPolygonPdf($(this).attr("data-sh-analytics-index"));
-    });
-    $(".sh-analytics-floating-hex-download-btn").off("click").on("click", function (evt) {
-        evt.preventDefault();
-        downloadSHAnalyticsHexData($(this).attr("data-sh-analytics-hex"));
-    });
-    $(".sh-analytics-floating-hex-pdf-btn").off("click").on("click", function (evt) {
-        evt.preventDefault();
-        downloadSHAnalyticsHexPdfReport($(this).attr("data-sh-analytics-hex"));
     });
 
     var targetExtent = null;
@@ -6765,18 +6708,28 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     }
     var clearBurnsFloatingMaps = function () {
         burnsGallerySyncHandles.forEach(function (handle) {
-            try { handle.remove(); } catch (e) {}
+            try {
+                handle.remove();
+            } catch (e) {}
         });
         burnsGallerySyncHandles = [];
         burnsGallerySyncing = false;
-        burnsGalleryMaps.forEach(function (m) { try { m.destroy(); } catch (e) {} });
+        burnsGalleryMaps.forEach(function (m) {
+            try {
+                m.destroy();
+            } catch (e) {}
+        });
         burnsGalleryMaps = [];
         if (burnsCompareMap) {
-            try { burnsCompareMap.destroy(); } catch (e) {}
+            try {
+                burnsCompareMap.destroy();
+            } catch (e) {}
             burnsCompareMap = null;
         }
         if (burnsCompareSwipe) {
-            try { burnsCompareSwipe.destroy(); } catch (e) {}
+            try {
+                burnsCompareSwipe.destroy();
+            } catch (e) {}
             burnsCompareSwipe = null;
         }
         $("#burnsCustomVerticalSwipe, #burnsCustomVerticalSwipeFloating").hide();
@@ -6796,7 +6749,9 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     };
     var bindBurnsGallerySync = function () {
         burnsGallerySyncHandles.forEach(function (handle) {
-            try { handle.remove(); } catch (e) {}
+            try {
+                handle.remove();
+            } catch (e) {}
         });
         burnsGallerySyncHandles = [];
         burnsGalleryMaps.forEach(function (miniMap) {
@@ -6845,7 +6800,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             var isActive = $(this).attr("data-burns-swipe-mode") === burnsSwipeViewMode;
             $(this).css({
                 background: isActive ? "#4f6b5a" : "#fff",
-                color: isActive ? "#fff" : "#3d5e4f"
+                color: isActive ? "#fff" : "#3d5e4f",
             });
         });
         $("#burnsSwipeOpacityPopover").toggle(burnsSwipeViewMode === "overlay");
@@ -6876,7 +6831,9 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             if (burnsCompareSwipe.domNode && burnsCompareSwipe.domNode.parentNode) {
                 burnsCompareSwipe.domNode.parentNode.removeChild(burnsCompareSwipe.domNode);
             }
-            try { burnsCompareSwipe.destroy(); } catch (e) {}
+            try {
+                burnsCompareSwipe.destroy();
+            } catch (e) {}
             burnsCompareSwipe = null;
         }
         $("#burnsSwipeControl").html("<div id='burnsSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div>");
@@ -6905,7 +6862,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         swipeNode.style.setProperty("position", "fixed", "important");
         swipeNode.style.setProperty("left", mapRect.left + "px", "important");
         swipeNode.style.setProperty("right", "auto", "important");
-        swipeNode.style.setProperty("top", (mapRect.top + top) + "px", "important");
+        swipeNode.style.setProperty("top", mapRect.top + top + "px", "important");
         swipeNode.style.setProperty("width", mapRect.width + "px", "important");
         swipeNode.style.setProperty("height", "42px", "important");
         swipeNode.style.setProperty("margin-top", "-21px", "important");
@@ -6979,7 +6936,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             var layerRect = layerNode.getBoundingClientRect();
             var layerWidth = layerNode.offsetWidth || layerRect.width || width;
             var layerHeight = layerNode.offsetHeight || layerRect.height || height;
-            var topInLayer = Math.max(0, Math.min(layerHeight, (wrapRect.top + top) - layerRect.top));
+            var topInLayer = Math.max(0, Math.min(layerHeight, wrapRect.top + top - layerRect.top));
             layerNode.style.clip = "rect(0px, " + layerWidth + "px, " + topInLayer + "px, 0px)";
             layerNode.style.clipPath = "inset(0 0 " + Math.max(0, layerHeight - topInLayer) + "px 0)";
             layerNode.style.webkitClipPath = "inset(0 0 " + Math.max(0, layerHeight - topInLayer) + "px 0)";
@@ -6996,28 +6953,34 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
                 applyBurnsCustomVerticalClip(burnsCustomVerticalTop == null ? startTop : burnsCustomVerticalTop);
             }
         }, 250);
-        $(getBurnsCustomVerticalSwipeNode()).off(".burnsCustomSwipe").on("mousedown.burnsCustomSwipe touchstart.burnsCustomSwipe", function (evt) {
-            evt.preventDefault();
-            var moveHandler = function (moveEvt) {
-                var originalEvt = moveEvt.originalEvent || moveEvt;
-                var point = originalEvt.touches && originalEvt.touches.length ? originalEvt.touches[0] : originalEvt;
-                var mapRect = mapWrap.getBoundingClientRect();
-                applyBurnsCustomVerticalClip(point.clientY - mapRect.top);
-            };
-            $(document).on("mousemove.burnsCustomSwipe touchmove.burnsCustomSwipe", moveHandler);
-            $(document).one("mouseup.burnsCustomSwipe touchend.burnsCustomSwipe touchcancel.burnsCustomSwipe", function () {
-                $(document).off("mousemove.burnsCustomSwipe touchmove.burnsCustomSwipe");
+        $(getBurnsCustomVerticalSwipeNode())
+            .off(".burnsCustomSwipe")
+            .on("mousedown.burnsCustomSwipe touchstart.burnsCustomSwipe", function (evt) {
+                evt.preventDefault();
+                var moveHandler = function (moveEvt) {
+                    var originalEvt = moveEvt.originalEvent || moveEvt;
+                    var point = originalEvt.touches && originalEvt.touches.length ? originalEvt.touches[0] : originalEvt;
+                    var mapRect = mapWrap.getBoundingClientRect();
+                    applyBurnsCustomVerticalClip(point.clientY - mapRect.top);
+                };
+                $(document).on("mousemove.burnsCustomSwipe touchmove.burnsCustomSwipe", moveHandler);
+                $(document).one("mouseup.burnsCustomSwipe touchend.burnsCustomSwipe touchcancel.burnsCustomSwipe", function () {
+                    $(document).off("mousemove.burnsCustomSwipe touchmove.burnsCustomSwipe");
+                });
             });
-        });
-        $(window).off("resize.burnsCustomSwipe scroll.burnsCustomSwipe").on("resize.burnsCustomSwipe scroll.burnsCustomSwipe", function () {
-            if (burnsSwipeViewMode === "vertical") {
-                applyBurnsCustomVerticalClip(burnsCustomVerticalTop == null ? startTop : burnsCustomVerticalTop);
-            }
-        });
+        $(window)
+            .off("resize.burnsCustomSwipe scroll.burnsCustomSwipe")
+            .on("resize.burnsCustomSwipe scroll.burnsCustomSwipe", function () {
+                if (burnsSwipeViewMode === "vertical") {
+                    applyBurnsCustomVerticalClip(burnsCustomVerticalTop == null ? startTop : burnsCustomVerticalTop);
+                }
+            });
         if (burnsCompareMap) {
-            $("#burnsSwipeMapWrap").off("mouseleave.burnsCustomSwipe").on("mouseleave.burnsCustomSwipe", function () {
-                $(document).off("mousemove.burnsCustomSwipe touchmove.burnsCustomSwipe");
-            });
+            $("#burnsSwipeMapWrap")
+                .off("mouseleave.burnsCustomSwipe")
+                .on("mouseleave.burnsCustomSwipe", function () {
+                    $(document).off("mousemove.burnsCustomSwipe touchmove.burnsCustomSwipe");
+                });
         }
     };
     var applyBurnsSwipeViewMode = function () {
@@ -7045,7 +7008,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         var swipeOptions = {
             type: "vertical",
             map: burnsCompareMap,
-            layers: [burnsSwipeLeftLayer]
+            layers: [burnsSwipeLeftLayer],
         };
         swipeOptions.left = mapNode ? Math.round(mapNode.offsetWidth / 2) : 360;
         burnsCompareSwipe = new esri.LayerSwipe(swipeOptions, "burnsSwipeControlNode");
@@ -7143,7 +7106,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             slider: false,
             showAttribution: false,
             center: targetExtent.getCenter(),
-            zoom: map.getZoom()
+            zoom: map.getZoom(),
         });
         var leftLayer = buildMosaicLayer(swipeCompareMoment);
         leftLayer.id = "burnsSwipeLeftLayer";
@@ -7186,52 +7149,76 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         renderGallery();
         setBurnsMode(initialMode === "swipe" ? "swipe" : "gallery");
     }
-    $("#burnsModeGallery").off("click").on("click", function () { setBurnsMode("gallery"); });
-    $("#burnsModeSwipe").off("click").on("click", function () { setBurnsMode("swipe"); });
+    $("#burnsModeGallery")
+        .off("click")
+        .on("click", function () {
+            setBurnsMode("gallery");
+        });
+    $("#burnsModeSwipe")
+        .off("click")
+        .on("click", function () {
+            setBurnsMode("swipe");
+        });
     updateBurnsSwipeModeButtons();
     setBurnsSwipeOverlayOpacity(burnsSwipeOverlayOpacity);
-    $(".burns-swipe-mode-btn").off("click").on("click", function () {
-        setBurnsSwipeViewMode($(this).attr("data-burns-swipe-mode"));
-    });
-    $("#burnsSwipeOpacityRange").off("input change").on("input change", function () {
-        setBurnsSwipeOverlayOpacity($(this).val());
-    });
-    $("#burnsSwipeMonthPickerBtn").off("click").on("click", function (evt) {
-        evt.preventDefault();
-        evt.stopPropagation();
-        $("#burnsMonthPickerPopover").toggle();
-        renderMonthPicker();
-    });
-    $("#burnsMonthPickerPrevYear").off("click").on("click", function () {
-        monthPickerYear -= 1;
-        renderMonthPicker();
-    });
-    $("#burnsMonthPickerNextYear").off("click").on("click", function () {
-        monthPickerYear += 1;
-        renderMonthPicker();
-    });
-    $("#burnsMonthPickerGrid").off("click", ".burns-month-option").on("click", ".burns-month-option", function () {
-        if ($(this).css("cursor") === "not-allowed") return;
-        var monthIdx = parseInt($(this).attr("data-month"), 10);
-        var selectedMoment = esri.moment({ year: monthPickerYear, month: monthIdx, day: 1 });
-        updateSwipeLeftSelection(selectedMoment);
-        $("#burnsMonthPickerPopover").hide();
-    });
-    $("#burnsFloatingDetail").off("click.burnsMonthPickerOutside").on("click.burnsMonthPickerOutside", function (evt) {
-        if (!$(evt.target).closest("#burnsMonthPickerPopover, #burnsSwipeMonthPickerBtn").length) {
+    $(".burns-swipe-mode-btn")
+        .off("click")
+        .on("click", function () {
+            setBurnsSwipeViewMode($(this).attr("data-burns-swipe-mode"));
+        });
+    $("#burnsSwipeOpacityRange")
+        .off("input change")
+        .on("input change", function () {
+            setBurnsSwipeOverlayOpacity($(this).val());
+        });
+    $("#burnsSwipeMonthPickerBtn")
+        .off("click")
+        .on("click", function (evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            $("#burnsMonthPickerPopover").toggle();
+            renderMonthPicker();
+        });
+    $("#burnsMonthPickerPrevYear")
+        .off("click")
+        .on("click", function () {
+            monthPickerYear -= 1;
+            renderMonthPicker();
+        });
+    $("#burnsMonthPickerNextYear")
+        .off("click")
+        .on("click", function () {
+            monthPickerYear += 1;
+            renderMonthPicker();
+        });
+    $("#burnsMonthPickerGrid")
+        .off("click", ".burns-month-option")
+        .on("click", ".burns-month-option", function () {
+            if ($(this).css("cursor") === "not-allowed") return;
+            var monthIdx = parseInt($(this).attr("data-month"), 10);
+            var selectedMoment = esri.moment({ year: monthPickerYear, month: monthIdx, day: 1 });
+            updateSwipeLeftSelection(selectedMoment);
             $("#burnsMonthPickerPopover").hide();
-        }
-    });
+        });
+    $("#burnsFloatingDetail")
+        .off("click.burnsMonthPickerOutside")
+        .on("click.burnsMonthPickerOutside", function (evt) {
+            if (!$(evt.target).closest("#burnsMonthPickerPopover, #burnsSwipeMonthPickerBtn").length) {
+                $("#burnsMonthPickerPopover").hide();
+            }
+        });
 
     if ($("#burnsFloatingDetail").data("moveableInit") !== true && typeof esri !== "undefined" && esri.Moveable) {
         new esri.Moveable("burnsFloatingDetail", { handle: "burnsFloatingHeader" });
         $("#burnsFloatingDetail").data("moveableInit", true);
     }
-    $("#burnsFloatingClose").off("click").on("click", function (evt) {
-        evt.preventDefault();
-        clearBurnsFloatingMaps();
-        $("#burnsFloatingDetail").hide();
-    });
+    $("#burnsFloatingClose")
+        .off("click")
+        .on("click", function (evt) {
+            evt.preventDefault();
+            clearBurnsFloatingMaps();
+            $("#burnsFloatingDetail").hide();
+        });
 }
 
 function getMonthlyMosaicIndexLabel(index) {
@@ -7252,29 +7239,13 @@ var CLASSIFIED_POLYGON_BORDER_COLOR = [80, 210, 210, 0.95];
 var CLASSIFIED_POLYGON_BORDER_WIDTH = 0.75;
 
 function createClassifiedPolygonPreviewSymbol() {
-    var borderSymbol = new esri.SimpleLineSymbol(
-        esri.SimpleLineSymbol.STYLE_SOLID,
-        new esri.Color(CLASSIFIED_POLYGON_BORDER_COLOR),
-        CLASSIFIED_POLYGON_BORDER_WIDTH
-    );
-    return new esri.SimpleFillSymbol(
-        esri.SimpleFillSymbol.STYLE_NULL,
-        borderSymbol,
-        new esri.Color([80, 210, 210, 0])
-    );
+    var borderSymbol = new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color(CLASSIFIED_POLYGON_BORDER_COLOR), CLASSIFIED_POLYGON_BORDER_WIDTH);
+    return new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_NULL, borderSymbol, new esri.Color([80, 210, 210, 0]));
 }
 
 function createSHAnalyticsPolygonSymbol() {
-    var borderSymbol = new esri.SimpleLineSymbol(
-        esri.SimpleLineSymbol.STYLE_SOLID,
-        new esri.Color(CLASSIFIED_POLYGON_BORDER_COLOR),
-        CLASSIFIED_POLYGON_BORDER_WIDTH
-    );
-    return new esri.SimpleFillSymbol(
-        esri.SimpleFillSymbol.STYLE_NULL,
-        borderSymbol,
-        new esri.Color([80, 210, 210, 0])
-    );
+    var borderSymbol = new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color(CLASSIFIED_POLYGON_BORDER_COLOR), CLASSIFIED_POLYGON_BORDER_WIDTH);
+    return new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_NULL, borderSymbol, new esri.Color([80, 210, 210, 0]));
 }
 
 function dissolveRasterPolygonsByValue(geojson, index) {
@@ -7416,12 +7387,7 @@ function removeSmallClassifiedPolygonHoles(polygons) {
 }
 
 function isValidGeoJsonCoordinate(coord) {
-    return Array.isArray(coord) &&
-        coord.length >= 2 &&
-        typeof coord[0] == "number" &&
-        typeof coord[1] == "number" &&
-        isFinite(coord[0]) &&
-        isFinite(coord[1]);
+    return Array.isArray(coord) && coord.length >= 2 && typeof coord[0] == "number" && typeof coord[1] == "number" && isFinite(coord[0]) && isFinite(coord[1]);
 }
 
 function cleanGeoJsonRing(ring) {
@@ -7489,15 +7455,16 @@ function sanitizeClassifiedFeatureForDownload(feature) {
     var sanitizedFeature = {
         type: "Feature",
         properties: properties,
-        geometry: polygonParts.length == 1
-            ? {
-                type: "Polygon",
-                coordinates: polygonParts[0],
-            }
-            : {
-                type: "MultiPolygon",
-                coordinates: polygonParts,
-            },
+        geometry:
+            polygonParts.length == 1
+                ? {
+                      type: "Polygon",
+                      coordinates: polygonParts[0],
+                  }
+                : {
+                      type: "MultiPolygon",
+                      coordinates: polygonParts,
+                  },
     };
 
     try {
@@ -7606,20 +7573,28 @@ function clearBurnsMonthlyMosaicWindow() {
             burnsLayerClickHandle = null;
         }
         burnsGallerySyncHandles.forEach(function (handle) {
-            try { handle.remove(); } catch (e) {}
+            try {
+                handle.remove();
+            } catch (e) {}
         });
         burnsGallerySyncHandles = [];
         burnsGallerySyncing = false;
         burnsGalleryMaps.forEach(function (m) {
-            try { m.destroy(); } catch (e) {}
+            try {
+                m.destroy();
+            } catch (e) {}
         });
         burnsGalleryMaps = [];
         if (burnsCompareMap) {
-            try { burnsCompareMap.destroy(); } catch (e) {}
+            try {
+                burnsCompareMap.destroy();
+            } catch (e) {}
             burnsCompareMap = null;
         }
         if (burnsCompareSwipe) {
-            try { burnsCompareSwipe.destroy(); } catch (e) {}
+            try {
+                burnsCompareSwipe.destroy();
+            } catch (e) {}
             burnsCompareSwipe = null;
         }
         $("#burnsFloatingDetail").hide().empty();
@@ -7778,7 +7753,7 @@ function normalizeRasterMosaicGeometry(geometry) {
     return {
         mapGeometry: mapGeometry,
         geoGeometry: geoGeometry,
-        geoJson: { type: "Polygon", coordinates: geoGeometry.rings }
+        geoJson: { type: "Polygon", coordinates: geoGeometry.rings },
     };
 }
 
@@ -7792,9 +7767,11 @@ function getRasterMosaicAoi() {
 }
 
 function getRasterMosaicYears() {
-    return $("input[name='rasterMosaicYearPanel']:checked").map(function () {
-        return this.value;
-    }).get();
+    return $("input[name='rasterMosaicYearPanel']:checked")
+        .map(function () {
+            return this.value;
+        })
+        .get();
 }
 
 function getRasterMosaicOutputSize(aoi, outputType) {
@@ -7813,7 +7790,9 @@ function getRasterMosaicOutputSize(aoi, outputType) {
 }
 
 function waitRasterMosaic(ms) {
-    return new Promise(function (resolve) { setTimeout(resolve, ms); });
+    return new Promise(function (resolve) {
+        setTimeout(resolve, ms);
+    });
 }
 
 function isRasterMosaicRetryableError(err) {
@@ -7875,41 +7854,47 @@ function searchRasterMosaicCatalog() {
             collections: [rasterMosaicByocCollection],
             datetime: year + "-01-01T00:00:00Z/" + year + "-12-31T23:59:59Z",
             intersects: aoi.geoJson,
-            limit: 50
+            limit: 50,
         };
-        return rasterMosaicAjaxWithRetry({
-            url: sentinelHubCatalogProxyUrl,
-            data: JSON.stringify(catalogBody),
-            type: "POST",
-            headers: { "Content-Type": "application/json" },
-            contentType: "application/json; charset=utf-8",
-            processData: true
-        }, 3);
+        return rasterMosaicAjaxWithRetry(
+            {
+                url: sentinelHubCatalogProxyUrl,
+                data: JSON.stringify(catalogBody),
+                type: "POST",
+                headers: { "Content-Type": "application/json" },
+                contentType: "application/json; charset=utf-8",
+                processData: true,
+            },
+            3,
+        );
     });
 
-    Promise.allSettled(requests).then(function (responses) {
-        var features = [];
-        var failedRequests = 0;
-        for (var i = 0; i < responses.length; i++) {
-            if (responses[i].status == "fulfilled" && responses[i].value && responses[i].value.features) {
-                features = features.concat(responses[i].value.features);
-            } else {
-                failedRequests += 1;
-                console.error("[RASTER_MOSAIC] Error consultando catálogo", responses[i].reason);
+    Promise.allSettled(requests)
+        .then(function (responses) {
+            var features = [];
+            var failedRequests = 0;
+            for (var i = 0; i < responses.length; i++) {
+                if (responses[i].status == "fulfilled" && responses[i].value && responses[i].value.features) {
+                    features = features.concat(responses[i].value.features);
+                } else {
+                    failedRequests += 1;
+                    console.error("[RASTER_MOSAIC] Error consultando catálogo", responses[i].reason);
+                }
             }
-        }
-        renderRasterMosaicCatalogResults(features);
-        if (failedRequests > 0) {
-            showLoading("Algunos años no pudieron consultarse. Se muestran los resultados disponibles.", null, "orange", true);
-        }
-    }).catch(function (err) {
-        console.error("[RASTER_MOSAIC] Error consultando catálogo", err);
-        $("#rasterMosaicsCatalogResults").html("No se pudo consultar el catálogo de imágenes mosaico.");
-        showLoading("No se pudo consultar el catálogo de imágenes mosaico", null, "red", true);
-    }).finally(function () {
-        $("#btnRasterMosaicsCatalog").removeAttr("disabled");
-        $("#rasterMosaicsCatalogLoader").hide();
-    });
+            renderRasterMosaicCatalogResults(features);
+            if (failedRequests > 0) {
+                showLoading("Algunos años no pudieron consultarse. Se muestran los resultados disponibles.", null, "orange", true);
+            }
+        })
+        .catch(function (err) {
+            console.error("[RASTER_MOSAIC] Error consultando catálogo", err);
+            $("#rasterMosaicsCatalogResults").html("No se pudo consultar el catálogo de imágenes mosaico.");
+            showLoading("No se pudo consultar el catálogo de imágenes mosaico", null, "red", true);
+        })
+        .finally(function () {
+            $("#btnRasterMosaicsCatalog").removeAttr("disabled");
+            $("#rasterMosaicsCatalogLoader").hide();
+        });
 }
 
 function renderRasterMosaicCatalogResults(features) {
@@ -8108,11 +8093,7 @@ function showRasterMosaicFootprint(button) {
 
         var cLine = esri.Color.fromArray([255, 255, 255, 1.0]);
         var cFill = esri.Color.fromArray([40, 120, 210, 0.12]);
-        var symbol = new esri.SimpleFillSymbol(
-            esri.SimpleFillSymbol.STYLE_SOLID,
-            new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, cLine, 2),
-            cFill
-        );
+        var symbol = new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, cLine, 2), cFill);
         var graphic = new esri.Graphic(geometry, symbol);
         graphic.attributes = { rasterMosaicKey: footprintKey };
         rasterMosaicFootprintLayer.setVisibility(true);
@@ -8134,13 +8115,13 @@ function showRasterMosaicFootprint(button) {
 function buildRasterMosaicProcessBody(itemId, imageDate, outputType) {
     var aoi = rasterMosaicCurrentAoi || getRasterMosaicAoi();
     if (!aoi) return null;
-    
+
     // Get the evalscript based on the selected index
     var evalscript = rasterMosaicIdxScripts[rasterMosaicCurrentIdx];
     if (rasterMosaicCurrentIdx === rasterMosaicFullDatasetIdx && outputType == "image/tiff") {
         evalscript = rasterMosaicFullDatasetDownloadScript;
     }
-    
+
     // Default to TrueColor if index not found
     if (!evalscript) {
         evalscript = rasterMosaicIdxScripts.TrueColor;
@@ -8152,24 +8133,26 @@ function buildRasterMosaicProcessBody(itemId, imageDate, outputType) {
         input: {
             bounds: {
                 geometry: aoi.geoJson,
-                properties: { crs: "http://www.opengis.net/def/crs/EPSG/0/4326" }
+                properties: { crs: "http://www.opengis.net/def/crs/EPSG/0/4326" },
             },
-            data: [{
-                dataFilter: {
-                    id: itemId,
-                    timeRange: { from: imageDate + "T00:00:00Z", to: imageDate + "T23:59:59Z" },
-                    mosaickingOrder: "mostRecent"
+            data: [
+                {
+                    dataFilter: {
+                        id: itemId,
+                        timeRange: { from: imageDate + "T00:00:00Z", to: imageDate + "T23:59:59Z" },
+                        mosaickingOrder: "mostRecent",
+                    },
+                    type: rasterMosaicByocCollection,
                 },
-                type: rasterMosaicByocCollection
-            }]
+            ],
         },
         output: {
             width: outputSize.width,
             height: outputSize.height,
-            responses: [{ identifier: "default", format: { type: outputType } }]
+            responses: [{ identifier: "default", format: { type: outputType } }],
         },
         evalscript: evalscript,
-        implementation: "https://services-uswest2.sentinel-hub.com"
+        implementation: "https://services-uswest2.sentinel-hub.com",
     };
 }
 
@@ -8195,52 +8178,55 @@ function requestRasterMosaicImage(itemId, imageDate, outputType) {
                 method: "POST",
                 headers: headers,
                 body: JSON.stringify(requestBody),
-                mode: "cors"
-            }).then(function (response) {
-                if (!response.ok) {
-                    return response.text().then(function (text) {
-                        var err = new Error("HTTP " + response.status + " " + response.statusText);
-                        err.status = response.status;
-                        err.statusText = response.statusText;
-                        err.responseText = text;
-                        err.response = response;
-                        throw err;
-                    });
-                }
-                return response.blob();
-            }).then(resolve).catch(function (err) {
-                var isProxyError = sentinelHubImageProxyUrl && (!err.status || err.status === 0);
-                var isProxyBadRequest = sentinelHubImageProxyUrl && err && err.status === 400;
-                if (isProxyError || isProxyBadRequest) {
-                    console.warn("[RASTER_MOSAIC] Error desde proxy local, reintentando con API directa", sentinelHubImageProxyUrl, err);
-                    sentinelHubImageProxyUrl = null;
-                    if (!currentSHToken) {
+                mode: "cors",
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        return response.text().then(function (text) {
+                            var err = new Error("HTTP " + response.status + " " + response.statusText);
+                            err.status = response.status;
+                            err.statusText = response.statusText;
+                            err.responseText = text;
+                            err.response = response;
+                            throw err;
+                        });
+                    }
+                    return response.blob();
+                })
+                .then(resolve)
+                .catch(function (err) {
+                    var isProxyError = sentinelHubImageProxyUrl && (!err.status || err.status === 0);
+                    var isProxyBadRequest = sentinelHubImageProxyUrl && err && err.status === 400;
+                    if (isProxyError || isProxyBadRequest) {
+                        console.warn("[RASTER_MOSAIC] Error desde proxy local, reintentando con API directa", sentinelHubImageProxyUrl, err);
+                        sentinelHubImageProxyUrl = null;
+                        if (!currentSHToken) {
+                            fetchSHToken(function (tokenOk) {
+                                if (tokenOk) {
+                                    sendRequest(true);
+                                } else {
+                                    reject(err);
+                                }
+                            });
+                            return;
+                        }
+                        sendRequest(true);
+                        return;
+                    }
+
+                    if (!sentinelHubImageProxyUrl && err && err.status === 401 && retryOnAuthError) {
                         fetchSHToken(function (tokenOk) {
                             if (tokenOk) {
-                                sendRequest(true);
+                                sendRequest(false);
                             } else {
                                 reject(err);
                             }
                         });
                         return;
                     }
-                    sendRequest(true);
-                    return;
-                }
 
-                if (!sentinelHubImageProxyUrl && err && err.status === 401 && retryOnAuthError) {
-                    fetchSHToken(function (tokenOk) {
-                        if (tokenOk) {
-                            sendRequest(false);
-                        } else {
-                            reject(err);
-                        }
-                    });
-                    return;
-                }
-
-                reject(err);
-            });
+                    reject(err);
+                });
         };
 
         if (!sentinelHubImageProxyUrl && !currentSHToken) {
@@ -8265,26 +8251,27 @@ function downloadRasterMosaicImage(button) {
         return;
     }
     $(button).attr("disabled", "disabled");
-    requestRasterMosaicImage(itemId, imageDate, "image/tiff").then(function (blob) {
-        var url = URL.createObjectURL(blob);
-        var link = document.createElement("a");
-        link.href = url;
-        link.download = rasterMosaicCurrentIdx === rasterMosaicFullDatasetIdx
-            ? "dataset_mosaico_8_bandas_" + imageDate + ".tif"
-            : "imagen_mosaico_" + imageDate + ".tif";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    }).catch(function (err) {
-        console.error("[RASTER_MOSAIC] Error descargando imagen", err);
-        readRasterMosaicError(err).then(function (detail) {
-            if (detail) console.error("[RASTER_MOSAIC] Detalle descarga", detail);
+    requestRasterMosaicImage(itemId, imageDate, "image/tiff")
+        .then(function (blob) {
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement("a");
+            link.href = url;
+            link.download = rasterMosaicCurrentIdx === rasterMosaicFullDatasetIdx ? "dataset_mosaico_8_bandas_" + imageDate + ".tif" : "imagen_mosaico_" + imageDate + ".tif";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        })
+        .catch(function (err) {
+            console.error("[RASTER_MOSAIC] Error descargando imagen", err);
+            readRasterMosaicError(err).then(function (detail) {
+                if (detail) console.error("[RASTER_MOSAIC] Detalle descarga", detail);
+            });
+            showLoading("No se pudo descargar la imagen mosaico", null, "red", true);
+        })
+        .finally(function () {
+            $(button).removeAttr("disabled");
         });
-        showLoading("No se pudo descargar la imagen mosaico", null, "red", true);
-    }).finally(function () {
-        $(button).removeAttr("disabled");
-    });
 }
 
 function viewRasterMosaicImage(button) {
@@ -8302,17 +8289,20 @@ function viewRasterMosaicImage(button) {
     }
     $(button).attr("disabled", "disabled");
     showLoading("Cargando imagen mosaico " + imageDate + "...", null, null, true);
-    requestRasterMosaicImage(itemId, imageDate, "image/png").then(function (blob) {
-        addRasterMosaicLayer(blob, imageDate, imageKey, button);
-    }).catch(function (err) {
-        console.error("[RASTER_MOSAIC] Error visualizando imagen", err);
-        readRasterMosaicError(err).then(function (detail) {
-            if (detail) console.error("[RASTER_MOSAIC] Detalle visualización", detail);
+    requestRasterMosaicImage(itemId, imageDate, "image/png")
+        .then(function (blob) {
+            addRasterMosaicLayer(blob, imageDate, imageKey, button);
+        })
+        .catch(function (err) {
+            console.error("[RASTER_MOSAIC] Error visualizando imagen", err);
+            readRasterMosaicError(err).then(function (detail) {
+                if (detail) console.error("[RASTER_MOSAIC] Detalle visualización", detail);
+            });
+            showLoading("No se pudo visualizar la imagen mosaico", null, "red", true);
+        })
+        .finally(function () {
+            $(button).removeAttr("disabled");
         });
-        showLoading("No se pudo visualizar la imagen mosaico", null, "red", true);
-    }).finally(function () {
-        $(button).removeAttr("disabled");
-    });
 }
 
 function addRasterMosaicLayer(blob, imageDate, imageKey, button) {
@@ -8327,7 +8317,7 @@ function addRasterMosaicLayer(blob, imageDate, imageKey, button) {
         type: blob.type,
         size: blob.size,
         objectUrl: objectUrl,
-        extent: aoi.mapGeometry.getExtent()
+        extent: aoi.mapGeometry.getExtent(),
     });
     var testImage = new Image();
     testImage.onload = function () {
@@ -8338,10 +8328,12 @@ function addRasterMosaicLayer(blob, imageDate, imageKey, button) {
     };
     testImage.src = objectUrl;
     var layer = new esri.MapImageLayer({ id: "RasterMosaicPlanetLayer_" + imageKey.replace(/[^a-zA-Z0-9_]/g, "_"), opacity: 0.95 });
-    layer.addImage(new esri.MapImage({
-        extent: aoi.mapGeometry.getExtent(),
-        href: objectUrl
-    }));
+    layer.addImage(
+        new esri.MapImage({
+            extent: aoi.mapGeometry.getExtent(),
+            href: objectUrl,
+        }),
+    );
     activeRasterMosaicImages[imageKey] = { layer: layer, objectUrl: objectUrl };
     map.addLayer(layer);
     setRasterMosaicButtonActive(button, true);
@@ -8744,7 +8736,7 @@ function updateImagenes() {
                         }
                     }
                     var searchCloudValue2 = getSliderValueSafe(slider, "#searchImagenesCloud", 50);
-                    if (searchCloudValue2 != null && searchCloudValue2 != "50") {
+                    if (searchCloudValue2 != null && searchCloudValue2 != "100") {
                         var cValue = parseInt(searchCloudValue2) / 100.0;
                         d.cloud = cValue;
                     }
@@ -8973,7 +8965,7 @@ function updateImagenes2() {
                         }
                     }
                     var searchCloudValue = getSliderValueSafe(slider, "#searchImagenesCloud", 50);
-                    if (searchCloudValue != null && searchCloudValue != "50") {
+                    if (searchCloudValue != null && searchCloudValue != "100") {
                         var cValue = parseInt(searchCloudValue) / 100.0;
                         d.cloud = cValue;
                     }
@@ -10949,11 +10941,7 @@ function setupMap() {
 
     /* Search */
     // Borde azul claro y relleno transparente para zonas clasificadas
-    searchImagenSymbol = new esri.SimpleFillSymbol(
-        esri.SimpleFillSymbol.STYLE_NULL,
-        new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color(CLASSIFIED_POLYGON_BORDER_COLOR), CLASSIFIED_POLYGON_BORDER_WIDTH),
-        new esri.Color([80, 210, 210, 0])
-    );
+    searchImagenSymbol = new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_NULL, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color(CLASSIFIED_POLYGON_BORDER_COLOR), CLASSIFIED_POLYGON_BORDER_WIDTH), new esri.Color([80, 210, 210, 0]));
     searchCoberturaSymbol = new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color([0, 0, 0, 0.5]), 4), new esri.Color([0, 0, 0, 0]));
     searchImagenActiveSymbol = new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color([64, 147, 208, 0.5]), 2), new esri.Color([64, 147, 208, 0]));
 
@@ -11119,13 +11107,15 @@ function setupMap() {
                 return geojson;
             });
         }
-        return readAreaFileAsArrayBuffer(file).then(function (buffer) {
-            return window.shp(buffer);
-        }).then(function (geojson) {
-            geojson = normalizeAreaGeoJson(geojson);
-            validateAreaGeoJsonWgs84(geojson, file.name);
-            return geojson;
-        });
+        return readAreaFileAsArrayBuffer(file)
+            .then(function (buffer) {
+                return window.shp(buffer);
+            })
+            .then(function (geojson) {
+                geojson = normalizeAreaGeoJson(geojson);
+                validateAreaGeoJsonWgs84(geojson, file.name);
+                return geojson;
+            });
     }
 
     function parseAreaFile(file) {
@@ -11174,26 +11164,28 @@ function setupMap() {
             tasks.push(parseAreaFile(files[i]));
         }
 
-        Promise.all(tasks).then(function (geojsonList) {
-            if (typeof options.beforeAdd == "function") {
-                options.beforeAdd();
-            } else {
-                layer.clear();
-            }
-            for (var i = 0; i < geojsonList.length; i++) {
-                addAreaGeoJsonToLayer(geojsonList[i], layer, symbol);
-            }
-            if (layer.graphics.length > 0) {
-                map.setExtent(esri.graphicsUtils.graphicsExtent(layer.graphics).expand(2));
-            }
-            if (typeof options.afterAdd == "function") {
-                options.afterAdd();
-            }
-        }).catch(function (err) {
-            console.error("Area file load error", err);
-            showLoading(err.message || "No se pudo cargar el archivo de área.", null, "red", true);
-            inputElement.value = "";
-        });
+        Promise.all(tasks)
+            .then(function (geojsonList) {
+                if (typeof options.beforeAdd == "function") {
+                    options.beforeAdd();
+                } else {
+                    layer.clear();
+                }
+                for (var i = 0; i < geojsonList.length; i++) {
+                    addAreaGeoJsonToLayer(geojsonList[i], layer, symbol);
+                }
+                if (layer.graphics.length > 0) {
+                    map.setExtent(esri.graphicsUtils.graphicsExtent(layer.graphics).expand(2));
+                }
+                if (typeof options.afterAdd == "function") {
+                    options.afterAdd();
+                }
+            })
+            .catch(function (err) {
+                console.error("Area file load error", err);
+                showLoading(err.message || "No se pudo cargar el archivo de área.", null, "red", true);
+                inputElement.value = "";
+            });
     }
 
     /* Area/GeoJSON */
@@ -11341,7 +11333,7 @@ function setupMap() {
                     container: "body",
                     html: true,
                     placement: "left",
-                    trigger: "hover"
+                    trigger: "hover",
                 });
             } else {
                 $("#sliderCCSHStatsIndexContainer .sh-inline-info").popover("hide");
@@ -13434,7 +13426,7 @@ function applyClassifiedIndexProperties(feature, indice, stateClasification, ind
             return sum + vals;
         }, 0);
         var mean = sum / valuesArray.length;
-        feature.properties.IndexRangeMean = +(mean).toFixed(4);
+        feature.properties.IndexRangeMean = +mean.toFixed(4);
     } else {
         feature.properties.IndexRangeMean = 0;
     }
@@ -13874,13 +13866,13 @@ function clasifyIndexDisplay(image, indice) {
                             }
 
                             var activeLayerName = indice && indice.toLowerCase() === "map_deforestation" ? "Polígonos de pérdida de cobertura vegetal" : "Polígonos de quemas";
-                            if (typeof setActiveLayer === 'function') {
+                            if (typeof setActiveLayer === "function") {
                                 setActiveLayer({
-                                    tipo: 'quemas',
+                                    tipo: "quemas",
                                     nombre: activeLayerName,
                                     datos: {
                                         Indice: indice,
-                                        'Cantidad de polígonos': polygons.features.length
+                                        "Cantidad de polígonos": polygons.features.length,
                                     },
                                     toggle: function (visible) {
                                         if (currentSHLayer) {
@@ -13889,16 +13881,14 @@ function clasifyIndexDisplay(image, indice) {
                                                 ensureBurnPolygonsOnTop();
                                             }
                                         }
-                                    }
+                                    },
                                 });
                             }
 
                             lastProcessedSHResult = {
                                 index: indice,
                                 polygons: polygons,
-                                fileName: ($("#selectSHStatsIdx").val() == "NBR" || $("#selectSHStatsIdx").val() == "NBR2" || $("#selectSHStatsIdx").val() == "MAP_DEFORESTATION")
-                                    ? $("#selectSHStatsIdx").val() + "_reclasificado.geojson"
-                                    : $("#selectSHStatsIdx").val() + "_reclasificado_" + new Date().toISOString().split("T")[0] + ".geojson",
+                                fileName: $("#selectSHStatsIdx").val() == "NBR" || $("#selectSHStatsIdx").val() == "NBR2" || $("#selectSHStatsIdx").val() == "MAP_DEFORESTATION" ? $("#selectSHStatsIdx").val() + "_reclasificado.geojson" : $("#selectSHStatsIdx").val() + "_reclasificado_" + new Date().toISOString().split("T")[0] + ".geojson",
                             };
                             $("#btnSHDownloadStats").removeAttr("disabled");
                             bindBurnsLayerClickHandler();
@@ -14432,7 +14422,7 @@ function placeOverlayContainerBelowGraphics(mapDiv) {
             mapDiv.appendChild(shImageOverlayContainer);
         }
     } catch (e) {
-        console.warn('[OVERLAY] placeOverlayContainerBelowGraphics error', e);
+        console.warn("[OVERLAY] placeOverlayContainerBelowGraphics error", e);
     }
 }
 
@@ -14443,12 +14433,14 @@ function addImageOverlayFromBlob(blob, extent) {
         shImageOverlayUrl = URL.createObjectURL(blob);
         shImageOverlayLayer = new esri.MapImageLayer({
             id: "SHBurnsSentinelOverlay",
-            opacity: 0.95
+            opacity: 0.95,
         });
-        shImageOverlayLayer.addImage(new esri.MapImage({
-            extent: extent,
-            href: shImageOverlayUrl
-        }));
+        shImageOverlayLayer.addImage(
+            new esri.MapImage({
+                extent: extent,
+                href: shImageOverlayUrl,
+            }),
+        );
 
         map.addLayer(shImageOverlayLayer);
         ensureBurnPolygonsOnTop();
@@ -14458,7 +14450,7 @@ function addImageOverlayFromBlob(blob, extent) {
             });
         }
     } catch (e) {
-        console.warn('[OVERLAY] addImageOverlayFromBlob error', e);
+        console.warn("[OVERLAY] addImageOverlayFromBlob error", e);
     }
 }
 
@@ -14470,15 +14462,13 @@ function fetchBurnsSentinelOverlay() {
             console.warn("[BURNS_OVERLAY] Faltan datos para cargar Sentinel", {
                 hasToken: !!currentSHToken,
                 hasSearchArea: !!burnsSearchAreaMap,
-                hasMap: !!map
+                hasMap: !!map,
             });
             return;
         }
 
-        var sliderValue = (sliderSHStats && typeof sliderSHStats.getValue === "function") ? parseInt(sliderSHStats.getValue(), 10) : 0;
-        var selectedLabel = (Array.isArray(currentSHStatsLabels) && currentSHStatsLabels.length > 0)
-            ? currentSHStatsLabels[Math.max(0, Math.min(sliderValue, currentSHStatsLabels.length - 1))]
-            : null;
+        var sliderValue = sliderSHStats && typeof sliderSHStats.getValue === "function" ? parseInt(sliderSHStats.getValue(), 10) : 0;
+        var selectedLabel = Array.isArray(currentSHStatsLabels) && currentSHStatsLabels.length > 0 ? currentSHStatsLabels[Math.max(0, Math.min(sliderValue, currentSHStatsLabels.length - 1))] : null;
 
         // Fallback para flujo de quema: cuando no hay serie temporal/slider, usar fecha final del panel.
         if (!selectedLabel || typeof selectedLabel !== "string") {
@@ -14495,7 +14485,7 @@ function fetchBurnsSentinelOverlay() {
             console.warn("[BURNS_OVERLAY] No hay fecha seleccionada para cargar Sentinel", {
                 sliderValue: sliderValue,
                 labelsCount: Array.isArray(currentSHStatsLabels) ? currentSHStatsLabels.length : 0,
-                fallbackEndDate: $("#selectSHStats2").val()
+                fallbackEndDate: $("#selectSHStats2").val(),
             });
             return;
         }
@@ -14512,18 +14502,14 @@ function fetchBurnsSentinelOverlay() {
 
         // Sentinel Process API espera geometría en EPSG:4326 para este payload.
         var searchArea4326 = burnsSearchAreaGeo;
-        if (
-            searchArea4326 &&
-            searchArea4326.spatialReference &&
-            searchArea4326.spatialReference.wkid === 3857
-        ) {
+        if (searchArea4326 && searchArea4326.spatialReference && searchArea4326.spatialReference.wkid === 3857) {
             searchArea4326 = esri.webMercatorUtils.webMercatorToGeographic(searchArea4326);
         }
         var requestRings = searchArea4326 && searchArea4326.rings ? searchArea4326.rings : null;
         if (!requestRings || !requestRings.length) {
             console.warn("[BURNS_OVERLAY] Geometría inválida para solicitud Sentinel", {
                 hasSearchAreaGeo: !!searchArea4326,
-                sr: searchArea4326 && searchArea4326.spatialReference ? searchArea4326.spatialReference.wkid : null
+                sr: searchArea4326 && searchArea4326.spatialReference ? searchArea4326.spatialReference.wkid : null,
             });
             return;
         }
@@ -14534,14 +14520,16 @@ function fetchBurnsSentinelOverlay() {
                     geometry: { type: "Polygon", coordinates: requestRings },
                     properties: { crs: "http://www.opengis.net/def/crs/EPSG/0/4326" },
                 },
-                data: [{
-                     dataFilter: {
-                        timeRange: { from: dateStart + "T00:00:00Z", to: dateEnd + "T23:59:59Z" },
-                        maxCloudCoverage: maxCloudCoveragePercent,
-                        mosaickingOrder: "mostRecent"
+                data: [
+                    {
+                        dataFilter: {
+                            timeRange: { from: dateStart + "T00:00:00Z", to: dateEnd + "T23:59:59Z" },
+                            maxCloudCoverage: maxCloudCoveragePercent,
+                            mosaickingOrder: "mostRecent",
+                        },
+                        type: "sentinel-2-l2a",
                     },
-                    type: "sentinel-2-l2a",
-                }],
+                ],
             },
             output: {
                 resx: 0.000269494697,
@@ -14555,7 +14543,7 @@ function setup() {
 function evaluatePixel(s) {
   if (s.dataMask === 0) return [0, 0, 0, 0];
   return [2.5 * s.B04, 2.5 * s.B03, 2.5 * s.B02, 1];
-}`
+}`,
         };
 
         $.ajax({
@@ -14587,19 +14575,17 @@ function evaluatePixel(s) {
 function updateImageOverlayPosition() {
     if (!shImageOverlay || !shImageOverlay._extent) return;
     var ext = shImageOverlay._extent;
-    var minX = ext.xmin, minY = ext.ymin, maxX = ext.xmax, maxY = ext.ymax;
+    var minX = ext.xmin,
+        minY = ext.ymin,
+        maxX = ext.xmax,
+        maxY = ext.ymax;
     try {
         // Usar SR real del extent para evitar reproyección doble (causaba overlay fuera de vista).
         var extentSR = ext.spatialReference || map.spatialReference || new esri.SpatialReference({ wkid: 4326 });
         var pTL = new esri.geometry.Point(minX, maxY, extentSR);
         var pBR = new esri.geometry.Point(maxX, minY, extentSR);
 
-        if (
-            map.spatialReference &&
-            map.spatialReference.wkid === 3857 &&
-            extentSR &&
-            extentSR.wkid === 4326
-        ) {
+        if (map.spatialReference && map.spatialReference.wkid === 3857 && extentSR && extentSR.wkid === 4326) {
             pTL = esri.geometry.geographicToWebMercator(pTL);
             pBR = esri.geometry.geographicToWebMercator(pBR);
         }
@@ -14609,12 +14595,11 @@ function updateImageOverlayPosition() {
         var top = Math.min(tl.y, br.y);
         var width = Math.abs(br.x - tl.x);
         var height = Math.abs(br.y - tl.y);
-        shImageOverlay.style.left = left + 'px';
-        shImageOverlay.style.top = top + 'px';
-        shImageOverlay.style.width = width + 'px';
-        shImageOverlay.style.height = height + 'px';
+        shImageOverlay.style.left = left + "px";
+        shImageOverlay.style.top = top + "px";
+        shImageOverlay.style.width = width + "px";
+        shImageOverlay.style.height = height + "px";
     } catch (e) {
-        console.warn('[OVERLAY] update position error', e);
+        console.warn("[OVERLAY] update position error", e);
     }
 }
-
