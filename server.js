@@ -2,8 +2,8 @@ const http = require("http");
 const https = require("https");
 const querystring = require("querystring");
 
-const CLIENT_ID = process.env.SENTINEL_HUB_CLIENT_ID || "e9b1b73f-2ee8-4add-86ed-673541dc930d";
-const CLIENT_SECRET = process.env.SENTINEL_HUB_CLIENT_SECRET || "qLnyHdNf5I0ssBpdBEG976WO4OIeGJPS";
+const CLIENT_ID = process.env.SENTINEL_HUB_CLIENT_ID || "89499d2c-67f4-4f57-86c0-cdef0ece217e";
+const CLIENT_SECRET = process.env.SENTINEL_HUB_CLIENT_SECRET || "lVjg5KL43HXjNMQiRll1IruOXlvG3KqM";
 const PLANET_API_KEY = process.env.PLANET_API_KEY || "PLAKd9faf25449294d9d86096fe33d980662";
 const PRISMA_API_BASE_URL = (process.env.PRISMA_API_BASE_URL || "https://prisma.procalculo.com").replace(/\/+$/, "");
 const PRISMA_USERNAME = process.env.PRISMA_USERNAME || "karens_diaz";

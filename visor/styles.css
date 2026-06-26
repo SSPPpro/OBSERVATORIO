@@ -4017,7 +4017,8 @@ footer .gov-co-logo-pie-mesa {
     color: #263b3d;
 }
 
-.sh-analytics-floating-download-btn {
+.sh-analytics-floating-download-btn,
+.sh-analytics-floating-hex-download-btn {
     background: transparent;
     border: 0;
     color: #3d5e4f;
@@ -4025,7 +4026,8 @@ footer .gov-co-logo-pie-mesa {
     padding: 0 4px;
 }
 
-.sh-analytics-floating-pdf-btn {
+.sh-analytics-floating-pdf-btn,
+.sh-analytics-floating-hex-pdf-btn {
     background: transparent;
     border: 0;
     color: #3d5e4f;
@@ -4035,13 +4037,22 @@ footer .gov-co-logo-pie-mesa {
 }
 
 .sh-analytics-floating-download-btn:focus,
-.sh-analytics-floating-pdf-btn:focus {
+.sh-analytics-floating-pdf-btn:focus,
+.sh-analytics-floating-hex-download-btn:focus,
+.sh-analytics-floating-hex-pdf-btn:focus {
     outline: none;
 }
 
 .sh-analytics-floating-download-btn:hover,
-.sh-analytics-floating-pdf-btn:hover {
+.sh-analytics-floating-pdf-btn:hover,
+.sh-analytics-floating-hex-download-btn:hover,
+.sh-analytics-floating-hex-pdf-btn:hover {
     color: #263b3d;
+}
+
+.sh-analytics-hex-number {
+    color: #2f4f4f;
+    font-weight: 600;
 }
 
 .sh-analytics-pdf-icon {
@@ -4056,9 +4067,10 @@ footer .gov-co-logo-pie-mesa {
 
 .sh-analytics-pdf-report {
     background: #ffffff;
+    box-sizing: border-box;
     color: #1f2f3d;
     font-family: Arial, sans-serif;
-    padding: 18px;
+    padding: 14px 18px;
     width: 1080px;
 }
 
@@ -4067,8 +4079,8 @@ footer .gov-co-logo-pie-mesa {
     border-bottom: 3px solid #4f6b5a;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
 }
 
 .sh-pdf-header h1 {
@@ -4081,6 +4093,20 @@ footer .gov-co-logo-pie-mesa {
     max-width: 90px;
 }
 
+.sh-pdf-header img.sh-pdf-header-logo {
+    display: block;
+    max-height: 52px;
+    max-width: 260px;
+    object-fit: contain;
+}
+
+.sh-pdf-header img.sh-pdf-right-logo {
+    display: block;
+    max-height: 58px;
+    max-width: 320px;
+    object-fit: contain;
+}
+
 .sh-pdf-kicker,
 .sh-pdf-subtitle,
 .sh-pdf-footnote {
@@ -4090,34 +4116,34 @@ footer .gov-co-logo-pie-mesa {
 
 .sh-pdf-metrics {
     display: grid;
-    gap: 12px;
+    gap: 10px;
     grid-template-columns: repeat(3, 1fr);
-    margin-bottom: 14px;
+    margin-bottom: 10px;
 }
 
 .sh-pdf-metrics div {
     background: #eef3f6;
     border: 1px solid #d2dde4;
-    border-radius: 8px;
-    padding: 12px;
+    border-radius: 6px;
+    padding: 7px 10px;
 }
 
 .sh-pdf-metrics strong {
     color: #2f4f4f;
     display: block;
-    font-size: 18px;
-    margin-bottom: 4px;
+    font-size: 16px;
+    margin-bottom: 2px;
 }
 
 .sh-pdf-metrics span {
     color: #586a75;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .sh-analytics-pdf-report h2 {
     color: #4f6b5a;
     font-size: 16px;
-    margin: 0 0 10px;
+    margin: 0 0 6px;
 }
 
 .sh-pdf-gallery {
@@ -4128,6 +4154,11 @@ footer .gov-co-logo-pie-mesa {
 
 .sh-pdf-gallery-item {
     border: 1px solid #d2dde4;
+    box-sizing: border-box;
+    break-inside: avoid;
+    overflow: hidden;
+    page-break-inside: avoid;
+    position: relative;
 }
 
 .sh-pdf-map-copy,
@@ -4151,16 +4182,107 @@ footer .gov-co-logo-pie-mesa {
 }
 
 .sh-pdf-caption {
+    background: rgba(255, 255, 255, 0.94);
+    bottom: auto;
+    box-sizing: border-box;
+    color: #1f2f3d;
     font-size: 11px;
     font-weight: 700;
-    padding: 4px 6px;
+    height: 24px;
+    left: 0;
+    line-height: 14px;
+    padding: 5px 6px;
+    position: absolute;
+    right: 0;
     text-transform: capitalize;
+    top: 0;
+    z-index: 2;
 }
 
 .sh-pdf-empty {
     border: 1px solid #d2dde4;
     color: #65737e;
     padding: 24px;
+}
+
+.sh-pdf-cadastral-page {
+    break-before: page;
+    box-sizing: border-box;
+    display: block;
+    margin-top: 0;
+    page-break-before: always;
+    padding-top: 0;
+}
+
+.sh-pdf-cadastral-page h2 {
+    color: #4f6b5a;
+    font-size: 18px;
+    margin: 0 0 4px;
+}
+
+.sh-pdf-cadastral-source {
+    color: #65737e;
+    font-size: 11px;
+    margin-bottom: 10px;
+}
+
+.sh-pdf-cadastral-table {
+    border-collapse: collapse;
+    color: #344450;
+    font-size: 11px;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.sh-pdf-cadastral-table th {
+    background: #5b6f66;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 8px 8px;
+    text-align: left;
+}
+
+.sh-pdf-cadastral-table th:first-child,
+.sh-pdf-cadastral-table td:first-child {
+    width: 40px;
+}
+
+.sh-pdf-cadastral-table th:nth-child(2),
+.sh-pdf-cadastral-table td:nth-child(2) {
+    width: 42%;
+}
+
+.sh-pdf-cadastral-table th:nth-child(3),
+.sh-pdf-cadastral-table td:nth-child(3) {
+    width: 30%;
+}
+
+.sh-pdf-cadastral-table th:nth-child(4),
+.sh-pdf-cadastral-table td:nth-child(4) {
+    width: 14%;
+}
+
+.sh-pdf-cadastral-table th:nth-child(5),
+.sh-pdf-cadastral-table td:nth-child(5) {
+    text-align: right;
+    width: 10%;
+}
+
+.sh-pdf-cadastral-table td {
+    border-bottom: 1px solid #e3e9ed;
+    overflow-wrap: anywhere;
+    padding: 8px;
+    vertical-align: top;
+}
+
+.sh-pdf-cadastral-table tbody tr:nth-child(even) {
+    background: #edf2f6;
+}
+
+.sh-pdf-cadastral-empty {
+    color: #65737e;
+    font-weight: 600;
+    text-align: center !important;
 }
 
 .sh-analytics-municipality-table tfoot td {

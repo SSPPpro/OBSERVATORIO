@@ -726,6 +726,7 @@ var sentinelHubClientSecret = runtimeEnv.sentinelHubClientSecret || null;
 var sentinelHubOAuthTokenUrl = runtimeEnv.sentinelHubOAuthTokenUrl || "https://services.sentinel-hub.com/oauth/token";
 var sentinelHubUseDirectToken = runtimeEnv.sentinelHubUseDirectToken === true;
 var sentinelHubTokenProxyUrl = runtimeEnv.sentinelHubTokenProxyUrl || "/sh-token";
+var sentinelHubFallbackTokenProxyUrl = runtimeEnv.sentinelHubFallbackTokenProxyUrl || "";
 var sentinelHubProcessProxyUrl = runtimeEnv.sentinelHubProcessProxyUrl || "/get-image";
 var sentinelHubCatalogProxyUrl = runtimeEnv.sentinelHubCatalogProxyUrl || "/get-catalog";
 var sentinelHubImageProxyUrl = runtimeEnv.sentinelHubImageProxyUrl || runtimeEnv.sentinelHubProcessProxyUrl || "/get-image";
@@ -1153,7 +1154,7 @@ var currentSHAnalyticsAdminLevel = "department";
 var currentSHAnalyticsDateFilter = { min: null, max: null, start: null, end: null };
 var currentSHAnalyticsDateFilterUserChanged = false;
 var currentSHAnalyticsLoadRequestId = 0;
-var SH_ANALYTICS_HEX_SIDE_METERS = 8000;
+var SH_ANALYTICS_HEX_SIDE_METERS = 2000;
 var SH_ANALYTICS_HEX_PALETTES = {
     building: {
         veryLow: { label: "Muy bajo", color: [242, 240, 247, 0.58] },
@@ -2901,43 +2902,13 @@ function fetchSHToken(callback) {
         return;
     }
 
-    var getTokenWithProxy = function () {
-        if (!sentinelHubTokenProxyUrl) {
-            console.error("[TOKEN] No hay URL de proxy configurada para Sentinel Hub");
+    var getTokenDirect = function () {
+        if (!sentinelHubUseDirectToken || !sentinelHubClientId || !sentinelHubClientSecret) {
+            console.error("[TOKEN] No hay credenciales configuradas para fallback directo de Sentinel Hub");
             callback(false);
             return;
         }
 
-        console.log("[TOKEN] Obteniendo token desde proxy configurado:", sentinelHubTokenProxyUrl);
-
-        $.ajax({
-            url: sentinelHubTokenProxyUrl,
-            type: "POST",
-            dataType: "json",
-            success: function (data) {
-                if (data && data.access_token) {
-                    currentSHToken = data.access_token;
-                    console.log("[TOKEN] Token obtenido exitosamente:", currentSHToken.substring(0, 20) + "...");
-                    callback(true);
-                    return;
-                }
-                console.error("[TOKEN] Respuesta inválida del proxy:", data);
-                callback(false);
-            },
-            error: function (xhr, status, error) {
-                console.error("[TOKEN] Error en proxy local:", {
-                    status: xhr.status,
-                    statusText: xhr.statusText,
-                    response: xhr.responseText ? String(xhr.responseText).substring(0, 500) : null,
-                    ajaxStatus: status,
-                    ajaxError: error,
-                });
-                callback(false);
-            }
-        });
-    };
-
-    if (sentinelHubUseDirectToken && sentinelHubClientId && sentinelHubClientSecret) {
         var tokenBody = "grant_type=client_credentials&client_id=" + encodeURIComponent(sentinelHubClientId) + "&client_secret=" + encodeURIComponent(sentinelHubClientSecret);
         console.log("[TOKEN] Obteniendo token directamente desde Sentinel Hub");
 
@@ -2955,11 +2926,7 @@ function fetchSHToken(callback) {
                     return;
                 }
                 console.error("[TOKEN] Respuesta inválida de Sentinel Hub:", data);
-                if (sentinelHubTokenProxyUrl) {
-                    getTokenWithProxy();
-                } else {
-                    callback(false);
-                }
+                callback(false);
             },
             error: function (xhr, status, error) {
                 console.error("[TOKEN] Error obteniendo token directo:", {
@@ -2969,17 +2936,56 @@ function fetchSHToken(callback) {
                     ajaxStatus: status,
                     ajaxError: error,
                 });
-                if (sentinelHubTokenProxyUrl) {
-                    getTokenWithProxy();
-                } else {
-                    callback(false);
-                }
+                callback(false);
             }
         });
-        return;
-    }
+    };
 
-    getTokenWithProxy();
+    var getTokenWithProxy = function (proxyUrl, fallbackCallback) {
+        if (!proxyUrl) {
+            console.error("[TOKEN] No hay URL de proxy configurada para Sentinel Hub");
+            fallbackCallback();
+            return;
+        }
+
+        console.log("[TOKEN] Obteniendo token desde proxy configurado:", proxyUrl);
+
+        $.ajax({
+            url: proxyUrl,
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                if (data && data.access_token) {
+                    currentSHToken = data.access_token;
+                    console.log("[TOKEN] Token obtenido exitosamente:", currentSHToken.substring(0, 20) + "...");
+                    callback(true);
+                    return;
+                }
+                console.error("[TOKEN] Respuesta inválida del proxy:", data);
+                fallbackCallback();
+            },
+            error: function (xhr, status, error) {
+                console.error("[TOKEN] Error en proxy configurado:", {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    response: xhr.responseText ? String(xhr.responseText).substring(0, 500) : null,
+                    ajaxStatus: status,
+                    ajaxError: error,
+                });
+                fallbackCallback();
+            }
+        });
+    };
+
+    var getTokenWithLocalProxy = function () {
+        if (sentinelHubFallbackTokenProxyUrl && sentinelHubFallbackTokenProxyUrl !== sentinelHubTokenProxyUrl) {
+            getTokenWithProxy(sentinelHubFallbackTokenProxyUrl, getTokenDirect);
+            return;
+        }
+        getTokenDirect();
+    };
+
+    getTokenWithProxy(sentinelHubTokenProxyUrl, getTokenWithLocalProxy);
 }
 
 function fetchSHTokenViaProxy(callback) {
@@ -4501,6 +4507,198 @@ function downloadSHAnalyticsFeatureByIndex(dataIndex) {
     downloadSHAnalyticsFeatureCollection([currentSHAnalyticsData[dataIndex]], "planet_analytics_poligono_" + dataIndex + ".geojson");
 }
 
+function getSHAnalyticsHexGraphicByKey(hexKey) {
+    if (hexKey === null || hexKey === undefined || !currentSHAnalyticsHexLayer || !currentSHAnalyticsHexLayer.graphics) {
+        return null;
+    }
+    hexKey = String(hexKey);
+    for (var i = 0; i < currentSHAnalyticsHexLayer.graphics.length; i++) {
+        var graphic = currentSHAnalyticsHexLayer.graphics[i];
+        if (graphic && graphic.attributes && String(graphic.attributes.analyticsHexKey) === hexKey) {
+            return graphic;
+        }
+    }
+    return null;
+}
+
+function getSHAnalyticsHexInfoByDataIndex(dataIndex) {
+    dataIndex = parseInt(dataIndex, 10);
+    if (isNaN(dataIndex) || !currentSHAnalyticsHexLayer || !currentSHAnalyticsHexLayer.graphics) {
+        return null;
+    }
+    for (var i = 0; i < currentSHAnalyticsHexLayer.graphics.length; i++) {
+        var graphic = currentSHAnalyticsHexLayer.graphics[i];
+        var attrs = graphic && graphic.attributes ? graphic.attributes : null;
+        if (!attrs || !attrs.indexes) {
+            continue;
+        }
+        if (attrs.indexes.indexOf(dataIndex) !== -1) {
+            return {
+                key: attrs.analyticsHexKey,
+                number: attrs.hexNumber || (i + 1),
+                count: attrs.count || attrs.indexes.length,
+                indexes: attrs.indexes || [],
+            };
+        }
+    }
+    return null;
+}
+
+function getSHAnalyticsHexInfoByKey(hexKey) {
+    var graphic = getSHAnalyticsHexGraphicByKey(hexKey);
+    var attrs = graphic && graphic.attributes ? graphic.attributes : null;
+    if (!attrs) {
+        return null;
+    }
+    return {
+        key: attrs.analyticsHexKey,
+        number: attrs.hexNumber || "",
+        count: attrs.count || (attrs.indexes ? attrs.indexes.length : 0),
+        indexes: attrs.indexes || [],
+    };
+}
+
+function getSHAnalyticsFeaturesByIndexes(indexes) {
+    return (indexes || []).map(function (dataIndex) {
+        return currentSHAnalyticsData && currentSHAnalyticsData[dataIndex] ? currentSHAnalyticsData[dataIndex] : null;
+    }).filter(function (feature) {
+        return !!feature;
+    });
+}
+
+function downloadSHAnalyticsHexData(hexKey) {
+    var hexInfo = getSHAnalyticsHexInfoByKey(hexKey);
+    if (!hexInfo || !hexInfo.indexes.length) {
+        showLoading("No se encontraron cambios para descargar en este hexágono", null, "red", true);
+        return;
+    }
+    downloadSHAnalyticsFeatureCollection(
+        getSHAnalyticsFeaturesByIndexes(hexInfo.indexes),
+        "planet_analytics_hexagono_" + slugifySHAnalyticsFileName(hexInfo.number || hexInfo.key) + ".geojson"
+    );
+}
+
+function getSHAnalyticsReportDateLabel(feature) {
+    var properties = feature && feature.properties ? feature.properties : {};
+    return properties.date || properties.acquired || properties.published || "No identificado";
+}
+
+function getSHAnalyticsMostRecentHexFeature(hexInfo) {
+    var selected = null;
+    var selectedMoment = null;
+    (hexInfo.indexes || []).forEach(function (dataIndex) {
+        var feature = currentSHAnalyticsData && currentSHAnalyticsData[dataIndex] ? currentSHAnalyticsData[dataIndex] : null;
+        var detectionMoment = getSHAnalyticsDetectionMoment(feature);
+        if (!feature || !detectionMoment) {
+            return;
+        }
+        if (!selectedMoment || detectionMoment.isAfter(selectedMoment)) {
+            selected = feature;
+            selectedMoment = detectionMoment;
+        }
+    });
+    return {
+        feature: selected,
+        moment: selectedMoment,
+    };
+}
+
+function getSHAnalyticsHexFeatureCollection(hexInfo) {
+    return {
+        type: "FeatureCollection",
+        features: getSHAnalyticsFeaturesByIndexes(hexInfo.indexes),
+    };
+}
+
+function buildSHAnalyticsGalleryHtml(galleryItems) {
+    var galleryHtml = "";
+    (galleryItems || []).forEach(function (item) {
+        if (!item || !item.image) {
+            return;
+        }
+        galleryHtml += "<div class='sh-pdf-gallery-item'>" +
+            "<img class='sh-pdf-map-image' src='" + item.image + "' />" +
+            "<div class='sh-pdf-caption'>" + escapeSHAnalyticsHtml(item.label) + "</div>" +
+        "</div>";
+    });
+    if (!galleryHtml) {
+        galleryHtml = "<div class='sh-pdf-empty'>No hay mosaicos disponibles para incluir en el reporte.</div>";
+    }
+    return galleryHtml;
+}
+
+function buildSHAnalyticsHexPdfReportHtml(hexInfo, galleryItems, cadastralResult) {
+    var subscriptionLabel = $("#selectSHAnalyticsSubs option:selected").text() || "Planet Analytics";
+    var rangeStart = formatSHAnalyticsMonthLabel(currentSHAnalyticsDateFilter.start);
+    var rangeEnd = formatSHAnalyticsMonthLabel(currentSHAnalyticsDateFilter.end);
+    var rangeLabel = rangeStart || rangeEnd ? (rangeStart + " - " + rangeEnd) : "No definido";
+    var mostRecent = getSHAnalyticsMostRecentHexFeature(hexInfo);
+    var latestDate = mostRecent.feature ? getSHAnalyticsReportDateLabel(mostRecent.feature) : "No identificado";
+    return "<div id='shAnalyticsPdfReport' class='sh-analytics-pdf-report'>" +
+        "<div class='sh-pdf-header'>" +
+            "<div><img class='sh-pdf-header-logo' src='data/Logo_OBS.png' /><h1>Reporte de Hexágono — Cambios</h1><div class='sh-pdf-subtitle'>" + escapeSHAnalyticsHtml(subscriptionLabel) + "</div></div>" +
+            "<img class='sh-pdf-right-logo' src='data/logos_cm.png' />" +
+        "</div>" +
+        "<div class='sh-pdf-metrics'>" +
+            "<div><strong>" + escapeSHAnalyticsHtml(hexInfo.number || hexInfo.key) + "</strong><span>Hexágono</span></div>" +
+            "<div><strong>" + escapeSHAnalyticsHtml(hexInfo.count) + "</strong><span>Cambios en el hexágono</span></div>" +
+            "<div><strong>" + escapeSHAnalyticsHtml(latestDate) + "</strong><span>Cambio más reciente</span></div>" +
+        "</div>" +
+        "<h2>Galería — Mosaicos mensuales</h2>" +
+        "<div class='sh-pdf-gallery'>" + buildSHAnalyticsGalleryHtml(galleryItems) + "</div>" +
+        "<div class='sh-pdf-footnote'>Mosaicos mensuales Planet · rango de publicación " + escapeSHAnalyticsHtml(rangeLabel) + "</div>" +
+        buildSHAnalyticsCadastralReportHtml(cadastralResult, { sourceText: "Predios intersectados con el hexágono seleccionado." }) +
+    "</div>";
+}
+
+function downloadSHAnalyticsHexPdfReport(hexKey) {
+    if (typeof html2pdf === "undefined") {
+        showLoading("No se encontró la librería para generar PDF", null, "red", true);
+        return;
+    }
+    var hexInfo = getSHAnalyticsHexInfoByKey(hexKey);
+    if (!hexInfo || !hexInfo.indexes.length) {
+        showLoading("No se encontraron cambios para reportar en este hexágono", null, "red", true);
+        return;
+    }
+    showLoading("Generando reporte del hexágono", "loading", "gold", false);
+    window.setTimeout(function () {
+        Promise.all([
+            createSHAnalyticsHexPdfMosaicSnapshots(hexInfo),
+            loadSHAnalyticsHexCadastralReportRows(hexInfo),
+        ]).then(function (reportData) {
+            var galleryItems = reportData[0];
+            var cadastralResult = reportData[1];
+            var reportNode = document.createElement("div");
+            reportNode.style.position = "fixed";
+            reportNode.style.left = "-12000px";
+            reportNode.style.top = "0";
+            reportNode.innerHTML = buildSHAnalyticsHexPdfReportHtml(hexInfo, galleryItems, cadastralResult);
+            document.body.appendChild(reportNode);
+            return html2pdf().set({
+                margin: 8,
+                filename: "Reporte_OTT_analytics_hexagono_" + slugifySHAnalyticsFileName(hexInfo.number || hexInfo.key) + ".pdf",
+                image: { type: "jpeg", quality: 0.95 },
+                html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+                jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+                pagebreak: { mode: ["css", "legacy"], before: [".sh-pdf-cadastral-page"] },
+            }).from(reportNode.firstChild).save().then(function () {
+                document.body.removeChild(reportNode);
+                closeLoading();
+            }).catch(function (err) {
+                document.body.removeChild(reportNode);
+                closeLoading();
+                console.error("No se pudo generar el reporte del hexágono", err);
+                showLoading("No se pudo generar el reporte del hexágono", null, "red", true);
+            });
+        }).catch(function (err) {
+            closeLoading();
+            console.error("No se pudo preparar el reporte del hexágono", err);
+            showLoading("No se pudo preparar el reporte del hexágono", null, "red", true);
+        });
+    }, 300);
+}
+
 function getSHAnalyticsPdfMonthLabel(dateMoment) {
     var monthNamesEs = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
     return monthNamesEs[dateMoment.month()] + " " + dateMoment.format("YYYY");
@@ -4591,7 +4789,8 @@ function drawSHAnalyticsPdfPolygonGeometry(ctx, geometry, topLeftPx, zoom) {
     ctx.restore();
 }
 
-function createSHAnalyticsPdfMosaicSnapshot(feature, dateMoment) {
+function createSHAnalyticsPdfMosaicSnapshot(feature, dateMoment, options) {
+    options = options || {};
     if (!feature || !feature.geometry || !planetTileProxyUrl) {
         return Promise.resolve(null);
     }
@@ -4599,7 +4798,7 @@ function createSHAnalyticsPdfMosaicSnapshot(feature, dateMoment) {
     var height = 300;
     var bbox;
     try {
-        bbox = turf.bbox(feature);
+        bbox = turf.bbox(options.bboxFeature || feature);
     } catch (e) {
         return Promise.resolve(null);
     }
@@ -4651,7 +4850,10 @@ function createSHAnalyticsPdfMosaicSnapshot(feature, dateMoment) {
         }
     }
     return Promise.all(tilePromises).then(function () {
-        drawSHAnalyticsPdfPolygonGeometry(ctx, feature.geometry, topLeftPx, zoom);
+        var overlayGeometries = options.overlayGeometries || [feature.geometry];
+        overlayGeometries.forEach(function (geometry) {
+            drawSHAnalyticsPdfPolygonGeometry(ctx, geometry, topLeftPx, zoom);
+        });
         return {
             label: getSHAnalyticsPdfMonthLabel(dateMoment),
             image: canvas.toDataURL("image/png"),
@@ -4676,6 +4878,35 @@ function createSHAnalyticsPdfMosaicSnapshots(dataIndex) {
         });
     }).catch(function (err) {
         console.warn("No se pudieron crear las miniaturas del PDF con teselas Planet", err);
+        return [];
+    });
+}
+
+function createSHAnalyticsHexPdfMosaicSnapshots(hexInfo) {
+    var mostRecent = getSHAnalyticsMostRecentHexFeature(hexInfo);
+    var featureCollection = getSHAnalyticsHexFeatureCollection(hexInfo);
+    var features = featureCollection.features || [];
+    if (!mostRecent.feature || !mostRecent.moment || !features.length || !planetTileProxyUrl) {
+        return Promise.resolve([]);
+    }
+    var overlayGeometries = features.map(function (feature) {
+        return feature.geometry;
+    }).filter(function (geometry) {
+        return !!geometry;
+    });
+    var snapshots = [];
+    for (var i = 0; i <= 5; i++) {
+        snapshots.push(createSHAnalyticsPdfMosaicSnapshot(mostRecent.feature, mostRecent.moment.clone().add(-i, "month"), {
+            bboxFeature: featureCollection,
+            overlayGeometries: overlayGeometries,
+        }));
+    }
+    return Promise.all(snapshots).then(function (items) {
+        return items.filter(function (item) {
+            return !!(item && item.image);
+        });
+    }).catch(function (err) {
+        console.warn("No se pudieron crear las miniaturas del PDF del hexágono", err);
         return [];
     });
 }
@@ -4788,7 +5019,296 @@ function formatSHAnalyticsCentroid9377(coordinates) {
     }
 }
 
-function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems) {
+var SH_ANALYTICS_CADASTRAL_FEATURE_SERVICE_URL = "https://services2.arcgis.com/RVvWzU3lgJISqdke/arcgis/rest/services/Base_Catastral_Publica_del_Gestor_IGAC_04_2026/FeatureServer";
+var SH_ANALYTICS_CADASTRAL_MAX_ROWS = 80;
+
+function getSHAnalyticsCadastralGeometry(feature) {
+    if (!feature || !feature.geometry || typeof Terraformer === "undefined" || !Terraformer.ArcGIS || !Terraformer.ArcGIS.fromGeoJSON) {
+        return null;
+    }
+    try {
+        var arcgisGeometry = Terraformer.ArcGIS.fromGeoJSON(feature.geometry);
+        if (arcgisGeometry && arcgisGeometry.rings && arcgisGeometry.rings.length) {
+            arcgisGeometry.spatialReference = { wkid: 4326 };
+            return arcgisGeometry;
+        }
+    } catch (err) {
+        console.warn("No se pudo convertir la detección para consulta catastral", err);
+    }
+    return null;
+}
+
+function querySHAnalyticsCadastralLayer(layerId, options) {
+    options = options || {};
+    var requestData = {
+        f: "json",
+        where: options.where || "1=1",
+        outFields: options.outFields || "*",
+        returnGeometry: options.returnGeometry ? "true" : "false",
+        resultRecordCount: options.resultRecordCount || 2000,
+    };
+    if (options.returnGeometry) {
+        requestData.outSR = options.outSR || "4326";
+    }
+    if (options.geometry) {
+        requestData.geometry = JSON.stringify(options.geometry);
+        requestData.geometryType = "esriGeometryPolygon";
+        requestData.inSR = options.inSR || (options.geometry.spatialReference && (options.geometry.spatialReference.latestWkid || options.geometry.spatialReference.wkid)) || "4326";
+        requestData.spatialRel = "esriSpatialRelIntersects";
+    }
+    return $.ajax({
+        url: SH_ANALYTICS_CADASTRAL_FEATURE_SERVICE_URL + "/" + layerId + "/query",
+        method: "POST",
+        data: requestData,
+    }).then(function (response) {
+        if (typeof response === "string") {
+            response = JSON.parse(response);
+        }
+        if (response && response.error) {
+            throw response.error;
+        }
+        return response && response.features ? response.features : [];
+    });
+}
+
+function buildSHAnalyticsSqlIn(fieldName, values) {
+    var cleanValues = [];
+    (values || []).forEach(function (value) {
+        value = value === null || value === undefined ? "" : String(value).trim();
+        if (value && cleanValues.indexOf(value) === -1) {
+            cleanValues.push(value);
+        }
+    });
+    if (cleanValues.length === 0) {
+        return "1=0";
+    }
+    return fieldName + " IN (" + cleanValues.map(function (value) {
+        return "'" + value.replace(/'/g, "''") + "'";
+    }).join(",") + ")";
+}
+
+function countSHAnalyticsConstructionsByTerreno(features) {
+    var counts = {};
+    (features || []).forEach(function (feature) {
+        var attrs = feature && feature.attributes ? feature.attributes : {};
+        var terrenoCodigo = attrs.TERRENO_CODIGO || attrs.Terreno_Codigo;
+        if (!terrenoCodigo) {
+            return;
+        }
+        counts[terrenoCodigo] = counts[terrenoCodigo] || { total: 0, edificaciones: {} };
+        if (attrs.CODIGO_EDIFICACION !== null && attrs.CODIGO_EDIFICACION !== undefined && attrs.CODIGO_EDIFICACION !== "") {
+            counts[terrenoCodigo].edificaciones[String(attrs.CODIGO_EDIFICACION)] = true;
+        } else {
+            counts[terrenoCodigo].total += 1;
+        }
+    });
+    Object.keys(counts).forEach(function (codigo) {
+        var uniqueCount = Object.keys(counts[codigo].edificaciones).length;
+        counts[codigo] = uniqueCount || counts[codigo].total;
+    });
+    return counts;
+}
+
+function indexSHAnalyticsAddressByTerreno(features) {
+    var addresses = {};
+    (features || []).forEach(function (feature) {
+        var attrs = feature && feature.attributes ? feature.attributes : {};
+        var terrenoCodigo = attrs.TERRENO_CODIGO || attrs.Terreno_Codigo;
+        var address = attrs.TEXTO || attrs.Texto;
+        if (terrenoCodigo && address && !addresses[terrenoCodigo]) {
+            addresses[terrenoCodigo] = address;
+        }
+    });
+    return addresses;
+}
+
+function getSHAnalyticsCadastralMetricLabel() {
+    return getSHAnalyticsSelectedClassLabel() === "road" ? "Vías" : "Edificios";
+}
+
+function getSHAnalyticsFeatureJsonGeometry(feature) {
+    if (!feature || !feature.geometry || typeof esri === "undefined" || !esri.jsonUtilsGeometry || !esri.jsonUtilsGeometry.fromJson) {
+        return null;
+    }
+    try {
+        return esri.jsonUtilsGeometry.fromJson(feature.geometry);
+    } catch (err) {
+        console.warn("No se pudo convertir geometría catastral", err);
+        return null;
+    }
+}
+
+function countSHAnalyticsMetricFeaturesByTerreno(terrenos, metricFeatures, uniqueField) {
+    var counts = {};
+    if (typeof esri === "undefined" || !esri.geometryEngine || !esri.geometryEngine.intersects) {
+        return counts;
+    }
+    var metricGeometries = (metricFeatures || []).map(function (feature) {
+        var attrs = feature && feature.attributes ? feature.attributes : {};
+        return {
+            id: attrs[uniqueField] || attrs.OBJECTID,
+            geometry: getSHAnalyticsFeatureJsonGeometry(feature),
+        };
+    }).filter(function (item) {
+        return !!item.geometry;
+    });
+    (terrenos || []).forEach(function (feature) {
+        var attrs = feature && feature.attributes ? feature.attributes : {};
+        var codigo = attrs.CODIGO || attrs.Codigo || "";
+        var terrenoGeometry = getSHAnalyticsFeatureJsonGeometry(feature);
+        if (!codigo || !terrenoGeometry) {
+            return;
+        }
+        var seenItems = {};
+        metricGeometries.forEach(function (metricFeature) {
+            try {
+                if (esri.geometryEngine.intersects(terrenoGeometry, metricFeature.geometry)) {
+                    seenItems[metricFeature.id || JSON.stringify(metricFeature.geometry.toJson ? metricFeature.geometry.toJson() : metricFeature.geometry)] = true;
+                }
+            } catch (err) {}
+        });
+        counts[codigo] = Object.keys(seenItems).length;
+    });
+    return counts;
+}
+
+function mergeSHAnalyticsMetricCounts(primaryCounts, fallbackCounts) {
+    var merged = {};
+    Object.keys(primaryCounts || {}).forEach(function (key) {
+        merged[key] = primaryCounts[key];
+    });
+    Object.keys(fallbackCounts || {}).forEach(function (key) {
+        if (!merged[key]) {
+            merged[key] = fallbackCounts[key];
+        }
+    });
+    return merged;
+}
+
+function buildSHAnalyticsCadastralRows(terrenos, zoneLabel, metricCounts) {
+    metricCounts = metricCounts || {};
+    return (terrenos || []).map(function (feature) {
+        var attrs = feature && feature.attributes ? feature.attributes : {};
+        var codigo = attrs.CODIGO || attrs.Codigo || "";
+        var hasMetric = Object.prototype.hasOwnProperty.call(metricCounts, codigo);
+        return {
+            predio: codigo || "—",
+            block: attrs.MANZANA_CODIGO || attrs.Manzana_Codigo || attrs.VEREDA_CODIGO || attrs.Vereda_Codigo || "—",
+            zone: zoneLabel,
+            metric: hasMetric ? metricCounts[codigo] : "",
+            hasMetric: hasMetric,
+        };
+    });
+}
+
+function loadSHAnalyticsCadastralReportRowsByGeometry(queryGeometry, emptyGeometryMessage) {
+    if (!queryGeometry) {
+        return Promise.resolve({ rows: [], error: emptyGeometryMessage || "No se pudo preparar la geometría para consultar catastro." });
+    }
+    var isRoadReport = getSHAnalyticsSelectedClassLabel() === "road";
+    return Promise.all([
+        querySHAnalyticsCadastralLayer(7, { geometry: queryGeometry, outFields: "CODIGO,MANZANA_CODIGO", returnGeometry: true }),
+        querySHAnalyticsCadastralLayer(14, { geometry: queryGeometry, outFields: "CODIGO,VEREDA_CODIGO", returnGeometry: true }),
+    ]).then(function (terrainGroups) {
+        var urbanTerrenos = terrainGroups[0] || [];
+        var ruralTerrenos = terrainGroups[1] || [];
+        var urbanCodes = urbanTerrenos.map(function (feature) { return feature.attributes && feature.attributes.CODIGO; });
+        var ruralCodes = ruralTerrenos.map(function (feature) { return feature.attributes && feature.attributes.CODIGO; });
+        var detailRequests = isRoadReport
+            ? [
+                querySHAnalyticsCadastralLayer(0, { geometry: queryGeometry, outFields: "OBJECTID", returnGeometry: true }),
+                querySHAnalyticsCadastralLayer(10, { geometry: queryGeometry, outFields: "OBJECTID", returnGeometry: true }),
+            ]
+            : [
+                querySHAnalyticsCadastralLayer(3, { geometry: queryGeometry, outFields: "OBJECTID,TERRENO_CODIGO,CODIGO_EDIFICACION", returnGeometry: true }),
+                querySHAnalyticsCadastralLayer(12, { geometry: queryGeometry, outFields: "OBJECTID,TERRENO_CODIGO,CODIGO_EDIFICACION", returnGeometry: true }),
+            ];
+        return Promise.all(detailRequests).then(function (detailGroups) {
+            var metricUniqueField = isRoadReport ? "OBJECTID" : "CODIGO_EDIFICACION";
+            var urbanSpatialCounts = countSHAnalyticsMetricFeaturesByTerreno(urbanTerrenos, detailGroups[0], metricUniqueField);
+            var ruralSpatialCounts = countSHAnalyticsMetricFeaturesByTerreno(ruralTerrenos, detailGroups[1], metricUniqueField);
+            var urbanMetricCounts = isRoadReport ? urbanSpatialCounts : mergeSHAnalyticsMetricCounts(urbanSpatialCounts, countSHAnalyticsConstructionsByTerreno(detailGroups[0]));
+            var ruralMetricCounts = isRoadReport ? ruralSpatialCounts : mergeSHAnalyticsMetricCounts(ruralSpatialCounts, countSHAnalyticsConstructionsByTerreno(detailGroups[1]));
+            var urbanRows = buildSHAnalyticsCadastralRows(
+                urbanTerrenos,
+                "Urbano",
+                urbanMetricCounts
+            );
+            var ruralRows = buildSHAnalyticsCadastralRows(
+                ruralTerrenos,
+                "Rural",
+                ruralMetricCounts
+            );
+            var rows = urbanRows.concat(ruralRows).slice(0, SH_ANALYTICS_CADASTRAL_MAX_ROWS);
+            return { rows: rows, error: rows.length ? null : "No se encontraron predios con " + getSHAnalyticsCadastralMetricLabel().toLowerCase() + " intersectados." };
+        });
+    }).catch(function (err) {
+        console.error("No se pudo consultar la base catastral para el reporte", err);
+        return { rows: [], error: "No se pudo consultar la base catastral pública del IGAC." };
+    });
+}
+
+function loadSHAnalyticsCadastralReportRows(dataIndex) {
+    dataIndex = parseInt(dataIndex, 10);
+    var feature = currentSHAnalyticsData && currentSHAnalyticsData[dataIndex] ? currentSHAnalyticsData[dataIndex] : null;
+    return loadSHAnalyticsCadastralReportRowsByGeometry(
+        getSHAnalyticsCadastralGeometry(feature),
+        "No se pudo preparar la geometría de la detección para consultar catastro."
+    );
+}
+
+function loadSHAnalyticsHexCadastralReportRows(hexInfo) {
+    var graphic = getSHAnalyticsHexGraphicByKey(hexInfo && hexInfo.key);
+    var queryGeometry = null;
+    if (graphic && graphic.geometry) {
+        var geometry = graphic.geometry;
+        try {
+            if (geometry.spatialReference && (geometry.spatialReference.wkid === 102100 || geometry.spatialReference.wkid === 3857 || geometry.spatialReference.latestWkid === 3857) && esri.webMercatorUtils && esri.webMercatorUtils.webMercatorToGeographic) {
+                geometry = esri.webMercatorUtils.webMercatorToGeographic(geometry);
+            }
+        } catch (err) {
+            console.warn("No se pudo convertir el hexágono para consulta catastral", err);
+        }
+        if (geometry && geometry.toJson) {
+            queryGeometry = geometry.toJson();
+        }
+    }
+    return loadSHAnalyticsCadastralReportRowsByGeometry(
+        queryGeometry,
+        "No se pudo preparar la geometría del hexágono para consultar catastro."
+    );
+}
+
+function buildSHAnalyticsCadastralReportHtml(cadastralResult, options) {
+    options = options || {};
+    cadastralResult = cadastralResult || {};
+    var rows = cadastralResult.rows || [];
+    var metricLabel = getSHAnalyticsCadastralMetricLabel();
+    var bodyHtml = "";
+    if (rows.length === 0) {
+        bodyHtml = "<tr><td colspan='5' class='sh-pdf-cadastral-empty'>" + escapeSHAnalyticsHtml(cadastralResult.error || "No se encontraron predios intersectados por la detección seleccionada.") + "</td></tr>";
+    } else {
+        rows.forEach(function (row, idx) {
+            bodyHtml += "<tr>" +
+                "<td>" + (idx + 1) + "</td>" +
+                "<td>" + escapeSHAnalyticsHtml(row.predio) + "</td>" +
+                "<td>" + escapeSHAnalyticsHtml(row.block) + "</td>" +
+                "<td>" + escapeSHAnalyticsHtml(row.zone) + "</td>" +
+                "<td>" + escapeSHAnalyticsHtml(row.metric === "" ? "" : row.metric) + "</td>" +
+            "</tr>";
+        });
+    }
+    return "<div class='sh-pdf-cadastral-page'>" +
+        "<h2>Cruce catastral — Base Catastral Pública IGAC 04/2026</h2>" +
+        "<div class='sh-pdf-cadastral-source'>" + escapeSHAnalyticsHtml(options.sourceText || "Predios intersectados con la detección seleccionada.") + "</div>" +
+        "<table class='sh-pdf-cadastral-table'>" +
+            "<thead><tr><th>#</th><th>Predio (código)</th><th>Manzana/Vereda</th><th>Zona</th><th>" + escapeSHAnalyticsHtml(metricLabel) + "</th></tr></thead>" +
+            "<tbody>" + bodyHtml + "</tbody>" +
+        "</table>" +
+    "</div>";
+}
+
+function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems, cadastralResult) {
     dataIndex = parseInt(dataIndex, 10);
     var feature = currentSHAnalyticsData && currentSHAnalyticsData[dataIndex] ? currentSHAnalyticsData[dataIndex] : null;
     var properties = feature && feature.properties ? feature.properties : {};
@@ -4818,8 +5338,8 @@ function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems) {
     }
     return "<div id='shAnalyticsPdfReport' class='sh-analytics-pdf-report'>" +
         "<div class='sh-pdf-header'>" +
-            "<div><div class='sh-pdf-kicker'>Observatorio de la Tierra y el Territorio</div><h1>Reporte de Detalle — Cambios</h1><div class='sh-pdf-subtitle'>" + escapeSHAnalyticsHtml(subscriptionLabel) + "</div></div>" +
-            "<img src='../images/logo_igac.png' onerror='this.style.display=\"none\"' />" +
+            "<div><img class='sh-pdf-header-logo' src='data/Logo_OBS.png' /><h1>Reporte de Detalle — Cambios</h1><div class='sh-pdf-subtitle'>" + escapeSHAnalyticsHtml(subscriptionLabel) + "</div></div>" +
+            "<img class='sh-pdf-right-logo' src='data/logos_cm.png' />" +
         "</div>" +
         "<div class='sh-pdf-metrics'>" +
             "<div><strong>" + escapeSHAnalyticsHtml(detectionDate) + "</strong><span>Fecha de detección</span></div>" +
@@ -4829,6 +5349,7 @@ function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems) {
         "<h2>Galería — Mosaicos mensuales</h2>" +
         "<div class='sh-pdf-gallery'>" + galleryHtml + "</div>" +
         "<div class='sh-pdf-footnote'>Mosaicos mensuales Planet · vista centrada en el polígono seleccionado</div>" +
+        buildSHAnalyticsCadastralReportHtml(cadastralResult) +
     "</div>";
 }
 
@@ -4843,22 +5364,28 @@ function downloadSHAnalyticsPolygonPdf(dataIndex) {
             ensureSHAnalyticsAdminLevelLoaded("department"),
             ensureSHAnalyticsAdminLevelLoaded("municipality"),
         ]).then(function () {
-            return captureSHAnalyticsPdfGalleryItems(dataIndex);
-        }).then(function (galleryItems) {
-            var reportHtml = buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems);
+            return Promise.all([
+                captureSHAnalyticsPdfGalleryItems(dataIndex),
+                loadSHAnalyticsCadastralReportRows(dataIndex),
+            ]);
+        }).then(function (reportData) {
+            var galleryItems = reportData[0];
+            var cadastralResult = reportData[1];
+            var reportHtml = buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems, cadastralResult);
             var reportNode = document.createElement("div");
             reportNode.style.position = "fixed";
             reportNode.style.left = "-12000px";
             reportNode.style.top = "0";
             reportNode.innerHTML = reportHtml;
             document.body.appendChild(reportNode);
-            var fileName = "reporte_planet_analytics_poligono_" + dataIndex + ".pdf";
+            var fileName = "Reporte_OTT_analytics_poligono_" + dataIndex + ".pdf";
             return html2pdf().set({
                 margin: 8,
                 filename: fileName,
                 image: { type: "jpeg", quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true, allowTaint: true },
                 jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+                pagebreak: { mode: ["css", "legacy"], before: [".sh-pdf-cadastral-page"] },
             }).from(reportNode.firstChild).save().then(function () {
                 document.body.removeChild(reportNode);
                 closeLoading();
@@ -5789,13 +6316,14 @@ function renderSHAnalyticsHexHeatmap(summary) {
     });
     var classBreaks = getSHAnalyticsHexClassBreaks(hexBins);
 
-    Object.keys(hexBins).forEach(function (key) {
+    Object.keys(hexBins).sort().forEach(function (key, hexIdx) {
         var bin = hexBins[key];
         var hexCenter = getSHAnalyticsHexCenter(bin);
         var geometry = createSHAnalyticsHexPolygon(hexCenter);
         var graphic = new esri.Graphic(geometry, createSHAnalyticsHexSymbol(bin.count, classBreaks));
         graphic.attributes = {
             analyticsHexKey: bin.key,
+            hexNumber: hexIdx + 1,
             count: bin.count,
             indexes: bin.indexes,
             maxCount: maxCount,
@@ -6130,9 +6658,17 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     var hasSelectedPolygon = !!(selectedGraphic && selectedGraphic.geometry);
     var shAnalyticsDownloadHtml = "";
     var shAnalyticsPdfHtml = "";
+    var shAnalyticsHexHtml = "";
     if (indexLabel === "Planet Analytics - Detección de Cambios" && shAnalyticsDataIndex !== undefined && shAnalyticsDataIndex !== null) {
         shAnalyticsDownloadHtml = "<button type='button' class='sh-analytics-floating-download-btn' title='Descargar polígono' data-sh-analytics-index='" + shAnalyticsDataIndex + "'><span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span></button>";
         shAnalyticsPdfHtml = "<button type='button' class='sh-analytics-floating-pdf-btn' title='Descargar reporte PDF' data-sh-analytics-index='" + shAnalyticsDataIndex + "'><span class='sh-analytics-pdf-icon'>PDF</span></button>";
+        var shAnalyticsHexInfo = getSHAnalyticsHexInfoByDataIndex(shAnalyticsDataIndex);
+        if (shAnalyticsHexInfo) {
+            shAnalyticsHexHtml = "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Hexágono</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='sh-analytics-hex-number'>" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.number) + "</span>" +
+                "<button type='button' class='sh-analytics-floating-hex-download-btn' title='Descargar cambios del hexágono' data-sh-analytics-hex='" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.key) + "'><span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span></button>" +
+                "<button type='button' class='sh-analytics-floating-hex-pdf-btn' title='Descargar reporte del hexágono' data-sh-analytics-hex='" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.key) + "'><span class='sh-analytics-pdf-icon'>PDF</span></button>" +
+            "</td></tr>";
+        }
     }
     var panelHtml = "<div id='burnsFloatingHeader' style='display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#4f6b5a;color:#fff;border-radius:6px 6px 0 0;cursor:move;'>" +
         "<div style='font-weight:600;'>Visualización de mosaicos mensuales</div>" +
@@ -6141,6 +6677,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         "<table style='width:100%;border-collapse:collapse;background:#fff;border:1px solid #ddd;'>" +
         "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Índice</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='burns-index-label'>" + indexLabel + "</span>" + shAnalyticsDownloadHtml + shAnalyticsPdfHtml + indexInfoHtml + "</td></tr>" +
         (detectionDateLabel ? "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Fecha de detección</td><td style='padding:8px;border-bottom:1px solid #eee;'>" + detectionDateLabel + "</td></tr>" : "") +
+        shAnalyticsHexHtml +
         "</table>" +
         "<div id='burnsSelectPolygonMessage' style='display:" + (hasSelectedPolygon ? "none" : "block") + ";margin:8px 0 0;padding:9px 10px;border:1px solid #d9e2dc;background:#f6faf7;color:#3d5e4f;font-weight:600;text-align:center;border-radius:4px;'>Seleccione poligono en el mapa para desplegar los mosaicos</div>" +
         "<div style='display:flex;gap:8px;margin-top:8px;margin-bottom:10px;'>" +
@@ -6203,6 +6740,14 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     $(".sh-analytics-floating-pdf-btn").off("click").on("click", function (evt) {
         evt.preventDefault();
         downloadSHAnalyticsPolygonPdf($(this).attr("data-sh-analytics-index"));
+    });
+    $(".sh-analytics-floating-hex-download-btn").off("click").on("click", function (evt) {
+        evt.preventDefault();
+        downloadSHAnalyticsHexData($(this).attr("data-sh-analytics-hex"));
+    });
+    $(".sh-analytics-floating-hex-pdf-btn").off("click").on("click", function (evt) {
+        evt.preventDefault();
+        downloadSHAnalyticsHexPdfReport($(this).attr("data-sh-analytics-hex"));
     });
 
     var targetExtent = null;
