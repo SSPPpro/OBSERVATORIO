@@ -136,7 +136,9 @@ async function getSentinelHubToken() {
         },
       },
       tokenBody,
-      "Token request"
+      "Token request",
+      1,
+      20000
     );
 
     if (tokenResponse.statusCode !== 200) {
@@ -326,45 +328,12 @@ const server = http.createServer((req, res) => {
   }
 
   if (req.url === "/sh-token" && req.method === "POST") {
-    const body = querystring.stringify({
-      grant_type: "client_credentials",
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
+    getSentinelHubToken().then((accessToken) => {
+      sendJson(res, 200, origin, { access_token: accessToken });
+    }).catch((error) => {
+      console.error("[PROXY] Sentinel Hub token request error:", error.message);
+      sendJson(res, 502, origin, { error: "Sentinel Hub token request failed", detail: error.message });
     });
-
-    console.log("[PROXY] Token request from:", origin);
-    console.log("[PROXY] Request body length:", body.length);
-
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Content-Length": Buffer.byteLength(body),
-      },
-    };
-
-    const shReq = https.request("https://services.sentinel-hub.com/oauth/token", options, (shRes) => {
-      let responseData = "";
-      console.log("[PROXY] SH Response status:", shRes.statusCode);
-      
-      shRes.on("data", (chunk) => {
-        responseData += chunk;
-      });
-      shRes.on("end", () => {
-        console.log("[PROXY] SH Response received, size:", responseData.length);
-        res.writeHead(shRes.statusCode, { "Content-Type": "application/json", "Access-Control-Allow-Origin": origin });
-        res.end(responseData);
-      });
-    });
-
-    shReq.on("error", (error) => {
-      console.error("[PROXY] SH Request error:", error.message);
-      res.writeHead(500, { "Content-Type": "application/json", "Access-Control-Allow-Origin": origin });
-      res.end(JSON.stringify({ error: error.message }));
-    });
-
-    shReq.write(body);
-    shReq.end();
     return;
   }
 

@@ -748,6 +748,9 @@ var sentinelHubFallbackTokenProxyUrl = runtimeEnv.sentinelHubFallbackTokenProxyU
 var sentinelHubProcessProxyUrl = runtimeEnv.sentinelHubProcessProxyUrl || "/get-image";
 var sentinelHubCatalogProxyUrl = runtimeEnv.sentinelHubCatalogProxyUrl || "/get-catalog";
 var sentinelHubImageProxyUrl = runtimeEnv.sentinelHubImageProxyUrl || runtimeEnv.sentinelHubProcessProxyUrl || "/get-image";
+var sentinelHubFallbackProcessProxyUrl = runtimeEnv.sentinelHubFallbackProcessProxyUrl || "";
+var sentinelHubFallbackCatalogProxyUrl = runtimeEnv.sentinelHubFallbackCatalogProxyUrl || "";
+var sentinelHubFallbackImageProxyUrl = runtimeEnv.sentinelHubFallbackImageProxyUrl || runtimeEnv.sentinelHubFallbackProcessProxyUrl || "";
 var rasterMosaicByocCollection = runtimeEnv.rasterMosaicByocCollection || "byoc-7c1511e7-42fd-41ee-925a-bedb3c24cc44";
 var rasterMosaicLayer = null;
 var rasterMosaicObjectUrl = null;
@@ -1199,6 +1202,12 @@ var burnsCompareMap = null;
 var burnsCompareSwipe = null;
 var burnsGallerySyncing = false;
 var burnsGallerySyncHandles = [];
+var superResLimitGeoJson = null;
+var superResLimitLoadPromise = null;
+var burnsSuperResMap = null;
+var burnsSuperResSwipe = null;
+var burnsSuperResLeftLayer = null;
+var burnsSuperResRightLayer = null;
 var cachePrisma;
 // var LOCAL_NO_LOGIN = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
 
@@ -2975,13 +2984,35 @@ function fetchSHToken(callback) {
 
         console.log("[TOKEN] Obteniendo token desde proxy configurado:", proxyUrl);
 
+        var useFallbackSentinelProxy = function () {
+            if (proxyUrl !== sentinelHubFallbackTokenProxyUrl) {
+                return;
+            }
+            if (sentinelHubFallbackProcessProxyUrl) {
+                sentinelHubProcessProxyUrl = sentinelHubFallbackProcessProxyUrl;
+            }
+            if (sentinelHubFallbackCatalogProxyUrl) {
+                sentinelHubCatalogProxyUrl = sentinelHubFallbackCatalogProxyUrl;
+            }
+            if (sentinelHubFallbackImageProxyUrl) {
+                sentinelHubImageProxyUrl = sentinelHubFallbackImageProxyUrl;
+            }
+            console.warn("[TOKEN] Usando proxy local para Sentinel Hub", {
+                token: proxyUrl,
+                catalog: sentinelHubCatalogProxyUrl,
+                process: sentinelHubProcessProxyUrl,
+            });
+        };
+
         $.ajax({
             url: proxyUrl,
             type: "POST",
             dataType: "json",
+            timeout: 25000,
             success: function (data) {
                 if (data && data.access_token) {
                     currentSHToken = data.access_token;
+                    useFallbackSentinelProxy();
                     console.log("[TOKEN] Token obtenido exitosamente:", currentSHToken.substring(0, 20) + "...");
                     callback(true);
                     return;
@@ -4561,6 +4592,84 @@ function getSHAnalyticsHexInfoByKey(hexKey) {
     };
 }
 
+function loadSuperResLimitGeoJson() {
+    if (superResLimitGeoJson) {
+        return Promise.resolve(superResLimitGeoJson);
+    }
+    if (superResLimitLoadPromise) {
+        return superResLimitLoadPromise;
+    }
+    superResLimitLoadPromise = $.ajax({
+        url: "data/limite-SuperRes.geojson",
+        method: "GET",
+        dataType: "json",
+        cache: true,
+    }).then(function (geojson) {
+        superResLimitGeoJson = geojson;
+        return superResLimitGeoJson;
+    }).catch(function (err) {
+        superResLimitLoadPromise = null;
+        console.warn("No se pudo cargar el límite de SuperResolución", err);
+        return null;
+    });
+    return superResLimitLoadPromise;
+}
+
+function getSHAnalyticsGraphicGeoJsonFeature(graphic) {
+    if (!graphic || !graphic.geometry || typeof Terraformer === "undefined" || !Terraformer.ArcGIS || !Terraformer.ArcGIS.toGeoJSON) {
+        return null;
+    }
+    try {
+        var geometry = graphic.geometry;
+        if (geometry.spatialReference && (geometry.spatialReference.wkid === 102100 || geometry.spatialReference.wkid === 3857 || geometry.spatialReference.latestWkid === 3857) && esri.webMercatorUtils && esri.webMercatorUtils.webMercatorToGeographic) {
+            geometry = esri.webMercatorUtils.webMercatorToGeographic(geometry);
+        }
+        var geojsonGeometry = Terraformer.ArcGIS.toGeoJSON(geometry.toJson ? geometry.toJson() : geometry);
+        return geojsonGeometry ? { type: "Feature", properties: {}, geometry: geojsonGeometry } : null;
+    } catch (err) {
+        console.warn("No se pudo convertir la geometría para validar SuperResolución", err);
+        return null;
+    }
+}
+
+function doesSHAnalyticsGraphicIntersectSuperResLimit(graphic, limitGeoJson) {
+    if (!graphic || !limitGeoJson || !window.turf || !turf.bbox) {
+        return false;
+    }
+    var graphicFeature = getSHAnalyticsGraphicGeoJsonFeature(graphic);
+    if (!graphicFeature || !graphicFeature.geometry) {
+        return false;
+    }
+    var limitFeatures = limitGeoJson.type === "FeatureCollection" ? limitGeoJson.features : [limitGeoJson];
+    var graphicBbox = turf.bbox(graphicFeature);
+    for (var i = 0; i < limitFeatures.length; i++) {
+        var limitFeature = limitFeatures[i];
+        if (!limitFeature || !limitFeature.geometry) {
+            continue;
+        }
+        try {
+            var limitBbox = turf.bbox(limitFeature);
+            if (graphicBbox[2] < limitBbox[0] || graphicBbox[0] > limitBbox[2] || graphicBbox[3] < limitBbox[1] || graphicBbox[1] > limitBbox[3]) {
+                continue;
+            }
+            if (turf.booleanIntersects) {
+                if (turf.booleanIntersects(graphicFeature, limitFeature)) {
+                    return true;
+                }
+            } else if (turf.booleanPointInPolygon && turf.pointOnFeature) {
+                var graphicPoint = turf.pointOnFeature(graphicFeature);
+                var limitPoint = turf.pointOnFeature(limitFeature);
+                if ((graphicPoint && turf.booleanPointInPolygon(graphicPoint, limitFeature)) || (limitPoint && turf.booleanPointInPolygon(limitPoint, graphicFeature))) {
+                    return true;
+                }
+            }
+        } catch (err) {
+            console.warn("No se pudo evaluar intersección con SuperResolución", err);
+        }
+    }
+    return false;
+}
+
 function getSHAnalyticsFeaturesByIndexes(indexes) {
     return (indexes || []).map(function (dataIndex) {
         return currentSHAnalyticsData && currentSHAnalyticsData[dataIndex] ? currentSHAnalyticsData[dataIndex] : null;
@@ -4583,7 +4692,18 @@ function downloadSHAnalyticsHexData(hexKey) {
 
 function getSHAnalyticsReportDateLabel(feature) {
     var properties = feature && feature.properties ? feature.properties : {};
-    return properties.date || properties.acquired || properties.published || "No identificado";
+    return formatSHAnalyticsDateLabel(properties.date || properties.acquired || properties.published || "");
+}
+
+function formatSHAnalyticsDateLabel(value) {
+    if (!value) {
+        return "No identificado";
+    }
+    var dateMoment = esri.moment(value, [esri.moment.ISO_8601, "DD/MM/YYYY", "DD/MM/yyyy", "YYYY-MM-DD"]);
+    if (!dateMoment.isValid()) {
+        return value;
+    }
+    return dateMoment.format("DD/MM/YYYY");
 }
 
 function getSHAnalyticsMostRecentHexFeature(hexInfo) {
@@ -5057,10 +5177,17 @@ function querySHAnalyticsCadastralLayer(layerId, options) {
         requestData.outSR = options.outSR || "4326";
     }
     if (options.geometry) {
-        requestData.geometry = JSON.stringify(options.geometry);
-        requestData.geometryType = "esriGeometryPolygon";
-        requestData.inSR = options.inSR || (options.geometry.spatialReference && (options.geometry.spatialReference.latestWkid || options.geometry.spatialReference.wkid)) || "4326";
+        var geometryForRequest = Object.assign({}, options.geometry);
+        var geometryDistance = options.distance || geometryForRequest._queryDistanceMeters;
+        delete geometryForRequest._queryDistanceMeters;
+        requestData.geometry = JSON.stringify(geometryForRequest);
+        requestData.geometryType = options.geometryType || (geometryForRequest.x !== undefined ? "esriGeometryPoint" : (geometryForRequest.xmin !== undefined ? "esriGeometryEnvelope" : "esriGeometryPolygon"));
+        requestData.inSR = options.inSR || (geometryForRequest.spatialReference && (geometryForRequest.spatialReference.latestWkid || geometryForRequest.spatialReference.wkid)) || "4326";
         requestData.spatialRel = "esriSpatialRelIntersects";
+        if (geometryDistance) {
+            requestData.distance = geometryDistance;
+            requestData.units = options.units || "esriSRUnit_Meter";
+        }
     }
     return $.ajax({
         url: SH_ANALYTICS_CADASTRAL_FEATURE_SERVICE_URL + "/" + layerId + "/query",
@@ -5075,6 +5202,79 @@ function querySHAnalyticsCadastralLayer(layerId, options) {
         }
         return response && response.features ? response.features : [];
     });
+}
+
+function getSHAnalyticsCadastralEnvelope(queryGeometry, bufferMeters) {
+    if (!queryGeometry) {
+        return null;
+    }
+    var xs = [];
+    var ys = [];
+    var collectCoordinate = function (coord) {
+        if (coord && coord.length >= 2 && isFinite(coord[0]) && isFinite(coord[1])) {
+            xs.push(Number(coord[0]));
+            ys.push(Number(coord[1]));
+        }
+    };
+    var collectRings = function (rings) {
+        (rings || []).forEach(function (ring) {
+            (ring || []).forEach(collectCoordinate);
+        });
+    };
+    if (queryGeometry.rings) {
+        collectRings(queryGeometry.rings);
+    }
+    if (queryGeometry.xmin !== undefined && queryGeometry.ymin !== undefined && queryGeometry.xmax !== undefined && queryGeometry.ymax !== undefined) {
+        collectCoordinate([queryGeometry.xmin, queryGeometry.ymin]);
+        collectCoordinate([queryGeometry.xmax, queryGeometry.ymax]);
+    }
+    if (!xs.length || !ys.length) {
+        return null;
+    }
+    var xmin = Math.min.apply(Math, xs);
+    var xmax = Math.max.apply(Math, xs);
+    var ymin = Math.min.apply(Math, ys);
+    var ymax = Math.max.apply(Math, ys);
+    var centerLat = (ymin + ymax) / 2;
+    var bufferLat = (Number(bufferMeters) || 0) / 111320;
+    var bufferLon = bufferLat / Math.max(Math.cos(centerLat * Math.PI / 180), 0.2);
+    return {
+        xmin: xmin - bufferLon,
+        ymin: ymin - bufferLat,
+        xmax: xmax + bufferLon,
+        ymax: ymax + bufferLat,
+        spatialReference: queryGeometry.spatialReference || { wkid: 4326 },
+    };
+}
+
+function getSHAnalyticsCadastralCentroidPoint(queryGeometry, distanceMeters) {
+    var envelope = getSHAnalyticsCadastralEnvelope(queryGeometry, 0);
+    if (!envelope) {
+        return null;
+    }
+    return {
+        x: (envelope.xmin + envelope.xmax) / 2,
+        y: (envelope.ymin + envelope.ymax) / 2,
+        spatialReference: envelope.spatialReference || { wkid: 4326 },
+        _queryDistanceMeters: distanceMeters,
+    };
+}
+
+function getSHAnalyticsCadastralFallbackGeometries(queryGeometry) {
+    var fallbackGeometries = [];
+    [120, 350, 800, 1500].forEach(function (bufferMeters) {
+        var envelope = getSHAnalyticsCadastralEnvelope(queryGeometry, bufferMeters);
+        if (envelope) {
+            fallbackGeometries.push(envelope);
+        }
+    });
+    [250, 750, 1500].forEach(function (distanceMeters) {
+        var point = getSHAnalyticsCadastralCentroidPoint(queryGeometry, distanceMeters);
+        if (point) {
+            fallbackGeometries.push(point);
+        }
+    });
+    return fallbackGeometries;
 }
 
 function buildSHAnalyticsSqlIn(fieldName, values) {
@@ -5093,11 +5293,91 @@ function buildSHAnalyticsSqlIn(fieldName, values) {
     }).join(",") + ")";
 }
 
+function getSHAnalyticsAttr(attrs, names) {
+    attrs = attrs || {};
+    for (var i = 0; i < names.length; i++) {
+        if (attrs[names[i]] !== null && attrs[names[i]] !== undefined && attrs[names[i]] !== "") {
+            return attrs[names[i]];
+        }
+    }
+    return "";
+}
+
+function getSHAnalyticsFeatureCode(feature) {
+    return getSHAnalyticsAttr(feature && feature.attributes, ["CODIGO", "Codigo", "codigo"]);
+}
+
+function getSHAnalyticsTerrenoCode(feature) {
+    return getSHAnalyticsAttr(feature && feature.attributes, ["TERRENO_CODIGO", "Terreno_Codigo", "terreno_codigo"]);
+}
+
+function mergeSHAnalyticsFeaturesByCode(primaryFeatures, secondaryFeatures) {
+    var merged = [];
+    var seen = {};
+    (primaryFeatures || []).concat(secondaryFeatures || []).forEach(function (feature) {
+        var code = getSHAnalyticsFeatureCode(feature);
+        var key = code || JSON.stringify(feature && feature.attributes ? feature.attributes : {});
+        if (!seen[key]) {
+            seen[key] = true;
+            merged.push(feature);
+        }
+    });
+    return merged;
+}
+
+function getSHAnalyticsMissingCodes(knownFeatures, candidateCodes) {
+    var known = {};
+    (knownFeatures || []).forEach(function (feature) {
+        var code = getSHAnalyticsFeatureCode(feature);
+        if (code) {
+            known[String(code)] = true;
+        }
+    });
+    var missing = [];
+    (candidateCodes || []).forEach(function (code) {
+        code = code === null || code === undefined ? "" : String(code).trim();
+        if (code && !known[code] && missing.indexOf(code) === -1) {
+            missing.push(code);
+        }
+    });
+    return missing;
+}
+
+function querySHAnalyticsFeaturesByCodes(layerId, fieldName, outFields, codes) {
+    codes = codes || [];
+    if (codes.length === 0) {
+        return Promise.resolve([]);
+    }
+    var requests = [];
+    for (var i = 0; i < codes.length; i += 100) {
+        requests.push(querySHAnalyticsCadastralLayer(layerId, {
+            where: buildSHAnalyticsSqlIn(fieldName, codes.slice(i, i + 100)),
+            outFields: outFields,
+            returnGeometry: true,
+        }));
+    }
+    return Promise.all(requests).then(function (groups) {
+        var features = [];
+        groups.forEach(function (group) {
+            features = features.concat(group || []);
+        });
+        return features;
+    });
+}
+
+function querySHAnalyticsTerrenosByCodes(layerId, outFields, codes) {
+    return querySHAnalyticsFeaturesByCodes(layerId, "CODIGO", outFields, codes);
+}
+
+function querySHAnalyticsUrbanTerrenosByManzanaCodes(codes) {
+    return querySHAnalyticsFeaturesByCodes(7, "MANZANA_CODIGO", "CODIGO,MANZANA_CODIGO", codes);
+}
+
 function countSHAnalyticsConstructionsByTerreno(features) {
     var counts = {};
     (features || []).forEach(function (feature) {
         var attrs = feature && feature.attributes ? feature.attributes : {};
-        var terrenoCodigo = attrs.TERRENO_CODIGO || attrs.Terreno_Codigo;
+        var terrenoCodigo = getSHAnalyticsTerrenoCode(feature);
         if (!terrenoCodigo) {
             return;
         }
@@ -5207,34 +5487,58 @@ function buildSHAnalyticsCadastralRows(terrenos, zoneLabel, metricCounts) {
     });
 }
 
-function loadSHAnalyticsCadastralReportRowsByGeometry(queryGeometry, emptyGeometryMessage) {
+function loadSHAnalyticsCadastralReportRowsByGeometryExact(queryGeometry, emptyGeometryMessage) {
     if (!queryGeometry) {
         return Promise.resolve({ rows: [], error: emptyGeometryMessage || "No se pudo preparar la geometría para consultar catastro." });
     }
     var isRoadReport = getSHAnalyticsSelectedClassLabel() === "road";
+    var urbanTerrainRequest = querySHAnalyticsCadastralLayer(7, { geometry: queryGeometry, outFields: "CODIGO,MANZANA_CODIGO", returnGeometry: true });
+    var urbanBlockRequest = querySHAnalyticsCadastralLayer(5, { geometry: queryGeometry, outFields: "CODIGO", returnGeometry: false });
+    var ruralTerrainRequest = querySHAnalyticsCadastralLayer(14, { geometry: queryGeometry, outFields: "CODIGO,VEREDA_CODIGO", returnGeometry: true });
+    var detailRequests = isRoadReport
+        ? [
+            querySHAnalyticsCadastralLayer(0, { geometry: queryGeometry, outFields: "OBJECTID", returnGeometry: true }),
+            querySHAnalyticsCadastralLayer(10, { geometry: queryGeometry, outFields: "OBJECTID", returnGeometry: true }),
+        ]
+        : [
+            querySHAnalyticsCadastralLayer(3, { geometry: queryGeometry, outFields: "OBJECTID,TERRENO_CODIGO,CODIGO_EDIFICACION", returnGeometry: true }),
+            querySHAnalyticsCadastralLayer(12, { geometry: queryGeometry, outFields: "OBJECTID,TERRENO_CODIGO,CODIGO_EDIFICACION", returnGeometry: true }),
+        ];
     return Promise.all([
-        querySHAnalyticsCadastralLayer(7, { geometry: queryGeometry, outFields: "CODIGO,MANZANA_CODIGO", returnGeometry: true }),
-        querySHAnalyticsCadastralLayer(14, { geometry: queryGeometry, outFields: "CODIGO,VEREDA_CODIGO", returnGeometry: true }),
-    ]).then(function (terrainGroups) {
-        var urbanTerrenos = terrainGroups[0] || [];
-        var ruralTerrenos = terrainGroups[1] || [];
-        var urbanCodes = urbanTerrenos.map(function (feature) { return feature.attributes && feature.attributes.CODIGO; });
-        var ruralCodes = ruralTerrenos.map(function (feature) { return feature.attributes && feature.attributes.CODIGO; });
-        var detailRequests = isRoadReport
-            ? [
-                querySHAnalyticsCadastralLayer(0, { geometry: queryGeometry, outFields: "OBJECTID", returnGeometry: true }),
-                querySHAnalyticsCadastralLayer(10, { geometry: queryGeometry, outFields: "OBJECTID", returnGeometry: true }),
-            ]
-            : [
-                querySHAnalyticsCadastralLayer(3, { geometry: queryGeometry, outFields: "OBJECTID,TERRENO_CODIGO,CODIGO_EDIFICACION", returnGeometry: true }),
-                querySHAnalyticsCadastralLayer(12, { geometry: queryGeometry, outFields: "OBJECTID,TERRENO_CODIGO,CODIGO_EDIFICACION", returnGeometry: true }),
-            ];
-        return Promise.all(detailRequests).then(function (detailGroups) {
+        urbanTerrainRequest,
+        urbanBlockRequest,
+        ruralTerrainRequest,
+        Promise.all(detailRequests),
+    ]).then(function (baseResults) {
+        var urbanTerrenos = baseResults[0] || [];
+        var urbanBlocks = baseResults[1] || [];
+        var ruralTerrenos = baseResults[2] || [];
+        var detailGroups = baseResults[3] || [];
+        var urbanDetails = detailGroups[0] || [];
+        var ruralDetails = detailGroups[1] || [];
+        console.info("[Catastro] Cruce exacto por interseccion", {
+            urbanTerrenos: urbanTerrenos.length,
+            urbanManzanas: urbanBlocks.length,
+            ruralTerrenos: ruralTerrenos.length,
+            urbanDetalles: urbanDetails.length,
+            ruralDetalles: ruralDetails.length,
+        });
+        var urbanDetailCodes = urbanDetails.map(getSHAnalyticsTerrenoCode).filter(function (code) { return !!code; });
+        var ruralDetailCodes = ruralDetails.map(getSHAnalyticsTerrenoCode).filter(function (code) { return !!code; });
+        var urbanBlockCodes = urbanBlocks.map(getSHAnalyticsFeatureCode).filter(function (code) { return !!code; });
+        return Promise.all([
+            isRoadReport ? Promise.resolve([]) : querySHAnalyticsTerrenosByCodes(7, "CODIGO,MANZANA_CODIGO", getSHAnalyticsMissingCodes(urbanTerrenos, urbanDetailCodes)),
+            isRoadReport ? Promise.resolve([]) : querySHAnalyticsTerrenosByCodes(14, "CODIGO,VEREDA_CODIGO", getSHAnalyticsMissingCodes(ruralTerrenos, ruralDetailCodes)),
+            querySHAnalyticsUrbanTerrenosByManzanaCodes(urbanBlockCodes),
+        ]).then(function (missingTerrainGroups) {
+            urbanTerrenos = mergeSHAnalyticsFeaturesByCode(urbanTerrenos, missingTerrainGroups[0]);
+            ruralTerrenos = mergeSHAnalyticsFeaturesByCode(ruralTerrenos, missingTerrainGroups[1]);
+            urbanTerrenos = mergeSHAnalyticsFeaturesByCode(urbanTerrenos, missingTerrainGroups[2]);
             var metricUniqueField = isRoadReport ? "OBJECTID" : "CODIGO_EDIFICACION";
-            var urbanSpatialCounts = countSHAnalyticsMetricFeaturesByTerreno(urbanTerrenos, detailGroups[0], metricUniqueField);
-            var ruralSpatialCounts = countSHAnalyticsMetricFeaturesByTerreno(ruralTerrenos, detailGroups[1], metricUniqueField);
-            var urbanMetricCounts = isRoadReport ? urbanSpatialCounts : mergeSHAnalyticsMetricCounts(urbanSpatialCounts, countSHAnalyticsConstructionsByTerreno(detailGroups[0]));
-            var ruralMetricCounts = isRoadReport ? ruralSpatialCounts : mergeSHAnalyticsMetricCounts(ruralSpatialCounts, countSHAnalyticsConstructionsByTerreno(detailGroups[1]));
+            var urbanSpatialCounts = countSHAnalyticsMetricFeaturesByTerreno(urbanTerrenos, urbanDetails, metricUniqueField);
+            var ruralSpatialCounts = countSHAnalyticsMetricFeaturesByTerreno(ruralTerrenos, ruralDetails, metricUniqueField);
+            var urbanMetricCounts = isRoadReport ? urbanSpatialCounts : mergeSHAnalyticsMetricCounts(urbanSpatialCounts, countSHAnalyticsConstructionsByTerreno(urbanDetails));
+            var ruralMetricCounts = isRoadReport ? ruralSpatialCounts : mergeSHAnalyticsMetricCounts(ruralSpatialCounts, countSHAnalyticsConstructionsByTerreno(ruralDetails));
             var urbanRows = buildSHAnalyticsCadastralRows(
                 urbanTerrenos,
                 "Urbano",
@@ -5246,6 +5550,11 @@ function loadSHAnalyticsCadastralReportRowsByGeometry(queryGeometry, emptyGeomet
                 ruralMetricCounts
             );
             var rows = urbanRows.concat(ruralRows).slice(0, SH_ANALYTICS_CADASTRAL_MAX_ROWS);
+            console.info("[Catastro] Filas del reporte", {
+                urbanos: urbanRows.length,
+                rurales: ruralRows.length,
+                total: rows.length,
+            });
             return { rows: rows, error: rows.length ? null : "No se encontraron predios con " + getSHAnalyticsCadastralMetricLabel().toLowerCase() + " intersectados." };
         });
     }).catch(function (err) {
@@ -5254,13 +5563,25 @@ function loadSHAnalyticsCadastralReportRowsByGeometry(queryGeometry, emptyGeomet
     });
 }
 
+function loadSHAnalyticsCadastralReportRowsByGeometry(queryGeometry, emptyGeometryMessage) {
+    return loadSHAnalyticsCadastralReportRowsByGeometryExact(queryGeometry, emptyGeometryMessage);
+}
+
 function loadSHAnalyticsCadastralReportRows(dataIndex) {
     dataIndex = parseInt(dataIndex, 10);
     var feature = currentSHAnalyticsData && currentSHAnalyticsData[dataIndex] ? currentSHAnalyticsData[dataIndex] : null;
-    return loadSHAnalyticsCadastralReportRowsByGeometry(
-        getSHAnalyticsCadastralGeometry(feature),
-        "No se pudo preparar la geometría de la detección para consultar catastro."
-    );
+    return loadSHAnalyticsCadastralReportRowsByGeometryExact(
+        getSHAnalyticsFeatureCadastralPointGeometry(feature),
+        "No se pudo preparar el punto de la detección para consultar catastro."
+    ).then(function (result) {
+        result = result || {};
+        var rows = result.rows || [];
+        if (!rows.length) {
+            return { rows: [], error: "No hay información predial para la detección seleccionada." };
+        }
+        result.rows = rows.slice(0, 1);
+        return result;
+    });
 }
 
 function loadSHAnalyticsHexCadastralReportRows(hexInfo) {
@@ -5319,7 +5640,7 @@ function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems, cadastralResult)
     var feature = currentSHAnalyticsData && currentSHAnalyticsData[dataIndex] ? currentSHAnalyticsData[dataIndex] : null;
     var properties = feature && feature.properties ? feature.properties : {};
     var subscriptionLabel = $("#selectSHAnalyticsSubs option:selected").text() || "Planet Analytics";
-    var detectionDate = properties.date || properties.published || properties.acquired || "";
+    var detectionDate = formatSHAnalyticsDateLabel(properties.date || properties.published || properties.acquired || "");
     var centroid = getSHAnalyticsFeatureCentroid(feature);
     var department = findSHAnalyticsAdminForPoint(centroid, "department");
     var municipality = findSHAnalyticsAdminForPoint(centroid, "municipality");
@@ -5350,7 +5671,7 @@ function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems, cadastralResult)
         "<h2>Galería — Mosaicos mensuales</h2>" +
         "<div class='sh-pdf-gallery'>" + galleryHtml + "</div>" +
         "<div class='sh-pdf-footnote'>Mosaicos mensuales Planet · vista centrada en el polígono seleccionado</div>" +
-        buildSHAnalyticsCadastralReportHtml(cadastralResult, { sourceText: "Predios intersectados con la detección seleccionada." }) +
+        buildSHAnalyticsCadastralReportHtml(cadastralResult, { sourceText: "Predio asociado al punto de la detección seleccionada." }) +
     "</div>";
 }
 
@@ -5533,6 +5854,27 @@ function getSHAnalyticsFeatureCentroid(feature) {
         return centroid && centroid.geometry && centroid.geometry.coordinates ? centroid.geometry.coordinates : null;
     } catch (err) {
         console.warn("No se pudo calcular el centroide del cambio", err, feature);
+        return null;
+    }
+}
+
+function getSHAnalyticsFeatureCadastralPointGeometry(feature) {
+    if (!feature || !feature.geometry || !window.turf) {
+        return null;
+    }
+    try {
+        var pointFeature = turf.pointOnFeature ? turf.pointOnFeature(feature) : turf.centroid(feature);
+        var coordinates = pointFeature && pointFeature.geometry && pointFeature.geometry.coordinates ? pointFeature.geometry.coordinates : null;
+        if (!coordinates || coordinates.length < 2 || !isFinite(coordinates[0]) || !isFinite(coordinates[1])) {
+            return null;
+        }
+        return {
+            x: coordinates[0],
+            y: coordinates[1],
+            spatialReference: { wkid: 4326 },
+        };
+    } catch (err) {
+        console.warn("No se pudo calcular el punto predial del cambio", err, feature);
         return null;
     }
 }
@@ -6235,6 +6577,21 @@ function getSHAnalyticsHexFillColor(count, classBreaksOrMaxCount) {
     return getSHAnalyticsHexClasses()[getSHAnalyticsHexClass(count, classBreaksOrMaxCount)].color;
 }
 
+function getSHAnalyticsHexBorderWidth(isSelected) {
+    var zoom = map && typeof map.getZoom == "function" ? map.getZoom() : 6;
+    var width;
+    if (zoom <= 6) {
+        width = 0.2;
+    } else if (zoom <= 8) {
+        width = 0.35;
+    } else if (zoom <= 10) {
+        width = 0.55;
+    } else {
+        width = 0.8;
+    }
+    return isSelected ? Math.max(1.2, width + 1.1) : width;
+}
+
 function renderSHAnalyticsLegend(classBreaksOrMaxCount) {
     var hexClasses = getSHAnalyticsHexClasses();
     var legendItems = getSHAnalyticsHexClassNames()
@@ -6256,7 +6613,7 @@ function hideSHAnalyticsLegend() {
 }
 
 function createSHAnalyticsHexSymbol(count, classBreaksOrMaxCount) {
-    var border = new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color([35, 35, 35, 0.65]), 0.9);
+    var border = new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color([35, 35, 35, 0.55]), getSHAnalyticsHexBorderWidth(false));
     return new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_SOLID, border, new esri.Color(getSHAnalyticsHexFillColor(count, classBreaksOrMaxCount)));
 }
 
@@ -6334,7 +6691,7 @@ function showSHAnalyticsPolygonInstructionPopup(graphic, mapPoint) {
 }
 
 function createSHAnalyticsSelectedHexSymbol() {
-    var border = new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color([255, 255, 255, 1]), 3);
+    var border = new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color([255, 255, 255, 0.95]), getSHAnalyticsHexBorderWidth(true));
     return new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_SOLID, border, new esri.Color([255, 255, 255, 0.08]));
 }
 
@@ -6603,7 +6960,7 @@ function openSHAnalyticsMosaicWindow(item, pos, mode) {
     var selectedGraphic = findSHAnalyticsGraphicByDataIndex(pos);
     var detectionDate = detectionMoment.format("DD/MM/YYYY");
     $("#shAnalyticsFloatingDetail").hide();
-    openMonthlyMosaicFloatingWindowFromDates(detectionDate, detectionDate, "Planet Analytics - Detección de Cambios", selectedGraphic, mode, properties.date || detectionDate, pos);
+    openMonthlyMosaicFloatingWindowFromDates(detectionDate, detectionDate, "Planet Analytics - Detección de Cambios", selectedGraphic, mode, formatSHAnalyticsDateLabel(properties.date || detectionDate), pos);
 }
 
 function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, indexLabel, selectedGraphic, initialMode, detectionDateLabel, shAnalyticsDataIndex) {
@@ -6626,10 +6983,11 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     var shAnalyticsDownloadHtml = "";
     var shAnalyticsPdfHtml = "";
     var shAnalyticsHexHtml = "";
+    var shAnalyticsHexInfo = null;
     if (indexLabel === "Planet Analytics - Detección de Cambios" && shAnalyticsDataIndex !== undefined && shAnalyticsDataIndex !== null) {
         shAnalyticsDownloadHtml = "<button type='button' class='sh-analytics-floating-download-btn' title='Descargar polígono' data-sh-analytics-index='" + shAnalyticsDataIndex + "'><span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span></button>";
         shAnalyticsPdfHtml = "<button type='button' class='sh-analytics-floating-pdf-btn' title='Descargar reporte PDF' data-sh-analytics-index='" + shAnalyticsDataIndex + "'><span class='sh-analytics-pdf-icon'>PDF</span></button>";
-        var shAnalyticsHexInfo = getSHAnalyticsHexInfoByDataIndex(shAnalyticsDataIndex);
+        shAnalyticsHexInfo = getSHAnalyticsHexInfoByDataIndex(shAnalyticsDataIndex);
         if (shAnalyticsHexInfo) {
             shAnalyticsHexHtml = "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>HExagono</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='sh-analytics-hex-number'>" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.number) + "</span>" +
                 "<button type='button' class='sh-analytics-floating-hex-download-btn' title='Descargar cambios del hexágono' data-sh-analytics-hex='" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.key) + "'><span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span></button>" +
@@ -6643,13 +7001,14 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         "<div style='padding:10px;background:#fff;'>" +
         "<table style='width:100%;border-collapse:collapse;background:#fff;border:1px solid #ddd;'>" +
         "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Índice</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='burns-index-label'>" + indexLabel + "</span>" + shAnalyticsDownloadHtml + shAnalyticsPdfHtml + indexInfoHtml + "</td></tr>" +
-        (detectionDateLabel ? "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Fecha de detección</td><td style='padding:8px;border-bottom:1px solid #eee;'>" + detectionDateLabel + "</td></tr>" : "") +
+        (detectionDateLabel ? "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Fecha de detección</td><td style='padding:8px;border-bottom:1px solid #eee;'>" + formatSHAnalyticsDateLabel(detectionDateLabel) + "</td></tr>" : "") +
         shAnalyticsHexHtml +
         "</table>" +
         "<div id='burnsSelectPolygonMessage' style='display:" + (hasSelectedPolygon ? "none" : "block") + ";margin:8px 0 0;padding:9px 10px;border:1px solid #d9e2dc;background:#f6faf7;color:#3d5e4f;font-weight:600;text-align:center;border-radius:4px;'>Seleccione poligono en el mapa para desplegar los mosaicos</div>" +
         "<div style='display:flex;gap:8px;margin-top:8px;margin-bottom:10px;'>" +
             "<button id='burnsModeGallery' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#4f6b5a;color:#fff;border-radius:4px;font-weight:600;'>Galería</button>" +
             "<button id='burnsModeSwipe' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#fff;color:#3d5e4f;border-radius:4px;font-weight:600;'>Swipe</button>" +
+            "<button id='burnsModeSuperRes' type='button' style='display:none;flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#fff;color:#3d5e4f;border-radius:4px;font-weight:600;'>SuperResolucion</button>" +
         "</div>" +
         "<div id='burnsGalleryPane' style='margin-top:8px;'>" +
             "<div id='burnsGalleryGrid' style='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;'></div>" +
@@ -6684,6 +7043,28 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
                     "</div>" +
                     "<div id='burnsMonthPickerGrid' style='display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;'></div>" +
                 "</div>" +
+            "</div>" +
+        "</div>" +
+        "<div id='burnsSuperResPane' style='display:none;'>" +
+            "<div style='display:flex;gap:10px;align-items:center;margin-bottom:8px;'>" +
+                "<label style='flex:1;color:#3d5e4f;font-weight:600;'>Inicial <select id='burnsSuperResInitialSelect' style='width:100%;margin-top:4px;border:1px solid #cfd8d2;border-radius:4px;padding:5px;'></select></label>" +
+                "<label style='flex:1;color:#3d5e4f;font-weight:600;'>Final <select id='burnsSuperResFinalSelect' style='width:100%;margin-top:4px;border:1px solid #cfd8d2;border-radius:4px;padding:5px;'></select></label>" +
+            "</div>" +
+            "<div id='burnsSuperResMapWrap' style='position:relative;height:420px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'>" +
+                "<div id='burnsSuperResMap' style='position:absolute;inset:0;z-index:1;'></div>" +
+                "<div id='burnsSuperResStatus' style='position:absolute;left:10px;top:10px;z-index:15;padding:5px 8px;background:rgba(255,255,255,0.92);border:1px solid #d5d5d5;border-radius:4px;color:#3d5e4f;font-size:12px;font-weight:600;'>Cargando mosaicos...</div>" +
+                "<div id='burnsSuperResSwipeControl' style='position:absolute;inset:0;z-index:40;pointer-events:none;'><div id='burnsSuperResSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div></div>" +
+                "<div id='burnsSuperResToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:2147483001;display:flex;align-items:center;gap:0;pointer-events:auto;'>" +
+                    "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" +
+                    "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" +
+                    "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" +
+                    "<div id='burnsSuperResOpacityPopover' style='display:none;position:absolute;bottom:30px;left:56px;z-index:17;width:112px;padding:7px 8px;background:#fff;border:1px solid #d5d5d5;border-radius:4px;box-shadow:0 7px 18px rgba(0,0,0,0.2);text-align:center;'>" +
+                        "<input id='burnsSuperResOpacityRange' type='range' min='0' max='1' step='0.05' value='0.5' style='width:100%;accent-color:#4f6b5a;'>" +
+                        "<div id='burnsSuperResOpacityLabel' style='margin-top:4px;color:#4f6b5a;font-size:13px;'>50%</div>" +
+                    "</div>" +
+                "</div>" +
+                "<div id='burnsSuperResLeftLabel' style='position:absolute;left:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;pointer-events:none;'></div>" +
+                "<div id='burnsSuperResRightLabel' style='position:absolute;right:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;pointer-events:none;'></div>" +
             "</div>" +
         "</div>" +
         "</div>";
@@ -6727,9 +7108,29 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         targetExtent = map.extent;
     }
     if (!hasSelectedPolygon) {
-        $("#burnsGalleryPane, #burnsSwipePane").hide();
-        $("#burnsModeGallery, #burnsModeSwipe").prop("disabled", true).css({ opacity: 0.55, cursor: "not-allowed" });
+        $("#burnsGalleryPane, #burnsSwipePane, #burnsSuperResPane").hide();
+        $("#burnsModeGallery, #burnsModeSwipe, #burnsModeSuperRes").prop("disabled", true).css({ opacity: 0.55, cursor: "not-allowed" });
     }
+    var clearBurnsSuperResMaps = function () {
+        if (burnsSuperResSwipe) {
+            if (burnsSuperResSwipe.domNode && burnsSuperResSwipe.domNode.parentNode) {
+                burnsSuperResSwipe.domNode.parentNode.removeChild(burnsSuperResSwipe.domNode);
+            }
+            try {
+                burnsSuperResSwipe.destroy();
+            } catch (e) {}
+            burnsSuperResSwipe = null;
+        }
+        if (burnsSuperResMap) {
+            try {
+                burnsSuperResMap.destroy();
+            } catch (e) {}
+            burnsSuperResMap = null;
+        }
+        burnsSuperResLeftLayer = null;
+        burnsSuperResRightLayer = null;
+        $("#burnsSuperResSwipeControl").html("<div id='burnsSuperResSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div>");
+    };
     var clearBurnsFloatingMaps = function () {
         burnsGallerySyncHandles.forEach(function (handle) {
             try {
@@ -6765,11 +7166,191 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         burnsSwipeLeftLayer = null;
         burnsSwipeRightLayer = null;
         burnsSwipeReady = false;
+        clearBurnsSuperResMaps();
     };
     clearBurnsFloatingMaps();
     var buildMosaicLayer = function (dateMoment) {
         var mosaicId = "global_monthly_" + dateMoment.format("YYYY_MM") + "_mosaic";
         return createSHAnalyticsTileLayer(mosaicId);
+    };
+    var superResMosaics = [
+        { id: "super_res_quarterly_visual_2024q2_mosaic", label: "Abr - Jun 2024" },
+        { id: "super_res_quarterly_visual_2024q3_mosaic", label: "Jul - Sep 2024" },
+        { id: "super_res_quarterly_visual_2024q4_mosaic", label: "Oct - Dic 2024" },
+        { id: "super_res_quarterly_visual_2025q1_mosaic", label: "Ene - Mar 2025" },
+        { id: "super_res_quarterly_visual_2025q2_mosaic", label: "Abr - Jun 2025" },
+        { id: "super_res_quarterly_visual_2025q3_mosaic", label: "Jul - Sep 2025" },
+        { id: "super_res_quarterly_visual_2025q4_mosaic", label: "Oct - Dic 2025" },
+    ];
+    var burnsSuperResSwipeViewMode = "horizontal";
+    var burnsSuperResOverlayOpacity = 0.5;
+    var getSuperResMosaicById = function (mosaicId) {
+        for (var i = 0; i < superResMosaics.length; i++) {
+            if (superResMosaics[i].id === mosaicId) {
+                return superResMosaics[i];
+            }
+        }
+        return superResMosaics[0];
+    };
+    var populateSuperResSelectors = function () {
+        var optionsHtml = superResMosaics.map(function (item) {
+            return "<option value='" + escapeSHAnalyticsHtml(item.id) + "'>" + escapeSHAnalyticsHtml(item.label + " · " + item.id.replace("super_res_quarterly_visual_", "").replace("_mosaic", "")) + "</option>";
+        }).join("");
+        $("#burnsSuperResInitialSelect").html(optionsHtml).val("super_res_quarterly_visual_2024q3_mosaic");
+        $("#burnsSuperResFinalSelect").html(optionsHtml).val("super_res_quarterly_visual_2025q4_mosaic");
+    };
+    var updateSuperResSwipeModeButtons = function () {
+        $(".burns-superres-mode-btn").each(function () {
+            var isActive = $(this).attr("data-superres-swipe-mode") === burnsSuperResSwipeViewMode;
+            $(this).css({
+                background: isActive ? "#4f6b5a" : "#fff",
+                color: isActive ? "#fff" : "#3d5e4f",
+            });
+        });
+        $("#burnsSuperResOpacityPopover").toggle(burnsSuperResSwipeViewMode === "overlay");
+    };
+    var destroySuperResSwipe = function () {
+        if (burnsSuperResSwipe) {
+            if (burnsSuperResSwipe.domNode && burnsSuperResSwipe.domNode.parentNode) {
+                burnsSuperResSwipe.domNode.parentNode.removeChild(burnsSuperResSwipe.domNode);
+            }
+            try {
+                burnsSuperResSwipe.destroy();
+            } catch (e) {}
+            burnsSuperResSwipe = null;
+        }
+        $("#burnsSuperResSwipeControl").html("<div id='burnsSuperResSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div>");
+    };
+    var setSuperResSwipeInteractiveNodes = function () {
+        if (!burnsSuperResSwipe || !burnsSuperResSwipe.domNode) return;
+        burnsSuperResSwipe.domNode.style.pointerEvents = "none";
+        burnsSuperResSwipe.domNode.style.zIndex = "2147483000";
+        if (burnsSuperResSwipe._moveableNode) {
+            burnsSuperResSwipe._moveableNode.style.pointerEvents = "auto";
+        }
+        var nodes = burnsSuperResSwipe.domNode.querySelectorAll(".handle, .handleContainer, .bar, .vertical, .horizontal");
+        if (nodes && nodes.length > 0) {
+            nodes.forEach(function (node) {
+                node.style.pointerEvents = "auto";
+                node.style.background = "#fff";
+                node.style.borderColor = "#335343";
+                node.style.boxShadow = "0 0 8px rgba(0,0,0,0.65)";
+            });
+        } else if (burnsSuperResSwipe.domNode.firstElementChild) {
+            burnsSuperResSwipe.domNode.firstElementChild.style.pointerEvents = "auto";
+        }
+    };
+    var applySuperResSwipeViewMode = function () {
+        updateSuperResSwipeModeButtons();
+        if (!burnsSuperResMap || !burnsSuperResLeftLayer || !burnsSuperResRightLayer) {
+            return;
+        }
+        destroySuperResSwipe();
+        burnsSuperResRightLayer.setOpacity(1);
+        if (burnsSuperResSwipeViewMode === "overlay") {
+            burnsSuperResLeftLayer.setOpacity(burnsSuperResOverlayOpacity);
+            return;
+        }
+        burnsSuperResLeftLayer.setOpacity(1);
+        var mapNode = document.getElementById("burnsSuperResMap");
+        var swipeOptions = {
+            type: burnsSuperResSwipeViewMode === "vertical" ? "horizontal" : "vertical",
+            map: burnsSuperResMap,
+            layers: [burnsSuperResLeftLayer],
+        };
+        if (burnsSuperResSwipeViewMode === "vertical") {
+            swipeOptions.top = mapNode ? Math.round(mapNode.offsetHeight / 2) : 210;
+        } else {
+            swipeOptions.left = mapNode ? Math.round(mapNode.offsetWidth / 2) : 360;
+        }
+        burnsSuperResSwipe = new esri.LayerSwipe(swipeOptions, "burnsSuperResSwipeControlNode");
+        burnsSuperResSwipe.startup();
+        setSuperResSwipeInteractiveNodes();
+        window.setTimeout(setSuperResSwipeInteractiveNodes, 100);
+    };
+    var setSuperResSwipeViewMode = function (mode) {
+        burnsSuperResSwipeViewMode = mode || "horizontal";
+        applySuperResSwipeViewMode();
+    };
+    var setSuperResOverlayOpacity = function (value) {
+        var opacity = parseFloat(value);
+        if (Number.isNaN(opacity)) opacity = 0.5;
+        burnsSuperResOverlayOpacity = Math.max(0, Math.min(1, opacity));
+        $("#burnsSuperResOpacityRange").val(burnsSuperResOverlayOpacity);
+        $("#burnsSuperResOpacityLabel").text(Math.round(burnsSuperResOverlayOpacity * 100) + "%");
+        if (burnsSuperResLeftLayer && burnsSuperResSwipeViewMode === "overlay") {
+            burnsSuperResLeftLayer.setOpacity(burnsSuperResOverlayOpacity);
+        }
+    };
+    var renderSuperResSwipe = function () {
+        clearBurnsSuperResMaps();
+        var leftId = $("#burnsSuperResInitialSelect").val() || "super_res_quarterly_visual_2024q3_mosaic";
+        var rightId = $("#burnsSuperResFinalSelect").val() || "super_res_quarterly_visual_2025q4_mosaic";
+        var leftInfo = getSuperResMosaicById(leftId);
+        var rightInfo = getSuperResMosaicById(rightId);
+        $("#burnsSuperResLeftLabel").text(leftInfo.label + " · " + leftInfo.id.replace("super_res_quarterly_visual_", "").replace("_mosaic", ""));
+        $("#burnsSuperResRightLabel").text(rightInfo.label + " · " + rightInfo.id.replace("super_res_quarterly_visual_", "").replace("_mosaic", ""));
+        $("#burnsSuperResStatus").stop(true, true).show().text("Cargando " + leftInfo.id + " y " + rightInfo.id + "...");
+        console.info("[SuperResolucion] Cargando mosaicos", {
+            inicial: leftInfo.id,
+            final: rightInfo.id,
+        });
+        burnsSuperResMap = new esri.Map("burnsSuperResMap", {
+            logo: false,
+            slider: false,
+            showAttribution: false,
+            center: targetExtent.getCenter(),
+            zoom: map.getZoom(),
+        });
+        burnsSuperResLeftLayer = createSHAnalyticsTileLayer(leftInfo.id);
+        burnsSuperResRightLayer = createSHAnalyticsTileLayer(rightInfo.id);
+        burnsSuperResLeftLayer.id = "burnsSuperResLeftLayer";
+        burnsSuperResRightLayer.id = "burnsSuperResRightLayer";
+        var superResLayerState = { left: false, right: false, leftError: false, rightError: false };
+        var updateSuperResLayerStatus = function () {
+            if (superResLayerState.leftError || superResLayerState.rightError) {
+                $("#burnsSuperResStatus").text("No se pudo cargar " + (superResLayerState.leftError ? leftInfo.id : rightInfo.id));
+                return;
+            }
+            if (superResLayerState.left && superResLayerState.right) {
+                $("#burnsSuperResStatus").text("Inicial: " + leftInfo.id + " | Final: " + rightInfo.id);
+                window.setTimeout(function () {
+                    $("#burnsSuperResStatus").fadeOut(250);
+                }, 3500);
+            }
+        };
+        burnsSuperResLeftLayer.on("load", function () {
+            superResLayerState.left = true;
+            updateSuperResLayerStatus();
+        });
+        burnsSuperResRightLayer.on("load", function () {
+            superResLayerState.right = true;
+            updateSuperResLayerStatus();
+        });
+        burnsSuperResLeftLayer.on("error", function (err) {
+            superResLayerState.leftError = true;
+            console.error("[SuperResolucion] Error cargando mosaico inicial", leftInfo.id, err);
+            updateSuperResLayerStatus();
+        });
+        burnsSuperResRightLayer.on("error", function (err) {
+            superResLayerState.rightError = true;
+            console.error("[SuperResolucion] Error cargando mosaico final", rightInfo.id, err);
+            updateSuperResLayerStatus();
+        });
+        burnsSuperResMap.addLayer(burnsSuperResRightLayer);
+        burnsSuperResMap.addLayer(burnsSuperResLeftLayer);
+        var superResSwipeStarted = false;
+        burnsSuperResMap.on("update-end", function () {
+            if (superResSwipeStarted || !burnsSuperResLeftLayer.loaded || !burnsSuperResRightLayer.loaded) return;
+            superResSwipeStarted = true;
+            if (selectedGraphic && selectedGraphic.geometry) {
+                burnsSuperResMap.graphics.add(new esri.Graphic(selectedGraphic.geometry, createClassifiedPolygonPreviewSymbol()));
+            }
+            burnsSuperResMap.resize();
+            burnsSuperResMap.reposition();
+            burnsSuperResMap.setExtent(targetExtent, true);
+            applySuperResSwipeViewMode();
+        });
     };
     var bindBurnsGallerySync = function () {
         burnsGallerySyncHandles.forEach(function (handle) {
@@ -7157,10 +7738,13 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     var setBurnsMode = function (mode) {
         var isGallery = mode === "gallery";
         var isSwipe = mode === "swipe";
+        var isSuperRes = mode === "superres";
         $("#burnsGalleryPane").toggle(isGallery);
         $("#burnsSwipePane").toggle(isSwipe);
+        $("#burnsSuperResPane").toggle(isSuperRes);
         $("#burnsModeGallery").css({ background: isGallery ? "#4f6b5a" : "#fff", color: isGallery ? "#fff" : "#3d5e4f" });
         $("#burnsModeSwipe").css({ background: isSwipe ? "#4f6b5a" : "#fff", color: isSwipe ? "#fff" : "#3d5e4f" });
+        $("#burnsModeSuperRes").css({ background: isSuperRes ? "#4f6b5a" : "#fff", color: isSuperRes ? "#fff" : "#3d5e4f" });
         if (isSwipe && !burnsCompareMap) {
             renderSwipe();
         } else if (isSwipe && burnsCompareMap) {
@@ -7168,10 +7752,24 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             burnsCompareMap.reposition();
             centerBurnsSwipeOnSelectedPolygon(applyBurnsSwipeViewMode);
         }
+        if (isSuperRes && !burnsSuperResMap) {
+            renderSuperResSwipe();
+        } else if (isSuperRes && burnsSuperResMap) {
+            burnsSuperResMap.resize();
+            burnsSuperResMap.reposition();
+            burnsSuperResMap.setExtent(targetExtent, true);
+        }
     };
     if (hasSelectedPolygon) {
         renderGallery();
         setBurnsMode(initialMode === "swipe" ? "swipe" : "gallery");
+        populateSuperResSelectors();
+        var superResCheckGraphic = shAnalyticsHexInfo ? getSHAnalyticsHexGraphicByKey(shAnalyticsHexInfo.key) : selectedGraphic;
+        loadSuperResLimitGeoJson().then(function (limitGeoJson) {
+            if (doesSHAnalyticsGraphicIntersectSuperResLimit(superResCheckGraphic || selectedGraphic, limitGeoJson)) {
+                $("#burnsModeSuperRes").show().prop("disabled", false).css({ opacity: 1, cursor: "pointer" });
+            }
+        });
     }
     $("#burnsModeGallery")
         .off("click")
@@ -7183,17 +7781,41 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         .on("click", function () {
             setBurnsMode("swipe");
         });
+    $("#burnsModeSuperRes")
+        .off("click")
+        .on("click", function () {
+            setBurnsMode("superres");
+        });
+    $("#burnsSuperResInitialSelect, #burnsSuperResFinalSelect")
+        .off("change")
+        .on("change", function () {
+            if ($("#burnsSuperResPane").is(":visible")) {
+                renderSuperResSwipe();
+            }
+        });
     updateBurnsSwipeModeButtons();
     setBurnsSwipeOverlayOpacity(burnsSwipeOverlayOpacity);
+    updateSuperResSwipeModeButtons();
+    setSuperResOverlayOpacity(burnsSuperResOverlayOpacity);
     $(".burns-swipe-mode-btn")
         .off("click")
         .on("click", function () {
             setBurnsSwipeViewMode($(this).attr("data-burns-swipe-mode"));
         });
+    $(".burns-superres-mode-btn")
+        .off("click")
+        .on("click", function () {
+            setSuperResSwipeViewMode($(this).attr("data-superres-swipe-mode"));
+        });
     $("#burnsSwipeOpacityRange")
         .off("input change")
         .on("input change", function () {
             setBurnsSwipeOverlayOpacity($(this).val());
+        });
+    $("#burnsSuperResOpacityRange")
+        .off("input change")
+        .on("input change", function () {
+            setSuperResOverlayOpacity($(this).val());
         });
     $("#burnsSwipeMonthPickerBtn")
         .off("click")
@@ -7621,6 +8243,23 @@ function clearBurnsMonthlyMosaicWindow() {
             } catch (e) {}
             burnsCompareSwipe = null;
         }
+        if (burnsSuperResSwipe) {
+            if (burnsSuperResSwipe.domNode && burnsSuperResSwipe.domNode.parentNode) {
+                burnsSuperResSwipe.domNode.parentNode.removeChild(burnsSuperResSwipe.domNode);
+            }
+            try {
+                burnsSuperResSwipe.destroy();
+            } catch (e) {}
+            burnsSuperResSwipe = null;
+        }
+        if (burnsSuperResMap) {
+            try {
+                burnsSuperResMap.destroy();
+            } catch (e) {}
+            burnsSuperResMap = null;
+        }
+        burnsSuperResLeftLayer = null;
+        burnsSuperResRightLayer = null;
         $("#burnsFloatingDetail").hide().empty();
         lastProcessedSHResult = null;
     } catch (e) {
@@ -10776,7 +11415,11 @@ function setupMap() {
 
     map.on("extent-change", function (evt) {});
 
-    map.on("zoom-end", function (evt) {});
+    map.on("zoom-end", function (evt) {
+        if (currentSHAnalyticsHexLayer && currentSHAnalyticsHexLayer.graphics && currentSHAnalyticsHexLayer.graphics.length) {
+            resetSHAnalyticsHexSymbols(getSHAnalyticsHexGraphicByKey(currentSHAnalyticsSelectedHexKey));
+        }
+    });
 
     /* Coordenadas */
     hoverHandle = map.on("mouse-move", function (evt) {

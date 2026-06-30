@@ -1,7 +1,7 @@
 (function (window) {
 
-  var defaultProxyBaseUrl = "https://ccg.igac.gov.co";
-  // var defaultProxyBaseUrl = "http://localhost:3000";
+  var remoteProxyBaseUrl = "https://ccg.igac.gov.co";
+  var localProxyBaseUrl = "http://localhost:3000";
 
   function joinUrl(baseUrl, path) {
     if (!baseUrl) return path;
@@ -10,10 +10,9 @@
 
   var existingEnv = window.__env || {};
   var isLocalFrontend = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
-  var remoteProxyBaseUrl = "https://ccg.igac.gov.co";
   var proxyBaseUrl = existingEnv.sentinelHubProxyBaseUrl || remoteProxyBaseUrl;
   var prismaProxyBaseUrl = existingEnv.prismaProxyBaseUrl || remoteProxyBaseUrl;
-  var prismaFallbackProxyBaseUrl = existingEnv.prismaFallbackProxyBaseUrl || defaultProxyBaseUrl;
+  var prismaFallbackProxyBaseUrl = existingEnv.prismaFallbackProxyBaseUrl || (isLocalFrontend ? localProxyBaseUrl : "");
   var prismaApiBaseUrl = existingEnv.prismaApiBaseUrl || (
     prismaProxyBaseUrl
       ? joinUrl(prismaProxyBaseUrl, "/prisma-proxy")
@@ -34,11 +33,14 @@
   window.__env = Object.assign({
     sentinelHubProxyBaseUrl: proxyBaseUrl,
     sentinelHubTokenProxyUrl: joinUrl(proxyBaseUrl, "/sh-token"),
-    sentinelHubFallbackTokenProxyUrl: isLocalFrontend ? joinUrl(defaultProxyBaseUrl, "/sh-token") : "",
+    sentinelHubFallbackTokenProxyUrl: isLocalFrontend ? joinUrl(localProxyBaseUrl, "/sh-token") : "",
     sentinelHubCatalogProxyUrl: joinUrl(proxyBaseUrl, "/get-catalog"),
+    sentinelHubFallbackCatalogProxyUrl: isLocalFrontend ? joinUrl(localProxyBaseUrl, "/get-catalog") : "",
     sentinelHubProcessProxyUrl: joinUrl(proxyBaseUrl, "/get-image"),
+    sentinelHubFallbackProcessProxyUrl: isLocalFrontend ? joinUrl(localProxyBaseUrl, "/get-image") : "",
     sentinelHubImageProxyUrl: joinUrl(proxyBaseUrl, "/get-image"),
-    planetTileProxyUrl: isLocalFrontend ? joinUrl(defaultProxyBaseUrl, "/planet-tile") : joinUrl(proxyBaseUrl, "/planet-tile"),
+    sentinelHubFallbackImageProxyUrl: isLocalFrontend ? joinUrl(localProxyBaseUrl, "/get-image") : "",
+    planetTileProxyUrl: isLocalFrontend ? joinUrl(localProxyBaseUrl, "/planet-tile") : joinUrl(proxyBaseUrl, "/planet-tile"),
     sentinelHubUseDirectToken: true,
     sentinelHubClientId: "89499d2c-67f4-4f57-86c0-cdef0ece217e",
     sentinelHubClientSecret: "lVjg5KL43HXjNMQiRll1IruOXlvG3KqM",
