@@ -2,6 +2,10 @@
 var view;
 var esri;
 
+if (window.location.hostname === "127.0.0.1") {
+    window.location.replace(window.location.href.replace("//127.0.0.1", "//localhost"));
+}
+
 var homeBtn;
 var overviewMap;
 var scalebar;
@@ -2993,15 +2997,19 @@ function fetchSHToken(callback) {
                     ajaxStatus: status,
                     ajaxError: error,
                 });
-                if (sentinelHubTokenProxyUrl) {
-                    getTokenWithProxy();
-                } else {
-                    callback(false);
-                }
+                fallbackCallback();
             }
         });
         return;
-    }
+    };
+
+    var getTokenWithLocalProxy = function () {
+        if (sentinelHubFallbackTokenProxyUrl && sentinelHubFallbackTokenProxyUrl !== sentinelHubTokenProxyUrl) {
+            getTokenWithProxy(sentinelHubFallbackTokenProxyUrl, getTokenDirect);
+            return;
+        }
+        getTokenDirect();
+    };
 
     getTokenWithProxy(sentinelHubTokenProxyUrl, getTokenWithLocalProxy);
 }
@@ -5331,8 +5339,8 @@ function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems, cadastralResult)
     }
     return "<div id='shAnalyticsPdfReport' class='sh-analytics-pdf-report'>" +
         "<div class='sh-pdf-header'>" +
-            "<div><div class='sh-pdf-kicker'>Observatorio de la Tierra y el Territorio</div><h1>Reporte de Detalle — Cambios</h1><div class='sh-pdf-subtitle'>" + escapeSHAnalyticsHtml(subscriptionLabel) + "</div></div>" +
-            "<img src='../images/logo_igac.png' onerror='this.style.display=\"none\"' />" +
+            "<div><img class='sh-pdf-header-logo' src='data/Logo_OBS.png' /><h1>Reporte de Detalle — Cambios</h1><div class='sh-pdf-subtitle'>" + escapeSHAnalyticsHtml(subscriptionLabel) + "</div></div>" +
+            "<img class='sh-pdf-right-logo' src='data/logos_cm.png' />" +
         "</div>" +
         "<div class='sh-pdf-metrics'>" +
             "<div><strong>" + escapeSHAnalyticsHtml(detectionDate) + "</strong><span>Fecha de detección</span></div>" +
@@ -5342,6 +5350,7 @@ function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems, cadastralResult)
         "<h2>Galería — Mosaicos mensuales</h2>" +
         "<div class='sh-pdf-gallery'>" + galleryHtml + "</div>" +
         "<div class='sh-pdf-footnote'>Mosaicos mensuales Planet · vista centrada en el polígono seleccionado</div>" +
+        buildSHAnalyticsCadastralReportHtml(cadastralResult, { sourceText: "Predios intersectados con la detección seleccionada." }) +
     "</div>";
 }
 
@@ -5356,22 +5365,28 @@ function downloadSHAnalyticsPolygonPdf(dataIndex) {
             ensureSHAnalyticsAdminLevelLoaded("department"),
             ensureSHAnalyticsAdminLevelLoaded("municipality"),
         ]).then(function () {
-            return captureSHAnalyticsPdfGalleryItems(dataIndex);
-        }).then(function (galleryItems) {
-            var reportHtml = buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems);
+            return Promise.all([
+                captureSHAnalyticsPdfGalleryItems(dataIndex),
+                loadSHAnalyticsCadastralReportRows(dataIndex),
+            ]);
+        }).then(function (reportData) {
+            var galleryItems = reportData[0];
+            var cadastralResult = reportData[1];
+            var reportHtml = buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems, cadastralResult);
             var reportNode = document.createElement("div");
             reportNode.style.position = "fixed";
             reportNode.style.left = "-12000px";
             reportNode.style.top = "0";
             reportNode.innerHTML = reportHtml;
             document.body.appendChild(reportNode);
-            var fileName = "reporte_planet_analytics_poligono_" + dataIndex + ".pdf";
+            var fileName = "Reporte_OTT_analytics_poligono_" + dataIndex + ".pdf";
             return html2pdf().set({
                 margin: 8,
                 filename: fileName,
                 image: { type: "jpeg", quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true, allowTaint: true },
                 jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+                pagebreak: { mode: ["css", "legacy"], before: [".sh-pdf-cadastral-page"] },
             }).from(reportNode.firstChild).save().then(function () {
                 document.body.removeChild(reportNode);
                 closeLoading();
@@ -6616,7 +6631,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         shAnalyticsPdfHtml = "<button type='button' class='sh-analytics-floating-pdf-btn' title='Descargar reporte PDF' data-sh-analytics-index='" + shAnalyticsDataIndex + "'><span class='sh-analytics-pdf-icon'>PDF</span></button>";
         var shAnalyticsHexInfo = getSHAnalyticsHexInfoByDataIndex(shAnalyticsDataIndex);
         if (shAnalyticsHexInfo) {
-            shAnalyticsHexHtml = "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Hexágono</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='sh-analytics-hex-number'>" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.number) + "</span>" +
+            shAnalyticsHexHtml = "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>HExagono</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='sh-analytics-hex-number'>" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.number) + "</span>" +
                 "<button type='button' class='sh-analytics-floating-hex-download-btn' title='Descargar cambios del hexágono' data-sh-analytics-hex='" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.key) + "'><span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span></button>" +
                 "<button type='button' class='sh-analytics-floating-hex-pdf-btn' title='Descargar reporte del hexágono' data-sh-analytics-hex='" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.key) + "'><span class='sh-analytics-pdf-icon'>PDF</span></button>" +
             "</td></tr>";
@@ -6629,6 +6644,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         "<table style='width:100%;border-collapse:collapse;background:#fff;border:1px solid #ddd;'>" +
         "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Índice</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='burns-index-label'>" + indexLabel + "</span>" + shAnalyticsDownloadHtml + shAnalyticsPdfHtml + indexInfoHtml + "</td></tr>" +
         (detectionDateLabel ? "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Fecha de detección</td><td style='padding:8px;border-bottom:1px solid #eee;'>" + detectionDateLabel + "</td></tr>" : "") +
+        shAnalyticsHexHtml +
         "</table>" +
         "<div id='burnsSelectPolygonMessage' style='display:" + (hasSelectedPolygon ? "none" : "block") + ";margin:8px 0 0;padding:9px 10px;border:1px solid #d9e2dc;background:#f6faf7;color:#3d5e4f;font-weight:600;text-align:center;border-radius:4px;'>Seleccione poligono en el mapa para desplegar los mosaicos</div>" +
         "<div style='display:flex;gap:8px;margin-top:8px;margin-bottom:10px;'>" +
@@ -6691,6 +6707,14 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     $(".sh-analytics-floating-pdf-btn").off("click").on("click", function (evt) {
         evt.preventDefault();
         downloadSHAnalyticsPolygonPdf($(this).attr("data-sh-analytics-index"));
+    });
+    $(".sh-analytics-floating-hex-download-btn").off("click").on("click", function (evt) {
+        evt.preventDefault();
+        downloadSHAnalyticsHexData($(this).attr("data-sh-analytics-hex"));
+    });
+    $(".sh-analytics-floating-hex-pdf-btn").off("click").on("click", function (evt) {
+        evt.preventDefault();
+        downloadSHAnalyticsHexPdfReport($(this).attr("data-sh-analytics-hex"));
     });
 
     var targetExtent = null;
@@ -8708,8 +8732,9 @@ function updateImagenes() {
                 type: "POST",
                 data: function (d) {
                     d.cmd = "query";
+                    var searchFiltroData = getSearchFiltroData();
                     if (modoSearch == "entidad") {
-                        if ($("#searchFiltro").select2("data")[0].type == "DEPTO" || $("#searchFiltro").select2("data")[0].type == "MUNI") {
+                        if (searchFiltroData != null && (searchFiltroData.type == "DEPTO" || searchFiltroData.type == "MUNI")) {
                             d.codigo = $("#searchFiltro").val();
                         }
                     }
@@ -8740,7 +8765,7 @@ function updateImagenes() {
                         var cValue = parseInt(searchCloudValue2) / 100.0;
                         d.cloud = cValue;
                     }
-                    if ($("#searchFiltro").select2("data")[0].type == "PAIS") {
+                    if (searchFiltroData != null && searchFiltroData.type == "PAIS") {
                     }
                     if ($("#searchImagenesFechaInicial").val() != null) {
                         d.fechaInicial = $("#searchImagenesFechaInicial").val();
@@ -8937,8 +8962,9 @@ function updateImagenes2() {
                 type: "POST",
                 data: function (d) {
                     d.cmd = "query";
+                    var searchFiltroData = getSearchFiltroData();
                     if (modoSearch == "entidad") {
-                        if ($("#searchFiltro").select2("data")[0].type == "DEPTO" || $("#searchFiltro").select2("data")[0].type == "MUNI") {
+                        if (searchFiltroData != null && (searchFiltroData.type == "DEPTO" || searchFiltroData.type == "MUNI")) {
                             d.codigo = $("#searchFiltro").val();
                         }
                     }
@@ -8969,7 +8995,7 @@ function updateImagenes2() {
                         var cValue = parseInt(searchCloudValue) / 100.0;
                         d.cloud = cValue;
                     }
-                    if ($("#searchFiltro").select2("data")[0].type == "PAIS") {
+                    if (searchFiltroData != null && searchFiltroData.type == "PAIS") {
                     }
                     d.token = currentAccessToken;
                     loading = $.confirm({
@@ -11751,6 +11777,14 @@ function getConfigValue(data, upperKey, lowerKey) {
     return [];
 }
 
+function getSearchFiltroData() {
+    var selectedData = $("#searchFiltro").select2("data");
+    if (!selectedData || selectedData.length === 0) {
+        return null;
+    }
+    return selectedData[0] || null;
+}
+
 function initData(data) {
     if (!isMapReady) {
         pendingInitData = data;
@@ -11816,7 +11850,10 @@ function initData(data) {
     $("#searchFiltro").val(null);
     $("#searchFiltro").trigger("change");
     $("#searchFiltro").on("change", function (e) {
-        var data = $("#searchFiltro").select2("data")[0];
+        var data = getSearchFiltroData();
+        if (data == null) {
+            return;
+        }
         if (data.type == "MUNI") {
             $("#limpiarBtn").show();
             var params = {};
@@ -12410,7 +12447,8 @@ function updateInicio() {
         toggleMenu("large");
         if (extentInicial == null) {
             if (searchCurrent != null) {
-                if ($("#searchFiltro").select2("data")[0].type == "PAIS") {
+                var searchFiltroData = getSearchFiltroData();
+                if (searchFiltroData != null && searchFiltroData.type == "PAIS") {
                     map.setExtent(default_extent);
                 } else {
                     map.setExtent(searchCurrent.getExtent().expand(1.5));
@@ -12423,7 +12461,8 @@ function updateInicio() {
     } else {
         if (extentInicial == null) {
             if (searchCurrent != null) {
-                if ($("#searchFiltro").select2("data")[0].type == "PAIS") {
+                var searchFiltroData2 = getSearchFiltroData();
+                if (searchFiltroData2 != null && searchFiltroData2.type == "PAIS") {
                     map.setExtent(default_extent);
                 } else {
                     map.setExtent(searchCurrent.getExtent().expand(1.5));

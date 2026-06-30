@@ -9,6 +9,7 @@
   }
 
   var existingEnv = window.__env || {};
+  var isLocalFrontend = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
   var remoteProxyBaseUrl = "https://ccg.igac.gov.co";
   var proxyBaseUrl = existingEnv.sentinelHubProxyBaseUrl || remoteProxyBaseUrl;
   var prismaProxyBaseUrl = existingEnv.prismaProxyBaseUrl || remoteProxyBaseUrl;
