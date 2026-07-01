@@ -48,7 +48,7 @@
     planetTileProxyUrl: joinUrl(proxyBaseUrl, "/planet-tile"),
     sentinelHubUseDirectToken: false,
     prismaProxyBaseUrl: prismaProxyBaseUrl,
-    rasterMosaicByocCollection: "byoc-7c1511e7-42fd-41ee-925a-bedb3c24cc44",
+    rasterMosaicByocCollection: "byoc-b866330d-4915-4591-b7f1-9e26af68085e",
     planetApiKey: "PLAKd9faf25449294d9d86096fe33d980662",
     prismaApiBaseUrl: prismaApiBaseUrl,
     prismaTokenProxyUrl: prismaTokenProxyUrl,
