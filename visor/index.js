@@ -8430,11 +8430,12 @@ function getRasterMosaicAoi() {
 }
 
 function getRasterMosaicYears() {
-    return $("input[name='rasterMosaicYearPanel']:checked")
-        .map(function () {
-            return this.value;
-        })
-        .get();
+    var years = {};
+    $("input[name='rasterMosaicYearPanel']:checked, input[name='rasterMosaicYear']:checked")
+        .each(function () {
+            years[this.value] = true;
+        });
+    return Object.keys(years).sort();
 }
 
 function getRasterMosaicOutputSize(aoi, outputType) {
