@@ -751,6 +751,14 @@ var sentinelHubImageProxyUrl = runtimeEnv.sentinelHubImageProxyUrl || runtimeEnv
 var sentinelHubFallbackProcessProxyUrl = runtimeEnv.sentinelHubFallbackProcessProxyUrl || "";
 var sentinelHubFallbackCatalogProxyUrl = runtimeEnv.sentinelHubFallbackCatalogProxyUrl || "";
 var sentinelHubFallbackImageProxyUrl = runtimeEnv.sentinelHubFallbackImageProxyUrl || runtimeEnv.sentinelHubFallbackProcessProxyUrl || "";
+var sentinelSpectralResolutionMeters = 10;
+var rasterMosaicResolutionMeters = 3;
+var rasterMosaicMaxOutputPixels = 2500;
+var metersPerDegreeApprox = 111000;
+var sentinelLargeAreaMaxPixels = 1000;
+var sentinelLargeAreaMaxConcurrentRequests = 2;
+var sentinelStatsRequestTimeoutMs = 180000;
+var sentinelStatsRequestMaxAttempts = 2;
 var rasterMosaicByocCollection = runtimeEnv.rasterMosaicByocCollection || "byoc-b866330d-4915-4591-b7f1-9e26af68085e";
 var rasterMosaicLayer = null;
 var rasterMosaicObjectUrl = null;
@@ -905,19 +913,17 @@ var rasterMosaicIdxScripts = {
     function normalizedDifference(a, b) {
       return (a + b) === 0 ? null : (a - b) / (a + b);
     }
-    function vegetationRamp(value) {
+    function ndviClassColor(value) {
       if (value === null || !isFinite(value)) return [0, 0, 0, 0];
-      var t = Math.min(Math.max((value + 1) / 2, 0), 1);
-      if (t < 0.5) {
-        var k1 = t / 0.5;
-        return [clamp255(160 + 80 * k1), clamp255(80 + 140 * k1), clamp255(35 + 15 * k1), 255];
-      }
-      var k2 = (t - 0.5) / 0.5;
-      return [clamp255(240 - 210 * k2), clamp255(220 - 80 * k2), clamp255(50 + 20 * k2), 255];
+      if (value < 0) return [184, 184, 134, 255];
+      if (value < 0.2) return [238, 233, 182, 255];
+      if (value < 0.5) return [143, 189, 80, 255];
+      if (value < 0.8) return [100, 156, 56, 255];
+      return [37, 101, 22, 255];
     }
     function evaluatePixel(sample) {
       if (sample.dataMask === 0 || isNoData(sample.nir) || isNoData(sample.red)) return { default: [0, 0, 0, 0] };
-      return { default: vegetationRamp(normalizedDifference(sample.nir, sample.red)) };
+      return { default: ndviClassColor(normalizedDifference(sample.nir, sample.red)) };
     }`,
     GNDVI: `//VERSION=3
     function setup() {
@@ -931,19 +937,16 @@ var rasterMosaicIdxScripts = {
     function normalizedDifference(a, b) {
       return (a + b) === 0 ? null : (a - b) / (a + b);
     }
-    function vegetationRamp(value) {
+    function gndviClassColor(value) {
       if (value === null || !isFinite(value)) return [0, 0, 0, 0];
-      var t = Math.min(Math.max((value + 1) / 2, 0), 1);
-      if (t < 0.5) {
-        var k1 = t / 0.5;
-        return [clamp255(160 + 80 * k1), clamp255(80 + 140 * k1), clamp255(35 + 15 * k1), 255];
-      }
-      var k2 = (t - 0.5) / 0.5;
-      return [clamp255(240 - 210 * k2), clamp255(220 - 80 * k2), clamp255(50 + 20 * k2), 255];
+      if (value < 0) return [0, 33, 0, 255];
+      if (value < 0.5) return [131, 181, 11, 255];
+      if (value < 0.8) return [28, 116, 4, 255];
+      return [4, 66, 4, 255];
     }
     function evaluatePixel(sample) {
       if (sample.dataMask === 0 || isNoData(sample.nir) || isNoData(sample.green)) return { default: [0, 0, 0, 0] };
-      return { default: vegetationRamp(normalizedDifference(sample.nir, sample.green)) };
+      return { default: gndviClassColor(normalizedDifference(sample.nir, sample.green)) };
     }`,
     EVI: `//VERSION=3
     function setup() {
@@ -955,15 +958,12 @@ var rasterMosaicIdxScripts = {
     function clamp255(value) { return Math.min(Math.max(Math.round(value), 0), 255); }
     function isNoData(value) { return !isFinite(value) || value <= 0 || value > 10000; }
     function reflectance(value) { return value / 10000; }
-    function vegetationRamp(value) {
+    function eviClassColor(value) {
       if (value === null || !isFinite(value)) return [0, 0, 0, 0];
-      var t = Math.min(Math.max((value + 1) / 2, 0), 1);
-      if (t < 0.5) {
-        var k1 = t / 0.5;
-        return [clamp255(160 + 80 * k1), clamp255(80 + 140 * k1), clamp255(35 + 15 * k1), 255];
-      }
-      var k2 = (t - 0.5) / 0.5;
-      return [clamp255(240 - 210 * k2), clamp255(220 - 80 * k2), clamp255(50 + 20 * k2), 255];
+      if (value < 0) return [0, 0, 242, 255];
+      if (value < 0.5) return [144, 255, 111, 255];
+      if (value < 0.8) return [255, 239, 0, 255];
+      return [255, 90, 0, 255];
     }
     function evaluatePixel(sample) {
       if (sample.dataMask === 0 || isNoData(sample.nir) || isNoData(sample.red) || isNoData(sample.blue)) return { default: [0, 0, 0, 0] };
@@ -972,7 +972,7 @@ var rasterMosaicIdxScripts = {
       var blue = reflectance(sample.blue);
       var denominator = nir + 6 * red - 7.5 * blue + 1;
       var evi = denominator === 0 ? null : 2.5 * ((nir - red) / denominator);
-      return { default: vegetationRamp(evi) };
+      return { default: eviClassColor(evi) };
     }`,
     SAVI: `//VERSION=3
     function setup() {
@@ -984,15 +984,12 @@ var rasterMosaicIdxScripts = {
     function clamp255(value) { return Math.min(Math.max(Math.round(value), 0), 255); }
     function isNoData(value) { return !isFinite(value) || value <= 0 || value > 10000; }
     function reflectance(value) { return value / 10000; }
-    function vegetationRamp(value) {
+    function saviClassColor(value) {
       if (value === null || !isFinite(value)) return [0, 0, 0, 0];
-      var t = Math.min(Math.max((value + 1) / 2, 0), 1);
-      if (t < 0.5) {
-        var k1 = t / 0.5;
-        return [clamp255(160 + 80 * k1), clamp255(80 + 140 * k1), clamp255(35 + 15 * k1), 255];
-      }
-      var k2 = (t - 0.5) / 0.5;
-      return [clamp255(240 - 210 * k2), clamp255(220 - 80 * k2), clamp255(50 + 20 * k2), 255];
+      if (value < 0) return [235, 235, 232, 255];
+      if (value < 0.5) return [241, 236, 187, 255];
+      if (value < 0.8) return [135, 183, 75, 255];
+      return [73, 132, 41, 255];
     }
     function evaluatePixel(sample) {
       if (sample.dataMask === 0 || isNoData(sample.nir) || isNoData(sample.red)) return { default: [0, 0, 0, 0] };
@@ -1001,7 +998,7 @@ var rasterMosaicIdxScripts = {
       var L = 0.428;
       var denominator = nir + red + L;
       var savi = denominator === 0 ? null : ((nir - red) / denominator) * (1 + L);
-      return { default: vegetationRamp(savi) };
+      return { default: saviClassColor(savi) };
     }`,
     NDWI: `//VERSION=3
     function setup() {
@@ -1015,19 +1012,14 @@ var rasterMosaicIdxScripts = {
     function normalizedDifference(a, b) {
       return (a + b) === 0 ? null : (a - b) / (a + b);
     }
-    function waterRamp(value) {
+    function ndwiClassColor(value) {
       if (value === null || !isFinite(value)) return [0, 0, 0, 0];
-      var t = Math.min(Math.max((value + 1) / 2, 0), 1);
-      return [
-        clamp255(210 - 190 * t),
-        clamp255(190 - 80 * t),
-        clamp255(90 + 165 * t),
-        255
-      ];
+      if (value < 0) return [4, 4, 4, 255];
+      return [154, 6, 4, 255];
     }
     function evaluatePixel(sample) {
       if (sample.dataMask === 0 || isNoData(sample.green) || isNoData(sample.nir)) return { default: [0, 0, 0, 0] };
-      return { default: waterRamp(normalizedDifference(sample.green, sample.nir)) };
+      return { default: ndwiClassColor(normalizedDifference(sample.green, sample.nir)) };
     }`,
     NDCI: `//VERSION=3
     function setup() {
@@ -1041,19 +1033,15 @@ var rasterMosaicIdxScripts = {
     function normalizedDifference(a, b) {
       return (a + b) === 0 ? null : (a - b) / (a + b);
     }
-    function chlorophyllRamp(value) {
+    function ndciClassColor(value) {
       if (value === null || !isFinite(value)) return [0, 0, 0, 0];
-      var t = Math.min(Math.max((value + 1) / 2, 0), 1);
-      return [
-        clamp255(65 + 155 * t),
-        clamp255(40 + 195 * t),
-        clamp255(150 - 120 * t),
-        255
-      ];
+      if (value < 0) return [227, 236, 232, 255];
+      if (value < 0.2) return [90, 98, 172, 255];
+      return [246, 190, 133, 255];
     }
     function evaluatePixel(sample) {
       if (sample.dataMask === 0 || isNoData(sample.rededge) || isNoData(sample.red)) return { default: [0, 0, 0, 0] };
-      return { default: chlorophyllRamp(normalizedDifference(sample.rededge, sample.red)) };
+      return { default: ndciClassColor(normalizedDifference(sample.rededge, sample.red)) };
     }`,
 };
 
@@ -2234,16 +2222,8 @@ function updateSHStats() {
     }
     currentSearchArea = shArea.currentSearchArea;
     currentSearchArea2 = shArea.currentSearchArea2;
-    if (esri.geometryEngine.geodesicArea(esri.webMercatorUtils.webMercatorToGeographic(currentSearchArea), "hectares") > 100) {
-        showLoading("Le informamos que su polígono excede el límite de área permitido (100 hectáreas), por este motivo, no podrá realizar la consulta de uso de suelo para su área de estudio", null, "red", false);
-        return;
-    }
 
-    // Calculate optimal resolution to fit within 2500x2500 pixel limit
     var resolutionInfo = calculateOptimalResolution(currentSearchArea);
-    if (resolutionInfo.maxResolution) {
-        showLoading("El área es muy grande. Se ajustará la resolución a " + resolutionInfo.resx + "m para procesarla (~" + resolutionInfo.pixelCount + " píxeles por lado). Esto puede tardar más tiempo.", null, "orange", false);
-    }
     if ($("#selectSHStats1").val() == "" || $("#selectSHStats1").val() == null) {
         showLoading("Debes seleccionar una fecha inicial", null, "red", true);
         return;
@@ -2281,12 +2261,44 @@ function updateSHStats() {
         },
     });
     loading.open();
-    var params = {
+    $("#divSHStats").hide();
+    $("#btnSHDownloadStats").attr("disabled", "disabled");
+    if (currentSHDataLayers != null) {
+        map.removeLayer(currentSHDataLayers);
+    }
+    currentSHLayer.clear();
+
+    var tiles = buildSentinelLargeAreaTiles(currentSearchArea, resolutionInfo);
+    console.log("[SH_STATS] Tiles para procesar:", tiles.length);
+    runPromisePool(
+        tiles.map(function (tile) {
+            return function () {
+                return requestSHStatsForGeometry(tile.geometry, resolutionInfo);
+            };
+        }),
+        sentinelLargeAreaMaxConcurrentRequests,
+    )
+        .then(function (responses) {
+            loading.close();
+            renderSHStatsData(mergeSHStatsResponses(responses));
+        })
+        .catch(function (err) {
+            loading.close();
+            var statusText = err && err.statusText ? String(err.statusText) : "";
+            var statusCode = err && err.status ? " HTTP " + err.status : "";
+            var timeoutText = statusText == "timeout" ? " por tiempo de espera" : "";
+            showLoading("No se pudo procesar la consulta Sentinel por tiles" + timeoutText + statusCode + ". Intenta un rango de fechas menor o vuelve a ejecutar la consulta.", null, "red", true);
+            console.error(err);
+        });
+}
+
+function buildSHStatsParams(geometryGeo, resolutionInfo) {
+    return {
         input: {
             bounds: {
                 geometry: {
                     type: "Polygon",
-                    coordinates: currentSearchArea.rings,
+                    coordinates: geometryGeo.rings,
                 },
             },
             data: [
@@ -2303,11 +2315,11 @@ function updateSHStats() {
         aggregation: {
             timeRange: {
                 from: esri.moment($("#selectSHStats1").val(), "DD/MM/yyyy").format("yyyy-MM-DD") + "T00:00:00Z",
-                to: esri.moment($("#selectSHStats2").val(), "DD/MM/yyyy").format("yyyy-MM-DD") + "T00:00:00Z",
+                to: esri.moment($("#selectSHStats2").val(), "DD/MM/yyyy").format("yyyy-MM-DD") + "T23:59:59Z",
             },
             aggregationInterval: {
                 of: $("#selectSHStatsAgg").val(),
-                lastIntervalBehavior: "SKIP",
+                lastIntervalBehavior: "SHORTEN",
             },
             resx: getSHStatsResolutionDegrees(resolutionInfo, "x"),
             resy: getSHStatsResolutionDegrees(resolutionInfo, "y"),
@@ -2326,98 +2338,249 @@ function updateSHStats() {
             },
         },
     };
-    $("#divSHStats").hide();
-    $("#btnSHDownloadStats").attr("disabled", "disabled");
-    if (currentSHDataLayers != null) {
-        map.removeLayer(currentSHDataLayers);
-    }
-    currentSHLayer.clear();
-    console.log(params);
-    console.log(sh_stats);
-    $.ajax({
-        url: sh_stats,
-        data: JSON.stringify(params),
-        dataType: "json",
-        type: "POST",
-        headers: { "Content-Type": "application/json", Authorization: "Bearer " + currentSHToken },
-        success: function (data) {
-            loading.close();
-            if (data.data.length == 0) {
-                showLoading("Debes seleccionar una extension menor para la generacion de la grafica", null, "red", true);
-                return;
-            }
-            $("#divSHStats").show();
-            $("#btnSHDownloadStats").removeAttr("disabled");
-            var statisticsData = data;
-            var labels = [];
-            var intervals = [];
-            var p10Data = [];
-            var meanData = [];
-            var p90Data = [];
+}
 
-            statisticsData.data.forEach((interval) => {
-                labels.push(interval.interval.from);
-                intervals.push({
-                    from: interval.interval.from.substring(0, 10),
-                    to: interval.interval.to ? interval.interval.to.substring(0, 10) : null,
-                    label: interval.interval.from.substring(0, 10),
-                });
-                p10Data.push(interval.outputs.data.bands.B0.stats.percentiles["10.0"]);
-                meanData.push(interval.outputs.data.bands.B0.stats.mean);
-                p90Data.push(interval.outputs.data.bands.B0.stats.percentiles["90.0"]);
-            });
-            currentSHStatsLabels = labels;
-            currentSHStatsIntervals = null;
-            currentSHStatsIntervals = intervals.map(function (interval, index) {
-                if (interval.to) return interval;
-                return getSHStatsIntervalByIndex(index);
-            });
-            generateChart(labels, meanData, p10Data, p90Data);
-            var initialInterval = getSHStatsIntervalByIndex(0);
-            currentSHDataLayers = new esri.WMSLayer(shStatsUrl, {
-                visibleLayers: [$("#selectSHStatsIdx").val()],
-                customParameters: {
-                    TIME: initialInterval.from + "/" + initialInterval.to,
-                    MAXCC: 100,
-                    GEOMETRY: currentSearchArea2.rings,
-                },
-            });
-            sliderSHStats.destroy();
-            sliderSHStats = new Slider("#sliderSHStats", {
-                min: 0,
-                max: currentSHStatsLabels.length - 1,
-                value: 0,
-                formatter: function (value) {
-                    if (currentSHStatsLabels == null) {
-                        $("#sliderSHStatsTxt").html("");
+function requestSHStatsForGeometry(geometryGeo, resolutionInfo) {
+    return new Promise(function (resolve, reject) {
+        var attempt = 0;
+        function send() {
+            attempt += 1;
+            $.ajax({
+                url: sh_stats,
+                data: JSON.stringify(buildSHStatsParams(geometryGeo, resolutionInfo)),
+                dataType: "json",
+                type: "POST",
+                headers: { "Content-Type": "application/json", Authorization: "Bearer " + currentSHToken },
+                success: resolve,
+                timeout: sentinelStatsRequestTimeoutMs,
+                error: function (err) {
+                    var retryable = err && (err.statusText == "timeout" || err.status == 0 || err.status == 408 || err.status == 429 || err.status >= 500);
+                    if (retryable && attempt < sentinelStatsRequestMaxAttempts) {
+                        console.warn("[SH_STATS] Reintentando tile Sentinel", { attempt: attempt, status: err.status, statusText: err.statusText });
+                        setTimeout(send, 750 * attempt);
+                        return;
                     }
-                    $("#sliderSHStatsTxt").html(currentSHStatsLabels[value].substring(0, 10));
-                    return currentSHStatsLabels[value].substring(0, 10);
+                    reject(err);
                 },
+                cache: false,
+                contentType: "application/json",
+                processData: false,
             });
-            sliderSHStats.on("change", function (args) {
-                try {
-                    applySHStatsLayerSelection(args.newValue);
-                } catch (err) {}
-            });
-            map.addLayer(currentSHDataLayers);
-        },
-        timeout: 60000,
-        error: function (err) {
-            loading.close();
-            showLoading("Debes seleccionar una extension menor para la generacion de la grafica", null, "red", true);
-            /*
-            if (err.responseJSON.error != null) {                
-                showLoading(err.responseJSON.error.message, null, "red", false);
+        }
+        send();
+    });
+}
+
+function runPromisePool(tasks, maxConcurrent) {
+    var results = [];
+    var nextIndex = 0;
+    var activeCount = 0;
+    maxConcurrent = Math.max(1, maxConcurrent || 1);
+    return new Promise(function (resolve, reject) {
+        function launchNext() {
+            if (nextIndex >= tasks.length && activeCount == 0) {
+                resolve(results);
                 return;
             }
-            */
-            console.error(err);
-        },
-        cache: false,
-        contentType: false,
-        processData: false,
+            while (activeCount < maxConcurrent && nextIndex < tasks.length) {
+                (function (taskIndex) {
+                    activeCount += 1;
+                    tasks[taskIndex]()
+                        .then(function (result) {
+                            results[taskIndex] = result;
+                            activeCount -= 1;
+                            launchNext();
+                        })
+                        .catch(reject);
+                })(nextIndex);
+                nextIndex += 1;
+            }
+        }
+        launchNext();
     });
+}
+
+function buildSentinelLargeAreaTiles(geometryGeo, resolutionInfo) {
+    var extent = geometryGeo && geometryGeo.getExtent ? geometryGeo.getExtent() : null;
+    if (!extent || !resolutionInfo || !resolutionInfo.horizontalMeters || !resolutionInfo.verticalMeters) {
+        return [{ geometry: geometryGeo }];
+    }
+    var tileMeters = sentinelLargeAreaMaxPixels * sentinelSpectralResolutionMeters;
+    var columns = Math.max(1, Math.ceil(resolutionInfo.horizontalMeters / tileMeters));
+    var rows = Math.max(1, Math.ceil(resolutionInfo.verticalMeters / tileMeters));
+    if (columns == 1 && rows == 1) {
+        return [{ geometry: geometryGeo }];
+    }
+
+    var tiles = [];
+    var dx = (extent.xmax - extent.xmin) / columns;
+    var dy = (extent.ymax - extent.ymin) / rows;
+    for (var row = 0; row < rows; row++) {
+        for (var col = 0; col < columns; col++) {
+            var xmin = extent.xmin + col * dx;
+            var xmax = col == columns - 1 ? extent.xmax : xmin + dx;
+            var ymin = extent.ymin + row * dy;
+            var ymax = row == rows - 1 ? extent.ymax : ymin + dy;
+            var tilePolygon = new esri.Polygon({
+                rings: [
+                    [
+                        [xmin, ymin],
+                        [xmin, ymax],
+                        [xmax, ymax],
+                        [xmax, ymin],
+                        [xmin, ymin],
+                    ],
+                ],
+                spatialReference: geometryGeo.spatialReference,
+            });
+            var tileGeometry = tilePolygon;
+            if (esri.geometryEngine && esri.geometryEngine.intersect) {
+                tileGeometry = esri.geometryEngine.intersect(geometryGeo, tilePolygon);
+            }
+            if (tileGeometry && tileGeometry.rings && tileGeometry.rings.length > 0) {
+                tiles.push({ geometry: tileGeometry });
+            }
+        }
+    }
+    return tiles.length ? tiles : [{ geometry: geometryGeo }];
+}
+
+function getSHStatsWeight(stats) {
+    if (!stats) return 0;
+    var sampleCount = Number(stats.sampleCount || 0);
+    var noDataCount = Number(stats.noDataCount || 0);
+    var validCount = sampleCount - noDataCount;
+    return validCount > 0 ? validCount : sampleCount;
+}
+
+function weightedAverageSHStats(values) {
+    var weightedSum = 0;
+    var totalWeight = 0;
+    values.forEach(function (item) {
+        var value = Number(item.value);
+        var weight = Number(item.weight || 0);
+        if (isFinite(value) && weight > 0) {
+            weightedSum += value * weight;
+            totalWeight += weight;
+        }
+    });
+    return totalWeight > 0 ? weightedSum / totalWeight : null;
+}
+
+function mergeSHStatsResponses(responses) {
+    var intervalsByKey = {};
+    responses.forEach(function (response) {
+        if (!response || !Array.isArray(response.data)) return;
+        response.data.forEach(function (interval) {
+            var key = interval && interval.interval ? interval.interval.from + "|" + interval.interval.to : null;
+            var stats = interval && interval.outputs && interval.outputs.data && interval.outputs.data.bands && interval.outputs.data.bands.B0 ? interval.outputs.data.bands.B0.stats : null;
+            if (!key || !stats) return;
+            if (!intervalsByKey[key]) {
+                intervalsByKey[key] = {
+                    template: JSON.parse(JSON.stringify(interval)),
+                    statsList: [],
+                };
+            }
+            intervalsByKey[key].statsList.push(stats);
+        });
+    });
+
+    var mergedData = Object.keys(intervalsByKey)
+        .sort()
+        .map(function (key) {
+            var entry = intervalsByKey[key];
+            var mergedInterval = entry.template;
+            var mergedStats = mergedInterval.outputs.data.bands.B0.stats;
+            var weightedStats = entry.statsList.map(function (stats) {
+                return { stats: stats, weight: getSHStatsWeight(stats) };
+            });
+            var totalSampleCount = 0;
+            var totalNoDataCount = 0;
+            weightedStats.forEach(function (item) {
+                totalSampleCount += Number(item.stats.sampleCount || 0);
+                totalNoDataCount += Number(item.stats.noDataCount || 0);
+            });
+            mergedStats.sampleCount = totalSampleCount;
+            mergedStats.noDataCount = totalNoDataCount;
+            mergedStats.mean = weightedAverageSHStats(
+                weightedStats.map(function (item) {
+                    return { value: item.stats.mean, weight: item.weight };
+                }),
+            );
+            if (mergedStats.percentiles) {
+                ["10.0", "20.0", "30.0", "40.0", "50.0", "60.0", "70.0", "80.0", "90.0"].forEach(function (percentileKey) {
+                    mergedStats.percentiles[percentileKey] = weightedAverageSHStats(
+                        weightedStats.map(function (item) {
+                            return { value: item.stats.percentiles ? item.stats.percentiles[percentileKey] : null, weight: item.weight };
+                        }),
+                    );
+                });
+            }
+            return mergedInterval;
+        });
+
+    return { data: mergedData };
+}
+
+function renderSHStatsData(data) {
+    if (!data || !Array.isArray(data.data) || data.data.length == 0) {
+        showLoading("Sentinel no retornó datos para el rango de fechas, índice y nivel de agrupamiento seleccionados. Prueba ampliar el rango o cambiar el agrupamiento.", null, "red", true);
+        return;
+    }
+    $("#divSHStats").show();
+    $("#btnSHDownloadStats").removeAttr("disabled");
+    var labels = [];
+    var intervals = [];
+    var p10Data = [];
+    var meanData = [];
+    var p90Data = [];
+
+    data.data.forEach(function (interval) {
+        labels.push(interval.interval.from);
+        intervals.push({
+            from: interval.interval.from.substring(0, 10),
+            to: interval.interval.to ? interval.interval.to.substring(0, 10) : null,
+            label: interval.interval.from.substring(0, 10),
+        });
+        p10Data.push(interval.outputs.data.bands.B0.stats.percentiles["10.0"]);
+        meanData.push(interval.outputs.data.bands.B0.stats.mean);
+        p90Data.push(interval.outputs.data.bands.B0.stats.percentiles["90.0"]);
+    });
+    currentSHStatsLabels = labels;
+    currentSHStatsIntervals = null;
+    currentSHStatsIntervals = intervals.map(function (interval, index) {
+        if (interval.to) return interval;
+        return getSHStatsIntervalByIndex(index);
+    });
+    generateChart(labels, meanData, p10Data, p90Data);
+    var initialInterval = getSHStatsIntervalByIndex(0);
+    currentSHDataLayers = new esri.WMSLayer(shStatsUrl, {
+        visibleLayers: [$("#selectSHStatsIdx").val()],
+        customParameters: {
+            TIME: initialInterval.from + "/" + initialInterval.to,
+            MAXCC: 100,
+            GEOMETRY: currentSearchArea2.rings,
+        },
+    });
+    sliderSHStats.destroy();
+    sliderSHStats = new Slider("#sliderSHStats", {
+        min: 0,
+        max: currentSHStatsLabels.length - 1,
+        value: 0,
+        formatter: function (value) {
+            if (currentSHStatsLabels == null) {
+                $("#sliderSHStatsTxt").html("");
+            }
+            $("#sliderSHStatsTxt").html(currentSHStatsLabels[value].substring(0, 10));
+            return currentSHStatsLabels[value].substring(0, 10);
+        },
+    });
+    sliderSHStats.on("change", function (args) {
+        try {
+            applySHStatsLayerSelection(args.newValue);
+        } catch (err) {}
+    });
+    map.addLayer(currentSHDataLayers);
 }
 
 function getSHStatsSearchArea() {
@@ -2441,11 +2604,11 @@ function getSHStatsSearchArea() {
 }
 
 function getSHStatsResolutionDegrees(resolutionInfo, axis) {
-    var defaultResolution = 0.000269494697;
+    var defaultResolution = sentinelSpectralResolutionMeters / metersPerDegreeApprox;
     if (!resolutionInfo) return defaultResolution;
     var calculatedResolution = axis == "y" ? resolutionInfo.resyDegrees : resolutionInfo.resxDegrees;
     if (!calculatedResolution || Number.isNaN(calculatedResolution)) return defaultResolution;
-    return Math.max(defaultResolution, calculatedResolution);
+    return calculatedResolution;
 }
 
 function getSHStatsIntervalByIndex(index) {
@@ -2517,11 +2680,7 @@ function procesarSH() {
     }
     var params = {};
 
-    // Calculate optimal resolution based on area size
     var resolutionInfo = calculateOptimalResolution(currentSearchArea);
-    if (resolutionInfo.maxResolution) {
-        console.warn("Large area detected. Using resolution:", resolutionInfo.resx + "m");
-    }
 
     var maxCloudCoveragePercent = getSHCloudCoverageMaxPercent();
     var cloudCoverageValue = getSHCloudCoverageMaxRatio();
@@ -2853,13 +3012,11 @@ function setSHStatsIndexThreshold(value) {
     $("#sliderCCSHStatsIndex").val(formattedValue);
 }
 
-// Calculate optimal resolution based on area to avoid exceeding 2500x2500 pixels
-// Each pixel is 10m x 10m, so max area is ~625 km²
+// Sentinel spectral tools must always request native 10m resolution.
 // Returns {resx, resy, pixelCount, areaKm2}
 function calculateOptimalResolution(geometryGeo) {
     try {
         var areaKm2 = esri.geometryEngine.geodesicArea(geometryGeo, "square-kilometers");
-        var areaM2 = areaKm2 * 1000000;
 
         var extent = geometryGeo.getExtent();
         var horizontalMeter = esri.geometryEngine.geodesicLength(
@@ -2887,21 +3044,8 @@ function calculateOptimalResolution(geometryGeo) {
             "meters",
         );
 
-        // Maximum pixels we can handle
-        var maxPixels = 2500;
-
-        var resolutionM = 10; // Default to 10m (Sentinel-2 resolution)
-        var minResolutionForWidth = Math.ceil(horizontalMeter / maxPixels / 5) * 5;
-        var minResolutionForHeight = Math.ceil(verticalMeter / maxPixels / 5) * 5;
-        var minResolutionByShape = Math.max(minResolutionForWidth, minResolutionForHeight, 10);
-
-        // If area exceeds max or the bounding box is too large, calculate required resolution
-        if (areaM2 > maxPixels * maxPixels * 10 * 10 || minResolutionByShape > 10) {
-            resolutionM = Math.max(Math.ceil(Math.sqrt(areaM2) / maxPixels / 5) * 5, minResolutionByShape);
-        }
-
-        // Convert to degrees (approximation: 1 degree ≈ 111 km)
-        var resolutionDegrees = resolutionM / 111000;
+        var resolutionM = sentinelSpectralResolutionMeters;
+        var resolutionDegrees = resolutionM / metersPerDegreeApprox;
 
         var estimatedPixelCount = Math.max(Math.round(horizontalMeter / resolutionM), Math.round(verticalMeter / resolutionM));
 
@@ -2912,17 +3056,21 @@ function calculateOptimalResolution(geometryGeo) {
             resyDegrees: resolutionDegrees,
             pixelCount: estimatedPixelCount,
             areaKm2: areaKm2,
-            maxResolution: resolutionM > 100,
+            horizontalMeters: horizontalMeter,
+            verticalMeters: verticalMeter,
+            maxResolution: false,
         };
     } catch (e) {
         console.error("Error calculating resolution:", e);
         return {
-            resx: 10,
-            resy: 10,
-            resxDegrees: 0.000269494697,
-            resyDegrees: 0.000269494697,
+            resx: sentinelSpectralResolutionMeters,
+            resy: sentinelSpectralResolutionMeters,
+            resxDegrees: sentinelSpectralResolutionMeters / metersPerDegreeApprox,
+            resyDegrees: sentinelSpectralResolutionMeters / metersPerDegreeApprox,
             pixelCount: 0,
             areaKm2: 0,
+            horizontalMeters: 0,
+            verticalMeters: 0,
             maxResolution: false,
         };
     }
@@ -8339,16 +8487,32 @@ function getRasterMosaicYears() {
 
 function getRasterMosaicOutputSize(aoi, outputType) {
     var defaultSize = outputType == "image/tiff" ? 1600 : 1024;
-    var maxSize = outputType == "image/tiff" ? 2200 : 1400;
-    var extent = aoi && aoi.mapGeometry && aoi.mapGeometry.getExtent ? aoi.mapGeometry.getExtent() : null;
+    var outputGeometry = aoi && aoi.mapGeometry ? aoi.mapGeometry : null;
+    if (outputGeometry && outputGeometry.spatialReference && outputGeometry.spatialReference.wkid == 4326 && esri.webMercatorUtils && esri.webMercatorUtils.geographicToWebMercator) {
+        outputGeometry = esri.webMercatorUtils.geographicToWebMercator(outputGeometry);
+    }
+    var extent = outputGeometry && outputGeometry.getExtent ? outputGeometry.getExtent() : null;
     if (!extent || !isFinite(extent.getWidth()) || !isFinite(extent.getHeight()) || extent.getWidth() <= 0 || extent.getHeight() <= 0) {
         return { width: defaultSize, height: defaultSize };
     }
     var width = extent.getWidth();
     var height = extent.getHeight();
-    var scale = Math.min(maxSize / Math.max(width, height), defaultSize / Math.min(width, height));
-    var pixelWidth = Math.max(64, Math.min(maxSize, Math.round(width * scale)));
-    var pixelHeight = Math.max(64, Math.min(maxSize, Math.round(height * scale)));
+    var pixelWidth = Math.max(1, Math.ceil(width / rasterMosaicResolutionMeters));
+    var pixelHeight = Math.max(1, Math.ceil(height / rasterMosaicResolutionMeters));
+    var maxDimension = Math.max(pixelWidth, pixelHeight);
+    if (maxDimension > rasterMosaicMaxOutputPixels) {
+        var scale = rasterMosaicMaxOutputPixels / maxDimension;
+        var adjustedWidth = Math.max(1, Math.floor(pixelWidth * scale));
+        var adjustedHeight = Math.max(1, Math.floor(pixelHeight * scale));
+        console.warn("[RASTER_MOSAIC] Ajustando salida para cumplir límite Sentinel Hub", {
+            originalWidth: pixelWidth,
+            originalHeight: pixelHeight,
+            width: adjustedWidth,
+            height: adjustedHeight,
+            maxPixels: rasterMosaicMaxOutputPixels,
+        });
+        return { width: adjustedWidth, height: adjustedHeight };
+    }
     return { width: pixelWidth, height: pixelHeight };
 }
 
@@ -15119,8 +15283,8 @@ function fetchBurnsSentinelOverlay() {
                 ],
             },
             output: {
-                resx: 0.000269494697,
-                resy: 0.000269494697,
+                resx: sentinelSpectralResolutionMeters / metersPerDegreeApprox,
+                resy: sentinelSpectralResolutionMeters / metersPerDegreeApprox,
                 responses: [{ identifier: "default", format: { type: "image/png" } }],
             },
             evalscript: `//VERSION=3
