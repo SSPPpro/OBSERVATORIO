@@ -4207,11 +4207,23 @@ footer .gov-co-logo-pie-mesa {
 
 .sh-pdf-cadastral-page {
     break-before: page;
+    break-inside: avoid;
     box-sizing: border-box;
     display: block;
+    height: 720px;
     margin-top: 0;
     page-break-before: always;
+    page-break-inside: avoid;
     padding-top: 0;
+    overflow: hidden;
+}
+
+.sh-pdf-cadastral-page .sh-pdf-header {
+    margin-bottom: 10px;
+}
+
+.sh-pdf-cadastral-page .sh-pdf-metrics {
+    margin-bottom: 12px;
 }
 
 .sh-pdf-cadastral-page h2 {
@@ -4232,6 +4244,18 @@ footer .gov-co-logo-pie-mesa {
     font-size: 11px;
     table-layout: fixed;
     width: 100%;
+}
+
+.sh-pdf-cadastral-table thead {
+    display: table-header-group;
+}
+
+.sh-pdf-cadastral-table tbody,
+.sh-pdf-cadastral-table tr,
+.sh-pdf-cadastral-table td,
+.sh-pdf-cadastral-table th {
+    break-inside: avoid;
+    page-break-inside: avoid;
 }
 
 .sh-pdf-cadastral-table th {
@@ -4270,8 +4294,9 @@ footer .gov-co-logo-pie-mesa {
 
 .sh-pdf-cadastral-table td {
     border-bottom: 1px solid #e3e9ed;
+    line-height: 1.2;
     overflow-wrap: anywhere;
-    padding: 8px;
+    padding: 6px 8px;
     vertical-align: top;
 }
 

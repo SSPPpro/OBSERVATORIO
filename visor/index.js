@@ -4896,6 +4896,10 @@ function buildSHAnalyticsGalleryHtml(galleryItems) {
     return galleryHtml;
 }
 
+function buildSHAnalyticsReportHeaderHtml(title, subscriptionLabel) {
+    return "<div class='sh-pdf-header'>" + "<div><img class='sh-pdf-header-logo' src='data/Logo_OBS.png' /><h1>" + escapeSHAnalyticsHtml(title) + "</h1><div class='sh-pdf-subtitle'>" + escapeSHAnalyticsHtml(subscriptionLabel) + "</div></div>" + "<img class='sh-pdf-right-logo' src='data/logos_cm.png' />" + "</div>";
+}
+
 function buildSHAnalyticsHexPdfReportHtml(hexInfo, galleryItems, cadastralResult) {
     var subscriptionLabel = $("#selectSHAnalyticsSubs option:selected").text() || "Planet Analytics";
     var rangeStart = formatSHAnalyticsMonthLabel(currentSHAnalyticsDateFilter.start);
@@ -4903,7 +4907,9 @@ function buildSHAnalyticsHexPdfReportHtml(hexInfo, galleryItems, cadastralResult
     var rangeLabel = rangeStart || rangeEnd ? rangeStart + " - " + rangeEnd : "No definido";
     var mostRecent = getSHAnalyticsMostRecentHexFeature(hexInfo);
     var latestDate = mostRecent.feature ? getSHAnalyticsReportDateLabel(mostRecent.feature) : "No identificado";
-    return "<div id='shAnalyticsPdfReport' class='sh-analytics-pdf-report'>" + "<div class='sh-pdf-header'>" + "<div><img class='sh-pdf-header-logo' src='data/Logo_OBS.png' /><h1>Reporte de Hexágono — Cambios</h1><div class='sh-pdf-subtitle'>" + escapeSHAnalyticsHtml(subscriptionLabel) + "</div></div>" + "<img class='sh-pdf-right-logo' src='data/logos_cm.png' />" + "</div>" + "<div class='sh-pdf-metrics'>" + "<div><strong>" + escapeSHAnalyticsHtml(hexInfo.number || hexInfo.key) + "</strong><span>Hexágono</span></div>" + "<div><strong>" + escapeSHAnalyticsHtml(hexInfo.count) + "</strong><span>Cambios en el hexágono</span></div>" + "<div><strong>" + escapeSHAnalyticsHtml(latestDate) + "</strong><span>Cambio más reciente</span></div>" + "</div>" + "<h2>Galería — Mosaicos mensuales</h2>" + "<div class='sh-pdf-gallery'>" + buildSHAnalyticsGalleryHtml(galleryItems) + "</div>" + "<div class='sh-pdf-footnote'>Mosaicos mensuales Planet · rango de publicación " + escapeSHAnalyticsHtml(rangeLabel) + "</div>" + buildSHAnalyticsCadastralReportHtml(cadastralResult, { sourceText: "Predios intersectados con el hexágono seleccionado." }) + "</div>";
+    var reportHeaderHtml = buildSHAnalyticsReportHeaderHtml("Reporte de Hexágono — Cambios", subscriptionLabel);
+    var metricsHtml = "<div class='sh-pdf-metrics'>" + "<div><strong>" + escapeSHAnalyticsHtml(hexInfo.number || hexInfo.key) + "</strong><span>Hexágono</span></div>" + "<div><strong>" + escapeSHAnalyticsHtml(hexInfo.count) + "</strong><span>Cambios en el hexágono</span></div>" + "<div><strong>" + escapeSHAnalyticsHtml(latestDate) + "</strong><span>Cambio más reciente</span></div>" + "</div>";
+    return "<div id='shAnalyticsPdfReport' class='sh-analytics-pdf-report'>" + "<div class='sh-pdf-page-content'>" + reportHeaderHtml + metricsHtml + "<h2>Galería — Mosaicos mensuales</h2>" + "<div class='sh-pdf-gallery'>" + buildSHAnalyticsGalleryHtml(galleryItems) + "</div>" + "<div class='sh-pdf-footnote'>Mosaicos mensuales Planet · rango de publicación " + escapeSHAnalyticsHtml(rangeLabel) + "</div>" + buildSHAnalyticsCadastralReportHtml(cadastralResult, { sourceText: "Predios asociados al centroide de cada cambio del hexágono seleccionado.", headerHtml: reportHeaderHtml, metricsHtml: metricsHtml, metricLabel: "Cambios" }) + "</div></div>";
 }
 
 function downloadSHAnalyticsHexPdfReport(hexKey) {
@@ -4935,7 +4941,7 @@ function downloadSHAnalyticsHexPdfReport(hexKey) {
                         image: { type: "jpeg", quality: 0.95 },
                         html2canvas: { scale: 2, useCORS: true, allowTaint: true },
                         jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
-                        pagebreak: { mode: ["css", "legacy"], before: [".sh-pdf-cadastral-page"] },
+                        pagebreak: { mode: ["css", "legacy"], before: [".sh-pdf-cadastral-page"], avoid: [".sh-pdf-cadastral-page", ".sh-pdf-cadastral-table tr"] },
                     })
                     .from(reportNode.firstChild)
                     .save()
@@ -5717,39 +5723,87 @@ function loadSHAnalyticsCadastralReportRows(dataIndex) {
     });
 }
 
-function loadSHAnalyticsHexCadastralReportRows(hexInfo) {
-    var graphic = getSHAnalyticsHexGraphicByKey(hexInfo && hexInfo.key);
-    var queryGeometry = null;
-    if (graphic && graphic.geometry) {
-        var geometry = graphic.geometry;
-        try {
-            if (geometry.spatialReference && (geometry.spatialReference.wkid === 102100 || geometry.spatialReference.wkid === 3857 || geometry.spatialReference.latestWkid === 3857) && esri.webMercatorUtils && esri.webMercatorUtils.webMercatorToGeographic) {
-                geometry = esri.webMercatorUtils.webMercatorToGeographic(geometry);
+function mergeSHAnalyticsHexCentroidCadastralRows(results) {
+    var rowsByPredio = {};
+    var totalRows = 0;
+    (results || []).forEach(function (result) {
+        var rows = result && result.rows ? result.rows : [];
+        rows.forEach(function (row) {
+            if (!row || !row.predio || row.predio === "—") {
+                return;
             }
-        } catch (err) {
-            console.warn("No se pudo convertir el hexágono para consulta catastral", err);
-        }
-        if (geometry && geometry.toJson) {
-            queryGeometry = geometry.toJson();
-        }
+            totalRows += 1;
+            if (!rowsByPredio[row.predio]) {
+                rowsByPredio[row.predio] = {
+                    predio: row.predio,
+                    block: row.block,
+                    zone: row.zone,
+                    metric: 0,
+                    hasMetric: true,
+                };
+            }
+            rowsByPredio[row.predio].metric += 1;
+        });
+    });
+    var rows = Object.keys(rowsByPredio)
+        .sort()
+        .map(function (predio) {
+            return rowsByPredio[predio];
+        })
+        .slice(0, SH_ANALYTICS_CADASTRAL_MAX_ROWS);
+    return {
+        rows: rows,
+        error: rows.length ? null : "No se encontraron predios asociados al centroide de los cambios.",
+        totalCentroidMatches: totalRows,
+    };
+}
+
+function loadSHAnalyticsHexCadastralReportRows(hexInfo) {
+    var features = getSHAnalyticsFeaturesByIndexes(hexInfo && hexInfo.indexes);
+    if (!features.length) {
+        return Promise.resolve({ rows: [], error: "No se encontraron cambios para cruzar con catastro." });
     }
-    return loadSHAnalyticsCadastralReportRowsByGeometry(queryGeometry, "No se pudo preparar la geometría del hexágono para consultar catastro.");
+    var requests = features.map(function (feature) {
+        return loadSHAnalyticsCadastralReportRowsByGeometryExact(getSHAnalyticsFeatureCadastralPointGeometry(feature), "No se pudo preparar el centroide del cambio para consultar catastro.").then(function (result) {
+            result = result || {};
+            result.rows = (result.rows || []).slice(0, 1);
+            return result;
+        });
+    });
+    return Promise.all(requests).then(mergeSHAnalyticsHexCentroidCadastralRows);
 }
 
 function buildSHAnalyticsCadastralReportHtml(cadastralResult, options) {
     options = options || {};
     cadastralResult = cadastralResult || {};
     var rows = cadastralResult.rows || [];
-    var metricLabel = getSHAnalyticsCadastralMetricLabel();
-    var bodyHtml = "";
+    var metricLabel = options.metricLabel || getSHAnalyticsCadastralMetricLabel();
+    var rowsPerPage = options.rowsPerPage || 12;
+    var pages = [];
     if (rows.length === 0) {
-        bodyHtml = "<tr><td colspan='5' class='sh-pdf-cadastral-empty'>" + escapeSHAnalyticsHtml(cadastralResult.error || "No se encontraron predios intersectados por la detección seleccionada.") + "</td></tr>";
-    } else {
-        rows.forEach(function (row, idx) {
-            bodyHtml += "<tr>" + "<td>" + (idx + 1) + "</td>" + "<td>" + escapeSHAnalyticsHtml(row.predio) + "</td>" + "<td>" + escapeSHAnalyticsHtml(row.block) + "</td>" + "<td>" + escapeSHAnalyticsHtml(row.zone) + "</td>" + "<td>" + escapeSHAnalyticsHtml(row.metric === "" ? "" : row.metric) + "</td>" + "</tr>";
+        pages.push({
+            startIndex: 0,
+            rows: [],
+            emptyMessage: cadastralResult.error || "No se encontraron predios intersectados por la detección seleccionada.",
         });
+    } else {
+        for (var i = 0; i < rows.length; i += rowsPerPage) {
+            pages.push({ startIndex: i, rows: rows.slice(i, i + rowsPerPage) });
+        }
     }
-    return "<div class='sh-pdf-cadastral-page'>" + "<h2>Cruce catastral — Base Catastral Pública IGAC 04/2026</h2>" + "<div class='sh-pdf-cadastral-source'>" + escapeSHAnalyticsHtml(options.sourceText || "Predios intersectados con la detección seleccionada.") + "</div>" + "<table class='sh-pdf-cadastral-table'>" + "<thead><tr><th>#</th><th>Predio (código)</th><th>Manzana/Vereda</th><th>Zona</th><th>" + escapeSHAnalyticsHtml(metricLabel) + "</th></tr></thead>" + "<tbody>" + bodyHtml + "</tbody>" + "</table>" + "</div>";
+    return pages
+        .map(function (page) {
+            var bodyHtml = "";
+            if (page.emptyMessage) {
+                bodyHtml = "<tr><td colspan='5' class='sh-pdf-cadastral-empty'>" + escapeSHAnalyticsHtml(page.emptyMessage) + "</td></tr>";
+            } else {
+                page.rows.forEach(function (row, idx) {
+                    bodyHtml += "<tr>" + "<td>" + (page.startIndex + idx + 1) + "</td>" + "<td>" + escapeSHAnalyticsHtml(row.predio) + "</td>" + "<td>" + escapeSHAnalyticsHtml(row.block) + "</td>" + "<td>" + escapeSHAnalyticsHtml(row.zone) + "</td>" + "<td>" + escapeSHAnalyticsHtml(row.metric === "" ? "" : row.metric) + "</td>" + "</tr>";
+                });
+            }
+            return "<div class='sh-pdf-cadastral-page'>" + (options.headerHtml || "") + (options.metricsHtml || "") + "<h2>Cruce catastral — Base Catastral Pública IGAC 04/2026</h2>" + "<div class='sh-pdf-cadastral-source'>" + escapeSHAnalyticsHtml(options.sourceText || "Predios intersectados con la detección seleccionada.") + "</div>" + "<table class='sh-pdf-cadastral-table'>" + "<thead><tr><th>#</th><th>Predio (código)</th><th>Manzana/Vereda</th><th>Zona</th><th>" + escapeSHAnalyticsHtml(metricLabel) + "</th></tr></thead>" + "<tbody>" + bodyHtml + "</tbody>" + "</table>" + "</div>";
+        })
+        .join("");
 }
 
 function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems, cadastralResult) {
@@ -5775,7 +5829,9 @@ function buildSHAnalyticsPdfReportHtml(dataIndex, galleryItems, cadastralResult)
     if (!galleryHtml) {
         galleryHtml = "<div class='sh-pdf-empty'>No hay mosaicos disponibles para incluir en el reporte.</div>";
     }
-    return "<div id='shAnalyticsPdfReport' class='sh-analytics-pdf-report'>" + "<div class='sh-pdf-header'>" + "<div><img class='sh-pdf-header-logo' src='data/Logo_OBS.png' /><h1>Reporte de Detalle — Cambios</h1><div class='sh-pdf-subtitle'>" + escapeSHAnalyticsHtml(subscriptionLabel) + "</div></div>" + "<img class='sh-pdf-right-logo' src='data/logos_cm.png' />" + "</div>" + "<div class='sh-pdf-metrics'>" + "<div><strong>" + escapeSHAnalyticsHtml(detectionDate) + "</strong><span>Fecha de detección</span></div>" + "<div><strong>" + escapeSHAnalyticsHtml(municipalityDepartmentName) + "</strong><span>Municipio</span></div>" + "<div><strong>" + escapeSHAnalyticsHtml(centroid9377Text) + "</strong><span>Centroide EPSG:9377</span></div>" + "</div>" + "<h2>Galería — Mosaicos mensuales</h2>" + "<div class='sh-pdf-gallery'>" + galleryHtml + "</div>" + "<div class='sh-pdf-footnote'>Mosaicos mensuales Planet · vista centrada en el polígono seleccionado</div>" + buildSHAnalyticsCadastralReportHtml(cadastralResult, { sourceText: "Predio asociado al punto de la detección seleccionada." }) + "</div>";
+    var reportHeaderHtml = buildSHAnalyticsReportHeaderHtml("Reporte de Detalle — Cambios", subscriptionLabel);
+    var metricsHtml = "<div class='sh-pdf-metrics'>" + "<div><strong>" + escapeSHAnalyticsHtml(detectionDate) + "</strong><span>Fecha de detección</span></div>" + "<div><strong>" + escapeSHAnalyticsHtml(municipalityDepartmentName) + "</strong><span>Municipio</span></div>" + "<div><strong>" + escapeSHAnalyticsHtml(centroid9377Text) + "</strong><span>Centroide EPSG:9377</span></div>" + "</div>";
+    return "<div id='shAnalyticsPdfReport' class='sh-analytics-pdf-report'>" + "<div class='sh-pdf-page-content'>" + reportHeaderHtml + metricsHtml + "<h2>Galería — Mosaicos mensuales</h2>" + "<div class='sh-pdf-gallery'>" + galleryHtml + "</div>" + "<div class='sh-pdf-footnote'>Mosaicos mensuales Planet · vista centrada en el polígono seleccionado</div>" + buildSHAnalyticsCadastralReportHtml(cadastralResult, { sourceText: "Predio asociado al centroide de la detección seleccionada.", headerHtml: reportHeaderHtml, metricsHtml: metricsHtml }) + "</div></div>";
 }
 
 function downloadSHAnalyticsPolygonPdf(dataIndex) {
@@ -5807,7 +5863,7 @@ function downloadSHAnalyticsPolygonPdf(dataIndex) {
                         image: { type: "jpeg", quality: 0.95 },
                         html2canvas: { scale: 2, useCORS: true, allowTaint: true },
                         jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
-                        pagebreak: { mode: ["css", "legacy"], before: [".sh-pdf-cadastral-page"] },
+                        pagebreak: { mode: ["css", "legacy"], before: [".sh-pdf-cadastral-page"], avoid: [".sh-pdf-cadastral-page", ".sh-pdf-cadastral-table tr"] },
                     })
                     .from(reportNode.firstChild)
                     .save()
@@ -5968,7 +6024,7 @@ function getSHAnalyticsFeatureCadastralPointGeometry(feature) {
         return null;
     }
     try {
-        var pointFeature = turf.pointOnFeature ? turf.pointOnFeature(feature) : turf.centroid(feature);
+        var pointFeature = turf.centroid(feature);
         var coordinates = pointFeature && pointFeature.geometry && pointFeature.geometry.coordinates ? pointFeature.geometry.coordinates : null;
         if (!coordinates || coordinates.length < 2 || !isFinite(coordinates[0]) || !isFinite(coordinates[1])) {
             return null;
