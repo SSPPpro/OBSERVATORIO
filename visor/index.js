@@ -1,4 +1,4 @@
-﻿var map;
+var map;
 var view;
 var esri;
 
@@ -1438,7 +1438,7 @@ function acceptLicencia() {
                                 title: "Observatorio de la tierra y el territorio",
                                 content: "No se pudieron enviar los datos",
                                 buttons: {
-                                    Ok: function () {},
+                                    Ok: function () { },
                                 },
                             });
                         }
@@ -1448,7 +1448,7 @@ function acceptLicencia() {
                             title: "Observatorio de la tierra y el territorio",
                             content: "No se pudieron enviar los datos",
                             buttons: {
-                                Ok: function () {},
+                                Ok: function () { },
                             },
                         });
                     },
@@ -1459,7 +1459,7 @@ function acceptLicencia() {
                     title: "Observatorio de la tierra y el territorio",
                     content: "No se pudieron enviar los datos",
                     buttons: {
-                        Ok: function () {},
+                        Ok: function () { },
                     },
                 });
             });
@@ -1517,7 +1517,7 @@ function acceptLicencia2() {
                                 title: "Observatorio de la tierra y el territorio",
                                 content: "No se pudieron enviar los datos",
                                 buttons: {
-                                    Ok: function () {},
+                                    Ok: function () { },
                                 },
                             });
                         }
@@ -1527,7 +1527,7 @@ function acceptLicencia2() {
                             title: "Observatorio de la tierra y el territorio",
                             content: "No se pudieron enviar los datos",
                             buttons: {
-                                Ok: function () {},
+                                Ok: function () { },
                             },
                         });
                     },
@@ -1538,7 +1538,7 @@ function acceptLicencia2() {
                     title: "Observatorio de la tierra y el territorio",
                     content: "No se pudieron enviar los datos",
                     buttons: {
-                        Ok: function () {},
+                        Ok: function () { },
                     },
                 });
             });
@@ -1625,7 +1625,7 @@ function signOut() {
     closeLogin();
 }
 
-function validate() {}
+function validate() { }
 
 function toggleMain(tipo) {
     clearRasterMosaicWorkArea();
@@ -2039,10 +2039,32 @@ function gotoSH() {
     if (currentSHData.length == 0) {
         loading.open();
         fetchSHToken(function (tokenOk) {
-            loading.close();
             if (tokenOk) {
-                updateSHList();
+                $.ajax({
+                    url: web_service + "/imagenes2?cmd=sentinelhub&token=" + currentAccessToken + "&t=" + new Date().getTime(),
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        loading.close();
+                        if (data.status) {
+                            currentSHData = data.layers;
+                            currentSHUrl = data.base_url;
+                            if (data.access_token && !currentSHToken) {
+                                currentSHToken = data.access_token;
+                            }
+                            updateSHList();
+                        } else {
+                            showLoading("No se pudo obtener la configuración de capas de Sentinel Hub", null, "red", true);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        loading.close();
+                        console.error("Error al obtener capas de Sentinel Hub:", error);
+                        showLoading("Error al conectar con el servidor para obtener las capas", null, "red", true);
+                    },
+                });
             } else {
+                loading.close();
                 showLoading("No se pudo obtener token de Sentinel Hub", null, "red", true);
             }
         });
@@ -2085,7 +2107,7 @@ function updateSHList() {
             if (currentSHData[i].description.length > 0) {
                 strHTML = strHTML + "<strong>Descripci&oacute;n: </strong>" + currentSHData[i].description + "</br >";
             }
-        } catch (err) {}
+        } catch (err) { }
         try {
             if (currentSHData[i].datasourceDefaults != null) {
                 if (currentSHData[i].datasourceDefaults.timeRange != null) {
@@ -2093,7 +2115,7 @@ function updateSHList() {
                     strHTML = strHTML + "<strong>Fecha final: </strong>" + esri.moment(currentSHData[i].datasourceDefaults.timeRange.endTime.value).toString() + "</br >";
                 }
             }
-        } catch (err) {}
+        } catch (err) { }
         strHTML = strHTML + "</div>";
         strHTML = strHTML + "</div>";
         strHTML = strHTML + "</div>";
@@ -2196,7 +2218,7 @@ function gotoSHStats() {
             buttons: {},
             closeIcon: true,
             lazyOpen: true,
-            onContentReady: function () {},
+            onContentReady: function () { },
             onOpenBefore: function () {
                 loading.buttons.ok.hide();
                 loading.buttons.close.hide();
@@ -2204,10 +2226,31 @@ function gotoSHStats() {
         });
         loading.open();
         fetchSHToken(function (tokenOk) {
-            loading.close();
             if (tokenOk) {
-                // currentSHToken ya está disponible desde Sentinel Hub directo
+                $.ajax({
+                    url: web_service + "/imagenes2?cmd=sentinelhub&token=" + currentAccessToken + "&t=" + new Date().getTime(),
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        loading.close();
+                        if (data.status) {
+                            currentSHData = data.layers;
+                            currentSHUrl = data.base_url;
+                            if (data.access_token && !currentSHToken) {
+                                currentSHToken = data.access_token;
+                            }
+                        } else {
+                            showLoading("No se pudo obtener la configuración de capas de Sentinel Hub", null, "red", true);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        loading.close();
+                        console.error("Error al obtener capas de Sentinel Hub:", error);
+                        showLoading("Error al conectar con el servidor para obtener las capas", null, "red", true);
+                    },
+                });
             } else {
+                loading.close();
                 showLoading("No se pudo obtener token de Sentinel Hub", null, "red", true);
             }
         });
@@ -2253,7 +2296,7 @@ function updateSHStats() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -2578,7 +2621,7 @@ function renderSHStatsData(data) {
     sliderSHStats.on("change", function (args) {
         try {
             applySHStatsLayerSelection(args.newValue);
-        } catch (err) {}
+        } catch (err) { }
     });
     map.addLayer(currentSHDataLayers);
 }
@@ -2662,7 +2705,7 @@ function procesarSH() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -2938,7 +2981,7 @@ function getSliderValueSafe(sliderInstance, inputSelector, fallbackValue) {
                 return sliderInstance.val();
             }
         }
-    } catch (e) {}
+    } catch (e) { }
     var inputValue = $(inputSelector).val();
     if (typeof inputValue === "string" && inputValue.indexOf(",") > -1) {
         var rangeValues = inputValue.split(",").map(function (value) {
@@ -3260,7 +3303,7 @@ function downloadSHStats() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -3485,7 +3528,7 @@ function generateChart(labels, meanData, p10Data, p90Data) {
                     sliderSHStats.setValue(dataIndex);
                     applySHStatsLayerSelection(dataIndex);
                     //var label = e.chart.data.labels[dataIndex];
-                } catch (err) {}
+                } catch (err) { }
             },
         },
     });
@@ -3523,7 +3566,7 @@ function gotoPrisma() {
                     title: "Observatorio de la tierra y el territorio",
                     content: message || "Funcionalidad no disponible. Intente nuevamente",
                     buttons: {
-                        Ok: function () {},
+                        Ok: function () { },
                     },
                 });
             }
@@ -3641,7 +3684,7 @@ function updatePrisma() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -3704,7 +3747,7 @@ function extractPrismaAccessToken(tokenValue) {
     if ((tokenText.charAt(0) === "{" && tokenText.charAt(tokenText.length - 1) === "}") || (tokenText.charAt(0) === "[" && tokenText.charAt(tokenText.length - 1) === "]")) {
         try {
             return extractPrismaAccessToken(JSON.parse(tokenText));
-        } catch (err) {}
+        } catch (err) { }
     }
 
     tokenText = tokenText.replace(/^"(.*)"$/, "$1").trim();
@@ -3814,7 +3857,7 @@ function getPrismaErrorMessage(xhr) {
         var response = xhr && xhr.responseJSON ? xhr.responseJSON : JSON.parse(xhr.responseText);
         if (response && response.detail) return response.detail;
         if (response && response.error) return response.error;
-    } catch (err) {}
+    } catch (err) { }
     if (xhr && xhr.status === 401) return "Token de Prisma inválido o vencido";
     if (xhr && xhr.status === 400) return "Prisma rechazó los parámetros de la solicitud";
     return fallback;
@@ -5202,7 +5245,7 @@ function captureSHAnalyticsVisiblePdfGalleryItems() {
         try {
             miniMap.resize();
             miniMap.reposition();
-        } catch (e) {}
+        } catch (e) { }
     });
 
     var restorePanelState = function () {
@@ -5610,7 +5653,7 @@ function countSHAnalyticsMetricFeaturesByTerreno(terrenos, metricFeatures, uniqu
                 if (esri.geometryEngine.intersects(terrenoGeometry, metricFeature.geometry)) {
                     seenItems[metricFeature.id || JSON.stringify(metricFeature.geometry.toJson ? metricFeature.geometry.toJson() : metricFeature.geometry)] = true;
                 }
-            } catch (err) {}
+            } catch (err) { }
         });
         counts[codigo] = Object.keys(seenItems).length;
     });
@@ -6317,7 +6360,7 @@ function createSHAnalyticsLoadingDialog() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             shAnalyticsLoadingDialog.buttons.ok.hide();
             shAnalyticsLoadingDialog.buttons.close.hide();
@@ -6373,7 +6416,7 @@ function gotoSHAnalytics() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             if (shAnalyticsLoading.buttons && shAnalyticsLoading.buttons.ok) {
                 shAnalyticsLoading.buttons.ok.hide();
@@ -6436,7 +6479,7 @@ function updateSHAnalytics() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             shAnalyticsResultsLoading.buttons.ok.hide();
             shAnalyticsResultsLoading.buttons.close.hide();
@@ -7015,7 +7058,7 @@ function loadMoreSHAnalytics() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -7155,19 +7198,54 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             shAnalyticsHexHtml = "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Hexágono</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='sh-analytics-hex-number'>" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.number) + "</span>" + "<button type='button' class='sh-analytics-floating-hex-download-btn' title='Descargar cambios del hexágono' data-sh-analytics-hex='" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.key) + "'><span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span></button>" + "<button type='button' class='sh-analytics-floating-hex-pdf-btn' title='Descargar reporte del hexágono' data-sh-analytics-hex='" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.key) + "'><span class='sh-analytics-pdf-icon'>PDF</span></button>" + "</td></tr>";
         }
     }
-    var panelHtml = "<div id='burnsFloatingHeader' style='display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#4f6b5a;color:#fff;border-radius:6px 6px 0 0;cursor:move;'>" + "<div style='font-weight:600;'>Visualización de mosaicos mensuales</div>" + "<a href='#' id='burnsFloatingClose' style='color:#fff;text-decoration:none;font-size:18px;line-height:18px;'>×</a></div>" + "<div style='padding:10px;background:#fff;'>" + "<table style='width:100%;border-collapse:collapse;background:#fff;border:1px solid #ddd;'>" + "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Índice</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='burns-index-label'>" + indexLabel + "</span>" + shAnalyticsDownloadHtml + shAnalyticsPdfHtml + indexInfoHtml + "</td></tr>" + (detectionDateLabel ? "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Fecha de detección</td><td style='padding:8px;border-bottom:1px solid #eee;'>" + formatSHAnalyticsDateLabel(detectionDateLabel) + "</td></tr>" : "") + shAnalyticsHexHtml + "</table>" + "<div id='burnsSelectPolygonMessage' style='display:" + (hasSelectedPolygon ? "none" : "block") + ";margin:8px 0 0;padding:9px 10px;border:1px solid #d9e2dc;background:#f6faf7;color:#3d5e4f;font-weight:600;text-align:center;border-radius:4px;'>Seleccione poligono en el mapa para desplegar los mosaicos</div>" + "<div style='display:flex;gap:8px;margin-top:8px;margin-bottom:10px;'>" + "<button id='burnsModeGallery' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#4f6b5a;color:#fff;border-radius:4px;font-weight:600;'>Galería</button>" + "<button id='burnsModeSwipe' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#fff;color:#3d5e4f;border-radius:4px;font-weight:600;'>Swipe</button>" + "<button id='burnsModeSuperRes' type='button' style='display:none;flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#fff;color:#3d5e4f;border-radius:4px;font-weight:600;'>SuperResolucion</button>" + "</div>" + "<div id='burnsGalleryPane' style='margin-top:8px;'>" + "<div id='burnsGalleryGrid' style='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;'></div>" + "</div>" + "<div id='burnsSwipePane' style='display:none;'>" + "<div id='burnsSwipeMapWrap' style='position:relative;height:420px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'>" + "<div id='burnsSwipeMap' style='position:absolute;inset:0;z-index:1;'></div>" + "<div id='burnsSwipeControl' style='position:absolute;inset:0;z-index:40;pointer-events:none;'><div id='burnsSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div></div>" + "<div id='burnsCustomVerticalSwipe' style='display:none;position:absolute;left:0;right:0;top:50%;height:28px;margin-top:-14px;z-index:70;cursor:ns-resize;pointer-events:auto;'>" + "<div style='position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;background:#fff;border-top:1px solid rgba(0,0,0,0.55);border-bottom:1px solid rgba(0,0,0,0.55);box-shadow:0 0 7px rgba(0,0,0,0.75);'></div>" + "<div style='position:absolute;left:50%;top:50%;width:30px;height:24px;margin-left:-15px;margin-top:-12px;background:#fff;border:2px solid #4f6b5a;border-radius:4px;box-shadow:0 1px 7px rgba(0,0,0,0.55);color:#4f6b5a;font-size:15px;font-weight:700;line-height:20px;text-align:center;'>↕</div>" + "</div>" + "<div id='burnsSwipeToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:2147483001;display:flex;align-items:center;gap:0;pointer-events:auto;'>" + "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" + "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" + "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" + "<div id='burnsSwipeOpacityPopover' style='display:none;position:absolute;bottom:30px;left:56px;z-index:17;width:112px;padding:7px 8px;background:#fff;border:1px solid #d5d5d5;border-radius:4px;box-shadow:0 7px 18px rgba(0,0,0,0.2);text-align:center;'>" + "<input id='burnsSwipeOpacityRange' type='range' min='0' max='1' step='0.05' value='0.5' style='width:100%;accent-color:#4f6b5a;'>" + "<div id='burnsSwipeOpacityLabel' style='margin-top:4px;color:#4f6b5a;font-size:13px;'>50%</div>" + "</div>" + "</div>" + "<div id='burnsSwipeLeftLabel' style='position:absolute;left:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:auto;display:flex;align-items:center;gap:8px;'>" + "<span id='burnsSwipeLeftLabelText'></span>" + "<button id='burnsSwipeMonthPickerBtn' type='button' style='border:0;background:#3d5e4f;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;line-height:1;cursor:pointer;' title='Seleccionar mes inicial'>▾</button>" + "</div>" + "<div id='burnsSwipeRightLabel' style='position:absolute;right:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:none;'></div>" + "<div id='burnsMonthPickerPopover' style='display:none;position:absolute;left:80px;bottom:62px;z-index:13;background:#fff;border:1px solid #d5d5d5;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.18);padding:10px;width:220px;'>" + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;'>" + "<button id='burnsMonthPickerPrevYear' type='button' style='border:0;background:transparent;color:#3d5e4f;font-size:18px;line-height:1;cursor:pointer;'>«</button>" + "<div id='burnsMonthPickerYear' style='font-weight:700;color:#3d5e4f;'></div>" + "<button id='burnsMonthPickerNextYear' type='button' style='border:0;background:transparent;color:#3d5e4f;font-size:18px;line-height:1;cursor:pointer;'>»</button>" + "</div>" + "<div id='burnsMonthPickerGrid' style='display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;'></div>" + "</div>" + "</div>" + "</div>" + "<div id='burnsSuperResPane' style='display:none;'>" + "<div style='display:flex;gap:10px;align-items:center;margin-bottom:8px;'>" + "<label style='flex:1;color:#3d5e4f;font-weight:600;'>Inicial <select id='burnsSuperResInitialSelect' style='width:100%;margin-top:4px;border:1px solid #cfd8d2;border-radius:4px;padding:5px;'></select></label>" + "<label style='flex:1;color:#3d5e4f;font-weight:600;'>Final <select id='burnsSuperResFinalSelect' style='width:100%;margin-top:4px;border:1px solid #cfd8d2;border-radius:4px;padding:5px;'></select></label>" + "</div>" + "<div id='burnsSuperResMapWrap' style='position:relative;height:420px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'>" + "<div id='burnsSuperResMap' style='position:absolute;inset:0;z-index:1;'></div>" + "<div id='burnsSuperResStatus' style='position:absolute;left:10px;top:10px;z-index:15;padding:5px 8px;background:rgba(255,255,255,0.92);border:1px solid #d5d5d5;border-radius:4px;color:#3d5e4f;font-size:12px;font-weight:600;'>Cargando mosaicos...</div>" + "<div id='burnsSuperResSwipeControl' style='position:absolute;inset:0;z-index:40;pointer-events:none;'><div id='burnsSuperResSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div></div>" + "<div id='burnsSuperResToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:2147483001;display:flex;align-items:center;gap:0;pointer-events:auto;'>" + "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" + "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" + "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" + "<div id='burnsSuperResOpacityPopover' style='display:none;position:absolute;bottom:30px;left:56px;z-index:17;width:112px;padding:7px 8px;background:#fff;border:1px solid #d5d5d5;border-radius:4px;box-shadow:0 7px 18px rgba(0,0,0,0.2);text-align:center;'>" + "<input id='burnsSuperResOpacityRange' type='range' min='0' max='1' step='0.05' value='0.5' style='width:100%;accent-color:#4f6b5a;'>" + "<div id='burnsSuperResOpacityLabel' style='margin-top:4px;color:#4f6b5a;font-size:13px;'>50%</div>" + "</div>" + "</div>" + "<div id='burnsSuperResLeftLabel' style='position:absolute;left:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;pointer-events:none;'></div>" + "<div id='burnsSuperResRightLabel' style='position:absolute;right:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;pointer-events:none;'></div>" + "</div>" + "</div>" + "</div>";
+    var panelHtml = "<div id='burnsFloatingHeader' style='display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#4f6b5a;color:#fff;border-radius:6px 6px 0 0;cursor:move;'>" + "<div style='font-weight:600;'>Visualización de mosaicos mensuales</div>" + "<a href='#' id='burnsFloatingClose' style='color:#fff;text-decoration:none;font-size:18px;line-height:18px;'>×</a></div>" + "<div id='burnsFloatingContent'>" + "<table style='width:100%;border-collapse:collapse;background:#fff;border:1px solid #ddd;'>" + "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Índice</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='burns-index-label'>" + indexLabel + "</span>" + shAnalyticsDownloadHtml + shAnalyticsPdfHtml + indexInfoHtml + "</td></tr>" + (detectionDateLabel ? "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Fecha de detección</td><td style='padding:8px;border-bottom:1px solid #eee;'>" + formatSHAnalyticsDateLabel(detectionDateLabel) + "</td></tr>" : "") + shAnalyticsHexHtml + "</table>" + "<div id='burnsSelectPolygonMessage' style='display:" + (hasSelectedPolygon ? "none" : "block") + ";margin:8px 0 0;padding:9px 10px;border:1px solid #d9e2dc;background:#f6faf7;color:#3d5e4f;font-weight:600;text-align:center;border-radius:4px;'>Seleccione poligono en el mapa para desplegar los mosaicos</div>" + "<div style='display:flex;gap:8px;margin-top:8px;margin-bottom:10px;'>" + "<button id='burnsModeGallery' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#4f6b5a;color:#fff;border-radius:4px;font-weight:600;'>Galería</button>" + "<button id='burnsModeSwipe' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#fff;color:#3d5e4f;border-radius:4px;font-weight:600;'>Swipe</button>" + "<button id='burnsModeSuperRes' type='button' style='display:none;flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#fff;color:#3d5e4f;border-radius:4px;font-weight:600;'>SuperResolucion</button>" + "</div>" + "<div id='burnsGalleryPane'>" + "<div id='burnsGalleryGrid' style='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;'></div>" + "</div>" + "<div id='burnsSwipePane' style='display:none;'>" + "<div id='burnsSwipeMapWrap' style='position:relative;height:420px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'>" + "<div id='burnsSwipeMap' style='position:absolute;inset:0;z-index:1;'></div>" + "<div id='burnsSwipeControl' style='position:absolute;inset:0;z-index:40;pointer-events:none;'><div id='burnsSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div></div>" + "<div id='burnsCustomVerticalSwipe' style='display:none;position:absolute;left:0;right:0;top:50%;height:28px;margin-top:-14px;z-index:70;cursor:ns-resize;pointer-events:auto;'>" + "<div style='position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;background:#fff;border-top:1px solid rgba(0,0,0,0.55);border-bottom:1px solid rgba(0,0,0,0.55);box-shadow:0 0 7px rgba(0,0,0,0.75);'></div>" + "<div style='position:absolute;left:50%;top:50%;width:30px;height:24px;margin-left:-15px;margin-top:-12px;background:#fff;border:2px solid #4f6b5a;border-radius:4px;box-shadow:0 1px 7px rgba(0,0,0,0.55);color:#4f6b5a;font-size:15px;font-weight:700;line-height:20px;text-align:center;'>↕</div>" + "</div>" + "<div id='burnsSwipeToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:2147483001;display:flex;align-items:center;gap:0;pointer-events:auto;'>" + "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" + "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" + "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" + "<div id='burnsSwipeOpacityPopover' style='display:none;position:absolute;bottom:30px;left:56px;z-index:17;width:112px;padding:7px 8px;background:#fff;border:1px solid #d5d5d5;border-radius:4px;box-shadow:0 7px 18px rgba(0,0,0,0.2);text-align:center;'>" + "<input id='burnsSwipeOpacityRange' type='range' min='0' max='1' step='0.05' value='0.5' style='width:100%;accent-color:#4f6b5a;'>" + "<div id='burnsSwipeOpacityLabel' style='margin-top:4px;color:#4f6b5a;font-size:13px;'>50%</div>" + "</div>" + "</div>" + "<div id='burnsSwipeLeftLabel' style='position:absolute;left:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:auto;display:flex;align-items:center;gap:8px;'>" + "<span id='burnsSwipeLeftLabelText'></span>" + "<button id='burnsSwipeMonthPickerBtn' type='button' style='border:0;background:#3d5e4f;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;line-height:1;cursor:pointer;' title='Seleccionar mes inicial'>▾</button>" + "</div>" + "<div id='burnsSwipeRightLabel' style='position:absolute;right:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:none;'></div>" + "<div id='burnsMonthPickerPopover' style='display:none;position:absolute;left:80px;bottom:62px;z-index:13;background:#fff;border:1px solid #d5d5d5;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.18);padding:10px;width:220px;'>" + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;'>" + "<button id='burnsMonthPickerPrevYear' type='button' style='border:0;background:transparent;color:#3d5e4f;font-size:18px;line-height:1;cursor:pointer;'>«</button>" + "<div id='burnsMonthPickerYear' style='font-weight:700;color:#3d5e4f;'></div>" + "<button id='burnsMonthPickerNextYear' type='button' style='border:0;background:transparent;color:#3d5e4f;font-size:18px;line-height:1;cursor:pointer;'>»</button>" + "</div>" + "<div id='burnsMonthPickerGrid' style='display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;'></div>" + "</div>" + "</div>" + "</div>" + "<div id='burnsSuperResPane' style='display:none;'>" + "<div style='display:flex;gap:10px;align-items:center;margin-bottom:8px;'>" + "<label style='flex:1;color:#3d5e4f;font-weight:600;'>Inicial <select id='burnsSuperResInitialSelect' style='width:100%;margin-top:4px;border:1px solid #cfd8d2;border-radius:4px;padding:5px;'></select></label>" + "<label style='flex:1;color:#3d5e4f;font-weight:600;'>Final <select id='burnsSuperResFinalSelect' style='width:100%;margin-top:4px;border:1px solid #cfd8d2;border-radius:4px;padding:5px;'></select></label>" + "</div>" + "<div id='burnsSuperResMapWrap' style='position:relative;height:420px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'>" + "<div id='burnsSuperResMap' style='position:absolute;inset:0;z-index:1;'></div>" + "<div id='burnsSuperResStatus' style='position:absolute;left:10px;top:10px;z-index:15;padding:5px 8px;background:rgba(255,255,255,0.92);border:1px solid #d5d5d5;border-radius:4px;color:#3d5e4f;font-size:12px;font-weight:600;'>Cargando mosaicos...</div>" + "<div id='burnsSuperResSwipeControl' style='position:absolute;inset:0;z-index:40;pointer-events:none;'><div id='burnsSuperResSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div></div>" + "<div id='burnsSuperResToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:2147483001;display:flex;align-items:center;gap:0;pointer-events:auto;'>" + "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" + "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" + "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" + "<div id='burnsSuperResOpacityPopover' style='display:none;position:absolute;bottom:30px;left:56px;z-index:17;width:112px;padding:7px 8px;background:#fff;border:1px solid #d5d5d5;border-radius:4px;box-shadow:0 7px 18px rgba(0,0,0,0.2);text-align:center;'>" + "<input id='burnsSuperResOpacityRange' type='range' min='0' max='1' step='0.05' value='0.5' style='width:100%;accent-color:#4f6b5a;'>" + "<div id='burnsSuperResOpacityLabel' style='margin-top:4px;color:#4f6b5a;font-size:13px;'>50%</div>" + "</div>" + "</div>" + "<div id='burnsSuperResLeftLabel' style='position:absolute;left:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;pointer-events:none;'></div>" + "<div id='burnsSuperResRightLabel' style='position:absolute;right:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;pointer-events:none;'></div>" + "</div>" + "</div>" + "</div>";
+    var wasHidden = !$("#burnsFloatingDetail").is(":visible");
     if ($("#burnsFloatingDetail").length === 0) {
-        $("#mapViewDiv").append("<div id='burnsFloatingDetail' style='position:absolute;top:20px;left:20px;z-index:1200;width:780px;max-width:calc(100vw - 40px);box-shadow:0 4px 14px rgba(0,0,0,0.25);border-radius:6px;overflow:hidden;'></div>");
+        $("#mapViewDiv").append("<div id='burnsFloatingDetail' style='position:absolute;top:20px;left:20px;z-index:1200;width:780px;max-width:calc(100vw - 40px);box-shadow:0 4px 14px rgba(0,0,0,0.25);border-radius:6px;overflow:auto;resize:both;'></div>");
     }
-    $("#burnsFloatingDetail").css({
-        width: "780px",
-        maxWidth: "calc(100vw - 40px)",
-    });
+    if (wasHidden) {
+        $("#burnsFloatingDetail").css({
+            width: "780px",
+            height: ""
+        });
+    }
+    var existingObserver = $("#burnsFloatingDetail").data("burnsResizeObserver");
+    if (existingObserver) {
+        try { existingObserver.disconnect(); } catch (e) {}
+    }
     $("#burnsFloatingDetail").html(panelHtml).show();
+    if (window.ResizeObserver) {
+        var resizeObserver = new ResizeObserver(function () {
+            if (burnsCompareMap) {
+                try { burnsCompareMap.reposition(); } catch (e) {}
+            }
+            if (burnsSuperResMap) {
+                try { burnsSuperResMap.reposition(); } catch (e) {}
+            }
+            burnsGalleryMaps.forEach(function (miniMap) {
+                try { miniMap.reposition(); } catch (e) {}
+            });
+            if (burnsSwipeViewMode === "vertical" && typeof applyBurnsCustomVerticalClip === "function") {
+                try {
+                    applyBurnsCustomVerticalClip(burnsCustomVerticalTop);
+                } catch (e) {}
+            }
+        });
+        var detailEl = document.getElementById("burnsFloatingDetail");
+        if (detailEl) {
+            resizeObserver.observe(detailEl);
+            $("#burnsFloatingDetail").data("burnsResizeObserver", resizeObserver);
+        }
+    }
     $("#burnsFloatingClose")
         .off("click")
         .on("click", function (evt) {
             evt.preventDefault();
+            var obs = $("#burnsFloatingDetail").data("burnsResizeObserver");
+            if (obs) {
+                try { obs.disconnect(); } catch (e) {}
+                $("#burnsFloatingDetail").data("burnsResizeObserver", null);
+            }
             $("#burnsCustomVerticalSwipeFloating").hide();
             $("#burnsFloatingDetail").hide();
         });
@@ -7216,13 +7294,13 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             }
             try {
                 burnsSuperResSwipe.destroy();
-            } catch (e) {}
+            } catch (e) { }
             burnsSuperResSwipe = null;
         }
         if (burnsSuperResMap) {
             try {
                 burnsSuperResMap.destroy();
-            } catch (e) {}
+            } catch (e) { }
             burnsSuperResMap = null;
         }
         burnsSuperResLeftLayer = null;
@@ -7233,26 +7311,26 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         burnsGallerySyncHandles.forEach(function (handle) {
             try {
                 handle.remove();
-            } catch (e) {}
+            } catch (e) { }
         });
         burnsGallerySyncHandles = [];
         burnsGallerySyncing = false;
         burnsGalleryMaps.forEach(function (m) {
             try {
                 m.destroy();
-            } catch (e) {}
+            } catch (e) { }
         });
         burnsGalleryMaps = [];
         if (burnsCompareMap) {
             try {
                 burnsCompareMap.destroy();
-            } catch (e) {}
+            } catch (e) { }
             burnsCompareMap = null;
         }
         if (burnsCompareSwipe) {
             try {
                 burnsCompareSwipe.destroy();
-            } catch (e) {}
+            } catch (e) { }
             burnsCompareSwipe = null;
         }
         $("#burnsCustomVerticalSwipe, #burnsCustomVerticalSwipeFloating").hide();
@@ -7316,7 +7394,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             }
             try {
                 burnsSuperResSwipe.destroy();
-            } catch (e) {}
+            } catch (e) { }
             burnsSuperResSwipe = null;
         }
         $("#burnsSuperResSwipeControl").html("<div id='burnsSuperResSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div>");
@@ -7459,7 +7537,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         burnsGallerySyncHandles.forEach(function (handle) {
             try {
                 handle.remove();
-            } catch (e) {}
+            } catch (e) { }
         });
         burnsGallerySyncHandles = [];
         burnsGalleryMaps.forEach(function (miniMap) {
@@ -7470,7 +7548,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
                     if (targetMap === miniMap) return;
                     try {
                         targetMap.setExtent(evt.extent, true);
-                    } catch (e) {}
+                    } catch (e) { }
                 });
                 burnsGallerySyncing = false;
             });
@@ -7482,8 +7560,8 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         for (var i = 5; i >= 0; i--) {
             var dm = endMoment.clone().add(-i, "month");
             var cellId = "burnsGalleryCell_" + dm.format("YYYY_MM");
-            $("#burnsGalleryGrid").append("<div><div id='" + cellId + "' style='height:190px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'></div><div style='text-align:center;font-weight:600;margin-top:6px;'>" + formatBurnsMonthYear(dm) + "</div></div>");
-            var miniMap = new esri.Map(cellId, { logo: false, slider: false, showAttribution: false, center: targetExtent.getCenter(), zoom: map.getZoom() });
+            $("#burnsGalleryGrid").append("<div><div class='burns-gallery-viewport'><div id='" + cellId + "' class='burns-gallery-map-canvas'></div></div><div style='text-align:center;font-weight:600;margin-top:6px;'>" + formatBurnsMonthYear(dm) + "</div></div>");
+            var miniMap = new esri.Map(cellId, { logo: false, slider: false, showAttribution: false, center: targetExtent.getCenter(), zoom: map.getZoom(), autoResize: false });
             miniMap.addLayer(buildMosaicLayer(dm));
             if (selectedGraphic && selectedGraphic.geometry) {
                 miniMap.graphics.add(new esri.Graphic(selectedGraphic.geometry, createClassifiedPolygonPreviewSymbol()));
@@ -7541,7 +7619,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             }
             try {
                 burnsCompareSwipe.destroy();
-            } catch (e) {}
+            } catch (e) { }
             burnsCompareSwipe = null;
         }
         $("#burnsSwipeControl").html("<div id='burnsSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div>");
@@ -8207,13 +8285,13 @@ function sanitizeClassifiedFeatureForDownload(feature) {
         geometry:
             polygonParts.length == 1
                 ? {
-                      type: "Polygon",
-                      coordinates: polygonParts[0],
-                  }
+                    type: "Polygon",
+                    coordinates: polygonParts[0],
+                }
                 : {
-                      type: "MultiPolygon",
-                      coordinates: polygonParts,
-                  },
+                    type: "MultiPolygon",
+                    coordinates: polygonParts,
+                },
     };
 
     try {
@@ -8324,26 +8402,26 @@ function clearBurnsMonthlyMosaicWindow() {
         burnsGallerySyncHandles.forEach(function (handle) {
             try {
                 handle.remove();
-            } catch (e) {}
+            } catch (e) { }
         });
         burnsGallerySyncHandles = [];
         burnsGallerySyncing = false;
         burnsGalleryMaps.forEach(function (m) {
             try {
                 m.destroy();
-            } catch (e) {}
+            } catch (e) { }
         });
         burnsGalleryMaps = [];
         if (burnsCompareMap) {
             try {
                 burnsCompareMap.destroy();
-            } catch (e) {}
+            } catch (e) { }
             burnsCompareMap = null;
         }
         if (burnsCompareSwipe) {
             try {
                 burnsCompareSwipe.destroy();
-            } catch (e) {}
+            } catch (e) { }
             burnsCompareSwipe = null;
         }
         if (burnsSuperResSwipe) {
@@ -8352,13 +8430,13 @@ function clearBurnsMonthlyMosaicWindow() {
             }
             try {
                 burnsSuperResSwipe.destroy();
-            } catch (e) {}
+            } catch (e) { }
             burnsSuperResSwipe = null;
         }
         if (burnsSuperResMap) {
             try {
                 burnsSuperResMap.destroy();
-            } catch (e) {}
+            } catch (e) { }
             burnsSuperResMap = null;
         }
         burnsSuperResLeftLayer = null;
@@ -9395,7 +9473,7 @@ function updateImagenDetalle() {
                 if (tempStr.length > 0) {
                     strHTML = strHTML + "<tr><td><label><b>Municipios:&nbsp;</b></label></td><td>" + tempStr.join(", ") + "</td></tr>";
                 }
-            } catch (err) {}
+            } catch (err) { }
         }
     }
 
@@ -9435,7 +9513,7 @@ function updateImagenDetalle() {
                         searchImageLayerDetalle.setMosaicRule(mosaicRule);
                         searchImageLayerDetalle.refresh();
                     }
-                } catch (err) {}
+                } catch (err) { }
             }
         }
     }
@@ -9539,7 +9617,7 @@ function updateImagenes() {
                         buttons: {},
                         closeIcon: true,
                         lazyOpen: true,
-                        onContentReady: function () {},
+                        onContentReady: function () { },
                         onOpenBefore: function () {
                             loading.buttons.ok.hide();
                             loading.buttons.close.hide();
@@ -9558,7 +9636,7 @@ function updateImagenes() {
                     return dataRow.imagenes;
                 },
             },
-            fnInitComplete: function () {},
+            fnInitComplete: function () { },
             drawCallback: function (settings) {
                 var api = this.api();
                 var total = api.page.info().recordsTotal;
@@ -9640,7 +9718,7 @@ function updateImagenes() {
                                 } else {
                                     searchGraphicsLayer.graphics[i].setSymbol(searchImagenSymbol);
                                 }
-                            } catch (err) {}
+                            } catch (err) { }
                         }
                     });
                 $("#tableSearchBniTable tr")
@@ -9656,7 +9734,7 @@ function updateImagenes() {
                                 }
                             }
                         },
-                        function () {},
+                        function () { },
                     );
                 var PageInfo = tableSearchBni.page.info();
                 tableSearchBni
@@ -9768,7 +9846,7 @@ function updateImagenes2() {
                         buttons: {},
                         closeIcon: true,
                         lazyOpen: true,
-                        onContentReady: function () {},
+                        onContentReady: function () { },
                         onOpenBefore: function () {
                             loading.buttons.ok.hide();
                             loading.buttons.close.hide();
@@ -9787,7 +9865,7 @@ function updateImagenes2() {
                     return dataRow.imagenes;
                 },
             },
-            fnInitComplete: function () {},
+            fnInitComplete: function () { },
             drawCallback: function (settings) {
                 var api = this.api();
                 $("#searchImagenesList2").html("");
@@ -9859,7 +9937,7 @@ function updateImagenes2() {
                                 } else {
                                     searchGraphicsLayer.graphics[i].setSymbol(searchImagenSymbol);
                                 }
-                            } catch (err) {}
+                            } catch (err) { }
                         }
                     });
                 $("#tableSearchBniTable2 tr")
@@ -9875,7 +9953,7 @@ function updateImagenes2() {
                                 }
                             }
                         },
-                        function () {},
+                        function () { },
                     );
                 var PageInfo = tableSearchBni2.page.info();
                 tableSearchBni2
@@ -10018,7 +10096,7 @@ function updateCoordenada(evt) {
             labelLongitudSM = "W: ";
         }
         $("#coordinatesDiv").html(labelLatitudSM + coordTextY + ", " + labelLongitudSM + coordTextX + " (" + $("#querySearchConsultaFormat").val() + ")");
-    } catch (err) {}
+    } catch (err) { }
 }
 
 function toggleViewImagenes() {
@@ -10106,7 +10184,7 @@ function buscarCoordenada() {
             );
             map.centerAndZoom(esri.graphicsUtils.graphicsExtent(coordsLayer.graphics).getCenter(), 14);
         }
-    } catch (err) {}
+    } catch (err) { }
 }
 
 function closeCoordenadas() {
@@ -10448,7 +10526,7 @@ function updateEditMeasure(g) {
             if ($("#measureLengthUnit").val() == "yards") {
                 strHTML2 = strHTML2 + "Longitud: " + esri.geometryEngine.geodesicLength(currentMeasureGraphic.geometry, "yards").toFixed(2) + " Yardas";
             }
-        } catch (err) {}
+        } catch (err) { }
     } else {
         if (currentMeasureGraphic.geometry.type == "triangle" || currentMeasureGraphic.geometry.type == "circle" || currentMeasureGraphic.geometry.type == "ellipse" || currentMeasureGraphic.geometry.type == "polygon" || currentMeasureGraphic.geometry.type == "freehandpolygon") {
             $("#measureDivAreaUnits").show();
@@ -10474,7 +10552,7 @@ function updateEditMeasure(g) {
                 if ($("#measureAreaUnit").val() == "square-yards") {
                     strHTML = strHTML + "&Aacute;rea: " + esri.geometryEngine.geodesicArea(currentMeasureGraphic.geometry, "square-yards").toFixed(2) + " Yardas cuadradas";
                 }
-            } catch (err) {}
+            } catch (err) { }
             try {
                 if ($("#measureLengthUnit").val() == "kilometers") {
                     strHTML2 = strHTML2 + "Per&iacute;metro: " + esri.geometryEngine.geodesicLength(currentMeasureGraphic.geometry, "kilometers").toFixed(2) + " Kilómetros";
@@ -10491,7 +10569,7 @@ function updateEditMeasure(g) {
                 if ($("#measureLengthUnit").val() == "yards") {
                     strHTML2 = strHTML2 + "Per&iacute;metro: " + esri.geometryEngine.geodesicLength(currentMeasureGraphic.geometry, "yards").toFixed(2) + " Yardas";
                 }
-            } catch (err) {}
+            } catch (err) { }
         } else {
             $("#measureDivContainer").hide();
         }
@@ -10966,10 +11044,10 @@ function quitarServicio() {
 function removeLayer(id) {
     try {
         map.removeLayer(map.getLayer(id));
-    } catch (err) {}
+    } catch (err) { }
     try {
         activeLayers = activeLayers.filter((e) => e !== id);
-    } catch (err) {}
+    } catch (err) { }
     if (currentServicio != null) {
         if (currentServicio.NOMBRE == id) {
             $("#detalleServicioBtn").show();
@@ -11409,7 +11487,7 @@ function setupMap() {
                 }),
             );
             extentInicial = extent_value;
-        } catch (err) {}
+        } catch (err) { }
         map = new esri.Map("mapViewDiv", {
             basemap: currentBasemap,
             sliderPosition: "bottom-right",
@@ -11432,7 +11510,7 @@ function setupMap() {
         map.setZoom(5);
     }
 
-    map.on("load", function () {});
+    map.on("load", function () { });
     map.on("click", function (event) {
         if (event.graphic != null) {
             if (event.graphic.getLayer() != dibujoLayer) {
@@ -11460,7 +11538,7 @@ function setupMap() {
     map.on("extent-change", function () {
         $("#panelLayersZoom").html(" - Zoom: " + map.getZoom());
     });
-    map.on("click", function (event) {});
+    map.on("click", function (event) { });
 
     overviewMap = new esri.OverviewMap({
         map: map,
@@ -11538,7 +11616,7 @@ function setupMap() {
         }
     });
 
-    map.on("extent-change", function (evt) {});
+    map.on("extent-change", function (evt) { });
 
     map.on("zoom-end", function (evt) {
         if (currentSHAnalyticsHexLayer && currentSHAnalyticsHexLayer.graphics && currentSHAnalyticsHexLayer.graphics.length) {
@@ -12397,7 +12475,7 @@ function setupMap() {
                 $("#drawOptFillColor").colorpicker("setValue", evt.graphic.symbol.color.toString());
                 $("#drawOptsLine").show();
                 $("#drawOptLineColor").colorpicker("setValue", evt.graphic.symbol.outline.color.toString());
-            } catch (err) {}
+            } catch (err) { }
         }
         updateLock = false;
         updateEditGraphic();
@@ -12528,7 +12606,7 @@ function getDataLocal() {
         success: function (data) {
             initData(data);
         },
-        error: function (_data) {},
+        error: function (_data) { },
     });
 }
 
@@ -13252,7 +13330,7 @@ function gotoVideo() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -13355,7 +13433,7 @@ function updateVideoFrame() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -13419,7 +13497,7 @@ function generarVideo() {
         buttons: {},
         closeIcon: true,
         lazyOpen: true,
-        onContentReady: function () {},
+        onContentReady: function () { },
         onOpenBefore: function () {
             loading.buttons.ok.hide();
             loading.buttons.close.hide();
@@ -13504,7 +13582,7 @@ function getItemtoText(feature) {
     var objectidc;
     try {
         _layer = feature.getLayer();
-    } catch (err) {}
+    } catch (err) { }
     if (feature.attributes == null) {
         if (feature.properties != null) {
             feature.attributes = feature.properties;
@@ -13612,7 +13690,7 @@ function getItemtoText(feature) {
                 }
                 $("#popupAttachment").html(attachmentHTML);
             });
-        } catch (err) {}
+        } catch (err) { }
     }
     return sHTML;
 }
@@ -15104,7 +15182,7 @@ function getLayerDomNode(layer) {
     if (typeof layer.getNode === "function") {
         try {
             return layer.getNode();
-        } catch (e) {}
+        } catch (e) { }
     }
     if (layer.id) {
         return document.getElementById(layer.id) || document.querySelector("[id$='" + layer.id + "']");

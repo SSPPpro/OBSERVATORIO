@@ -1,4 +1,4 @@
-﻿/*fonts*/
+/*fonts*/
 @font-face {
     font-family: 'Gill Sans Std Bold';
     src: url(../fonts/GillSansStd-Bold.eot);
@@ -4924,3 +4924,51 @@ strong {
 .burns-nbr-info .tooltip-text::after {
     display: none;
 }
+
+/* Layout flexible para la ventana flotante de mosaicos */
+#burnsFloatingDetail {
+    min-width: 500px;
+    min-height: 380px;
+    max-width: 95vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#burnsFloatingContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #fff;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#burnsGalleryPane {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 8px;
+}
+
+/* Viewport contenedor para los mini-mapas de la galería */
+.burns-gallery-viewport {
+    position: relative;
+    overflow: hidden;
+    height: 190px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f7f7f7;
+    width: 100%;
+}
+
+/* El mapa de la galería tiene un tamaño fijo grande centrado para evitar resize y espacios blancos */
+.burns-gallery-map-canvas {
+    width: 800px !important;
+    height: 500px !important;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
