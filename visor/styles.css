@@ -1329,82 +1329,6 @@ label {
     -webkit-box-shadow: none;
 }
 
-.ortho-help {
-    color: #666;
-    font-size: 12px;
-    margin-bottom: 8px;
-}
-
-.ortho-results {
-    margin-top: 10px;
-    max-height: calc(100vh - 230px);
-    overflow-y: auto;
-}
-
-.ortho-result {
-    border-bottom: 1px solid #d5d5d5;
-    padding: 9px 2px;
-}
-
-.ortho-result-name {
-    font-size: 12px;
-    font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.ortho-result-meta {
-    color: #777;
-    font-size: 11px;
-}
-
-.ortho-result-actions {
-    display: flex;
-    gap: 5px;
-    justify-content: flex-end;
-    margin-top: 5px;
-}
-
-.ortho-action-btn.active {
-    background: #337ab7;
-    border-color: #2e6da4;
-    color: #fff;
-}
-
-.ortho-v2-status {
-    color: #666;
-    font-size: 11px;
-    line-height: 1.25;
-    margin: 7px 0 3px;
-}
-
-.ortho-v2-filters {
-    background: rgba(255, 255, 255, 0.55);
-    border: 1px solid #d5d5d5;
-    margin-top: 8px;
-    padding: 7px;
-}
-
-.ortho-v2-filter-label,
-.ortho-v2-resolution-label {
-    color: #555;
-    display: block;
-    font-size: 11px;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.ortho-v2-filters > label:not(.ortho-v2-resolution-label) {
-    font-size: 11px;
-    font-weight: normal;
-    margin: 0 9px 7px 0;
-}
-
-.ortho-v2-resolution-label {
-    margin-top: 2px;
-}
-
 .panel-default {
     border: none;
     box-shadow: 0 0 10px #00000091;
@@ -3682,6 +3606,130 @@ footer .gov-co-logo-pie-mesa {
     color: #ffffff !important;
 }
 
+/* Modal 3D Personalizado con Control Total */
+.custom-modal-backdrop {
+    display: none;
+    /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fondo oscuro semitransparente */
+    z-index: 9999;
+    /* Por encima de todo el mapa de ESRI */
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    /* Desenfoque de fondo moderno */
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+/* Estado activo del backdrop */
+.custom-modal-backdrop.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* Contenedor del Modal */
+.custom-modal-container {
+    position: relative;
+    background: #ffffff;
+    border-radius: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    box-shadow: none;
+    transform: translateY(-30px);
+    transition: transform 0.25s ease;
+    overflow: hidden;
+}
+
+/* Efecto de deslizamiento al abrir */
+.custom-modal-backdrop.active .custom-modal-container {
+    transform: translateY(0);
+}
+
+/* Cabecera del Modal */
+.custom-modal-header {
+    padding: 15px 20px;
+    background: #6b7d6c;
+    /* Color verde oliva del visor */
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.custom-modal-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.custom-modal-close {
+    position: absolute;
+    top: 13px;
+    right: 200px;
+    background: none;
+    border: none;
+    color: #1d1616;
+    font-size: 32px;
+    cursor: pointer;
+    line-height: 1;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    z-index: 10;
+}
+
+.custom-modal-close span {
+    font-size: 16px;
+    margin-right: 1px;
+    border: 1px solid white;
+    border-radius: 8px;
+    background-color: #741414;
+    color: white;
+    padding: 7px;
+    box-shadow: 2px 2px 5px black;
+}
+
+.custom-modal-close:hover {
+    opacity: 1;
+}
+
+/* Contenido */
+.custom-modal-body {
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-size: 14px;
+    color: #333333;
+    background: #ffffff;
+}
+
+/* Visor 3D e Iframe a pantalla completa */
+#viewerDiv3d {
+    height: 100%;
+    width: 100%;
+}
+
+#viewerDiv3d iframe {
+    height: 100%;
+    width: 100%;
+    border: none;
+}
+
+/* Pie del modal */
+.custom-modal-footer {
+    padding: 10px 20px;
+    background: #f9f9f9;
+    text-align: right;
+    border-top: 1px solid #eeeeee;
+}
+
+
 /* Media querys */
 @media (max-width: 768px) {
     .navbarigac ul {
@@ -3801,6 +3849,11 @@ footer .gov-co-logo-pie-mesa {
 
 #infoToolBtn {
     background-image: url('../images/iconos/informacion_adicional.svg');
+    top: 215px;
+}
+
+#tresDToolBtn {
+    background-image: url('../images/iconos/3d_btn.svg');
     top: 215px;
 }
 
@@ -4253,7 +4306,7 @@ footer .gov-co-logo-pie-mesa {
     object-fit: cover;
 }
 
-.sh-pdf-map-copy > * {
+.sh-pdf-map-copy>* {
     pointer-events: none !important;
 }
 
@@ -4861,7 +4914,7 @@ strong {
     margin: 0 0 12px 0;
 }
 
-.sh-cloud-slider-wrap > input#sliderCCSHStats {
+.sh-cloud-slider-wrap>input#sliderCCSHStats {
     display: none;
 }
 
@@ -5047,4 +5100,3 @@ strong {
     top: 50%;
     transform: translate(-50%, -50%);
 }
-
