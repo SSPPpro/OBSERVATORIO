@@ -1,6 +1,10 @@
 const http = require("http");
 const https = require("https");
 const querystring = require("querystring");
+const fs = require("fs");
+const path = require("path");
+const crypto = require("crypto");
+const { spawn } = require("child_process");
 
 const CLIENT_ID = process.env.SENTINEL_HUB_CLIENT_ID || "89499d2c-67f4-4f57-86c0-cdef0ece217e";
 const CLIENT_SECRET = process.env.SENTINEL_HUB_CLIENT_SECRET || "lVjg5KL43HXjNMQiRll1IruOXlvG3KqM";
@@ -9,6 +13,9 @@ const PRISMA_API_BASE_URL = (process.env.PRISMA_API_BASE_URL || "https://prisma.
 const PRISMA_USERNAME = process.env.PRISMA_USERNAME || "karens_diaz";
 const PRISMA_PASSWORD = process.env.PRISMA_PASSWORD || "Ig4c.2026";
 const PORT = Number(process.env.PORT) || 3000;
+const ORTHO_JOB_ROOT = path.resolve(process.env.ORTHO_JOB_ROOT || path.join(__dirname, "ortho-download-jobs"));
+const GDALBUILDVRT_PATH = process.env.GDALBUILDVRT_PATH || "gdalbuildvrt";
+const GDAL_TRANSLATE_PATH = process.env.GDAL_TRANSLATE_PATH || "gdal_translate";
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "*")
   .split(",")
   .map((origin) => origin.trim())
@@ -21,6 +28,16 @@ let sentinelHubTokenRequest = null;
 let prismaTokenCache = null;
 let prismaTokenExpiresAt = 0;
 let prismaTokenRequest = null;
+const orthoDownloadJobs = new Map();
+let gdalAvailabilityPromise = null;
+
+const ORTHO_DOWNLOAD_EVALSCRIPT = `//VERSION=3
+function setup() {
+  return { input: [{ bands: ["red", "green", "blue", "dataMask"], units: "DN" }], output: { bands: 4, sampleType: "UINT8" } };
+}
+function evaluatePixel(sample) {
+  return [sample.red, sample.green, sample.blue, sample.dataMask * 255];
+}`;
 
 function getCorsOrigin(requestOrigin) {
   if (ALLOWED_ORIGINS.includes("*")) return requestOrigin || "*";
@@ -240,6 +257,202 @@ function relayBufferedResponse(res, origin, upstreamResponse, fallbackContentTyp
   res.end(upstreamResponse.body);
 }
 
+function safeOrthoJobName(value) {
+  return String(value || "ortomosaico").replace(/[^a-zA-Z0-9_-]+/g, "_").slice(0, 120) || "ortomosaico";
+}
+
+function publicOrthoJob(job) {
+  return {
+    id: job.id,
+    name: job.name,
+    status: job.status,
+    phase: job.phase,
+    progress: job.progress,
+    completedTiles: job.completedTiles,
+    totalTiles: job.totalTiles,
+    createdAt: job.createdAt,
+    updatedAt: job.updatedAt,
+    error: job.error || null,
+    downloadUrl: job.status === "completed" ? `/ortho-download-jobs/${job.id}/file` : null,
+  };
+}
+
+async function persistOrthoJob(job) {
+  job.updatedAt = new Date().toISOString();
+  await fs.promises.mkdir(job.directory, { recursive: true });
+  await fs.promises.writeFile(path.join(job.directory, "job.json"), JSON.stringify(job, null, 2));
+}
+
+async function loadOrthoJob(jobId) {
+  if (!/^[0-9a-f-]{36}$/.test(jobId)) return null;
+  if (orthoDownloadJobs.has(jobId)) return orthoDownloadJobs.get(jobId);
+  try {
+    const job = JSON.parse(await fs.promises.readFile(path.join(ORTHO_JOB_ROOT, jobId, "job.json"), "utf8"));
+    orthoDownloadJobs.set(jobId, job);
+    return job;
+  } catch (error) {
+    return null;
+  }
+}
+
+function runGdal(command, args, label) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { windowsHide: true });
+    let stderr = "";
+    child.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
+    child.on("error", (error) => reject(new Error(`${label}: ${error.message}`)));
+    child.on("close", (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`${label} exited with code ${code}: ${stderr.slice(-2000)}`));
+    });
+  });
+}
+
+function ensureGdalAvailable() {
+  if (!gdalAvailabilityPromise) {
+    gdalAvailabilityPromise = Promise.all([
+      runGdal(GDALBUILDVRT_PATH, ["--version"], "gdalbuildvrt"),
+      runGdal(GDAL_TRANSLATE_PATH, ["--version"], "gdal_translate"),
+    ]).catch((error) => {
+      gdalAvailabilityPromise = null;
+      throw error;
+    });
+  }
+  return gdalAvailabilityPromise;
+}
+
+function createOrthoDownloadTiles(payload) {
+  const resolution = Number(payload.resolutionMeters);
+  const bbox = payload.bbox.map(Number);
+  const maxPixels = 2500;
+  const totalWidth = Math.ceil((bbox[2] - bbox[0]) / resolution);
+  const totalHeight = Math.ceil((bbox[3] - bbox[1]) / resolution);
+  const columns = Math.ceil(totalWidth / maxPixels);
+  const rows = Math.ceil(totalHeight / maxPixels);
+  const tiles = [];
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      const width = Math.min(maxPixels, totalWidth - column * maxPixels);
+      const height = Math.min(maxPixels, totalHeight - row * maxPixels);
+      const xmin = bbox[0] + column * maxPixels * resolution;
+      const ymax = bbox[3] - row * maxPixels * resolution;
+      tiles.push({
+        row,
+        column,
+        width,
+        height,
+        bbox: [xmin, ymax - height * resolution, xmin + width * resolution, ymax],
+      });
+    }
+  }
+  return { tiles, totalWidth, totalHeight, columns, rows };
+}
+
+async function downloadOrthoJobTile(job, tile, accessToken) {
+  const day = job.imageDate;
+  const processBody = JSON.stringify({
+    input: {
+      bounds: { bbox: tile.bbox, properties: { crs: "http://www.opengis.net/def/crs/EPSG/0/3857" } },
+      data: [{
+        type: "byoc-" + job.collectionId,
+        dataFilter: {
+          id: job.itemId,
+          timeRange: { from: day + "T00:00:00Z", to: day + "T23:59:59Z" },
+          mosaickingOrder: "mostRecent",
+        },
+      }],
+    },
+    output: {
+      width: tile.width,
+      height: tile.height,
+      responses: [{ identifier: "default", format: { type: "image/tiff" } }],
+    },
+    evalscript: ORTHO_DOWNLOAD_EVALSCRIPT,
+  });
+  const response = await requestBufferWithRetry(
+    "https://services-uswest2.sentinel-hub.com/api/v1/process",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(processBody),
+        Authorization: "Bearer " + accessToken,
+        Accept: "image/tiff",
+      },
+    },
+    processBody,
+    `Ortho job ${job.id} tile ${tile.row},${tile.column}`,
+    3,
+    180000
+  );
+  if (response.statusCode !== 200) {
+    throw new Error(`Sentinel Hub returned ${response.statusCode}: ${response.body.toString("utf8").slice(0, 1000)}`);
+  }
+  const filename = `tile_r${String(tile.row + 1).padStart(3, "0")}_c${String(tile.column + 1).padStart(3, "0")}.tif`;
+  await fs.promises.writeFile(path.join(job.tilesDirectory, filename), response.body);
+}
+
+async function runOrthoDownloadJob(job) {
+  try {
+    job.status = "running";
+    job.phase = "downloading";
+    await persistOrthoJob(job);
+    await fs.promises.mkdir(job.tilesDirectory, { recursive: true });
+    const accessToken = await getSentinelHubToken();
+    let nextTile = 0;
+    let failure = null;
+    async function worker() {
+      while (!failure && nextTile < job.tiles.length) {
+        const tile = job.tiles[nextTile++];
+        try {
+          await downloadOrthoJobTile(job, tile, accessToken);
+          job.completedTiles += 1;
+          job.progress = Math.floor((job.completedTiles / job.totalTiles) * 85);
+          await persistOrthoJob(job);
+        } catch (error) {
+          failure = error;
+        }
+      }
+    }
+    await Promise.all([worker(), worker()]);
+    if (failure) throw failure;
+
+    job.phase = "building_vrt";
+    job.progress = 88;
+    await persistOrthoJob(job);
+    const tileFiles = (await fs.promises.readdir(job.tilesDirectory))
+      .filter((name) => name.toLowerCase().endsWith(".tif"))
+      .sort()
+      .map((name) => path.join(job.tilesDirectory, name));
+    const listPath = path.join(job.directory, "tiles.txt");
+    await fs.promises.writeFile(listPath, tileFiles.join("\n"));
+    const vrtPath = path.join(job.directory, "mosaic.vrt");
+    await runGdal(GDALBUILDVRT_PATH, ["-input_file_list", listPath, vrtPath], "gdalbuildvrt");
+
+    job.phase = "creating_geotiff";
+    job.progress = 92;
+    await persistOrthoJob(job);
+    await runGdal(GDAL_TRANSLATE_PATH, [
+      vrtPath,
+      job.outputPath,
+      "-of", "GTiff",
+      "-co", "TILED=YES",
+      "-co", "COMPRESS=DEFLATE",
+      "-co", "BIGTIFF=IF_SAFER",
+    ], "gdal_translate");
+    job.status = "completed";
+    job.phase = "completed";
+    job.progress = 100;
+    await persistOrthoJob(job);
+  } catch (error) {
+    console.error(`[ORTHO_JOB] ${job.id} failed:`, error.message);
+    job.status = "failed";
+    job.phase = "failed";
+    job.error = error.message;
+    await persistOrthoJob(job).catch(() => {});
+  }
+}
+
 const server = http.createServer((req, res) => {
   const origin = getCorsOrigin(req.headers.origin);
   res.setHeader("Access-Control-Allow-Origin", origin);
@@ -258,6 +471,103 @@ const server = http.createServer((req, res) => {
   }
 
   const requestUrl = new URL(req.url, "http://localhost");
+
+  if (requestUrl.pathname === "/ortho-download-jobs" && req.method === "POST") {
+    readRequestBody(req).then(async (requestBody) => {
+      const payload = parseJsonBody(requestBody);
+      const collectionId = String(payload.collectionId || "").replace(/^byoc-/, "");
+      const itemId = String(payload.itemId || "");
+      const imageDate = String(payload.imageDate || "");
+      const resolutionMeters = Number(payload.resolutionMeters);
+      const bbox = Array.isArray(payload.bbox) ? payload.bbox.map(Number) : [];
+      const validBbox = bbox.length === 4 && bbox.every(Number.isFinite) && bbox[2] > bbox[0] && bbox[3] > bbox[1] &&
+        bbox.every((value) => Math.abs(value) <= 20037508.35);
+      if (!/^[0-9a-fA-F-]{36}$/.test(collectionId) || !/^[0-9a-fA-F-]{36}$/.test(itemId) ||
+          !/^\d{4}-\d{2}-\d{2}$/.test(imageDate) || !Number.isFinite(resolutionMeters) ||
+          resolutionMeters < 0.01 || resolutionMeters > 100 || !validBbox) {
+        sendJson(res, 400, origin, { error: "Invalid ortho download job parameters" });
+        return;
+      }
+      try {
+        await ensureGdalAvailable();
+      } catch (error) {
+        sendJson(res, 503, origin, {
+          error: "GDAL is required to build the final GeoTIFF",
+          detail: error.message,
+        });
+        return;
+      }
+      const grid = createOrthoDownloadTiles({ bbox, resolutionMeters });
+      if (!grid.tiles.length || grid.tiles.length > 10000) {
+        sendJson(res, 400, origin, { error: "The requested area produces an unsupported number of tiles" });
+        return;
+      }
+      const id = crypto.randomUUID();
+      const name = safeOrthoJobName(payload.name);
+      const directory = path.join(ORTHO_JOB_ROOT, id);
+      const job = {
+        id,
+        name,
+        status: "queued",
+        phase: "queued",
+        progress: 0,
+        completedTiles: 0,
+        totalTiles: grid.tiles.length,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        collectionId,
+        itemId,
+        imageDate,
+        resolutionMeters,
+        bbox,
+        totalWidth: grid.totalWidth,
+        totalHeight: grid.totalHeight,
+        columns: grid.columns,
+        rows: grid.rows,
+        tiles: grid.tiles,
+        directory,
+        tilesDirectory: path.join(directory, "tiles"),
+        outputPath: path.join(directory, name + ".tif"),
+      };
+      orthoDownloadJobs.set(id, job);
+      await persistOrthoJob(job);
+      setImmediate(() => runOrthoDownloadJob(job));
+      sendJson(res, 202, origin, publicOrthoJob(job));
+    }).catch((error) => {
+      console.error("[ORTHO_JOB] Could not create job:", error.message);
+      sendJson(res, 400, origin, { error: "Could not create ortho download job", detail: error.message });
+    });
+    return;
+  }
+
+  const orthoJobMatch = requestUrl.pathname.match(/^\/ortho-download-jobs\/([0-9a-f-]{36})(\/file)?$/);
+  if (orthoJobMatch && req.method === "GET") {
+    loadOrthoJob(orthoJobMatch[1]).then((job) => {
+      if (!job) {
+        sendJson(res, 404, origin, { error: "Ortho download job not found" });
+        return;
+      }
+      if (!orthoJobMatch[2]) {
+        sendJson(res, 200, origin, publicOrthoJob(job));
+        return;
+      }
+      if (job.status !== "completed" || !fs.existsSync(job.outputPath)) {
+        sendJson(res, 409, origin, { error: "Ortho download is not ready", job: publicOrthoJob(job) });
+        return;
+      }
+      const stat = fs.statSync(job.outputPath);
+      res.writeHead(200, {
+        "Access-Control-Allow-Origin": origin,
+        "Content-Type": "image/tiff",
+        "Content-Length": stat.size,
+        "Content-Disposition": `attachment; filename="${safeOrthoJobName(job.name)}.tif"`,
+      });
+      fs.createReadStream(job.outputPath).pipe(res);
+    }).catch((error) => {
+      sendJson(res, 500, origin, { error: "Could not read ortho download job", detail: error.message });
+    });
+    return;
+  }
 
   if (requestUrl.pathname === "/planet-tile" && req.method === "GET") {
     const mosaicId = requestUrl.searchParams.get("mosaicId");

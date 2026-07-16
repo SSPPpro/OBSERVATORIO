@@ -751,6 +751,7 @@ var sentinelHubProcessProxyUrl = runtimeEnv.sentinelHubProcessProxyUrl || "/get-
 var sentinelHubCatalogProxyUrl = runtimeEnv.sentinelHubCatalogProxyUrl || "/get-catalog";
 var sentinelHubByocTilesProxyUrl = runtimeEnv.sentinelHubByocTilesProxyUrl || "/get-byoc-tiles";
 var orthoTileProxyUrl = runtimeEnv.orthoTileProxyUrl || "/ortho-tile";
+var orthoDownloadJobsUrl = runtimeEnv.orthoDownloadJobsUrl || "/ortho-download-jobs";
 var sentinelHubImageProxyUrl = runtimeEnv.sentinelHubImageProxyUrl || runtimeEnv.sentinelHubProcessProxyUrl || "/get-image";
 var sentinelHubFallbackProcessProxyUrl = runtimeEnv.sentinelHubFallbackProcessProxyUrl || "";
 var sentinelHubFallbackCatalogProxyUrl = runtimeEnv.sentinelHubFallbackCatalogProxyUrl || "";
@@ -777,18 +778,24 @@ var activeOrthoV2Footprints = {};
 
 function ensureOrthoV2Ui() {
     if ($("#rasterToolDiv").length && !$("#openOrthomosaicsV2").length) {
-        $("#rasterToolDiv").append('<br /><a id="openOrthomosaicsV2" href="#" onclick="gotoOrthoV2Catalog(); return false;">Ortomosaicos V2</a>');
+        $("#rasterToolDiv").append('<br /><a id="openOrthomosaicsV2" href="#" onclick="gotoOrthoV2Catalog(); return false;">Ortoimágenes, MDT y MDS</a>');
     }
     if (!$("#panelOrthomosaicsV2").length) {
         var panelHtml = '<div id="panelOrthomosaicsV2" class="panel collapse">' +
             '<div class="panel-heading-f" role="tab"><div class="panel-title">' +
             '<a class="panel-toggle icon-panel" href="#" style="background-image:url(../images/iconos/Mapas base y capas.png);"></a>' +
-            '<a href="#" class="panel-toggle collapsed"><span class="panel-label">Ortomosaicos V2</span></a>' +
+            '<a href="#" class="panel-toggle collapsed"><span class="panel-label">Ortoimágenes, MDT y MDS</span></a>' +
             '<a class="panel-close" href="#" onclick="closeOrthoV2Catalog(); return false;"><span class="esri-icon esri-icon-close"></span></a>' +
             '</div></div><div class="panel-collapse"><div class="panel-body">' +
-            '<p class="ortho-help">Servicios ArcGIS ImageServer registrados en el archivo local.</p>' +
+            '<p class="ortho-help">Ortoimágenes y modelos digitales ArcGIS ImageServer registrados en el archivo local.</p>' +
             '<div class="input-group input-group-sm"><input id="orthoV2Search" type="search" class="form-control" placeholder="Buscar municipio, código o resolución...">' +
             '<span class="input-group-btn"><button class="btn btn-default" type="button" onclick="loadOrthoV2Catalog(true);" title="Actualizar"><span class="glyphicon glyphicon-refresh"></span></button></span></div>' +
+            '<div class="ortho-v2-filters"><div class="ortho-v2-filter-label">Tipo de dato</div>' +
+            '<label><input class="ortho-v2-type" type="checkbox" value="ortho" checked> Ortoimágenes</label>' +
+            '<label><input class="ortho-v2-type" type="checkbox" value="mdt" checked> MDT</label>' +
+            '<label><input class="ortho-v2-type" type="checkbox" value="mds" checked> MDS</label>' +
+            '<label class="ortho-v2-resolution-label" for="orthoV2Resolution">Resolución</label>' +
+            '<select id="orthoV2Resolution" class="form-control input-sm"><option value="">Todas las resoluciones</option></select></div>' +
             '<div id="orthoV2Status" class="ortho-v2-status"></div><div id="orthoV2Loader" class="raster-mosaic-loader" style="display:none;">Leyendo servicios...</div>' +
             '<div id="orthoV2Results" class="ortho-results">Abre el panel para cargar los servicios.</div>' +
             '</div></div></div>';
@@ -9405,6 +9412,7 @@ function renderOrthoCatalog() {
         html += "<button class='btn btn-xs ortho-action-btn" + (activeOrthoImages[key] ? " active" : "") + "' title='Prender/apagar imagen' onclick=\"toggleOrthoImage('" + encodedKey + "',this)\"><span class='glyphicon glyphicon-eye-open'></span></button>";
         html += "<button class='btn btn-xs ortho-action-btn" + (activeOrthoFootprints[key] ? " active" : "") + "' title='Prender/apagar footprint' onclick=\"toggleOrthoFootprint('" + encodedKey + "',this)\"><span class='glyphicon glyphicon-unchecked'></span></button>";
         html += "<button class='btn btn-xs ortho-action-btn' title='Zoom a la imagen' onclick=\"zoomToOrtho('" + encodedKey + "')\"><span class='glyphicon glyphicon-zoom-in'></span></button>";
+        html += "<button class='btn btn-xs ortho-action-btn' title='Descargar ortomosaico por teselas en resolución original' onclick=\"downloadOrthoImageClientTiles('" + encodedKey + "',this)\"><span class='glyphicon glyphicon-download-alt'></span></button>";
         html += "</div></div>";
     });
     $("#orthoCatalogResults").html(html);
@@ -9476,6 +9484,344 @@ function buildOrthoProcessBody(feature) {
     };
 }
 
+function getOrthoResolutionMeters(feature) {
+    var displayName = getOrthoDisplayName(feature);
+    var match = displayName.match(/(?:^|[^a-z])orto\s*(\d+(?:[.,]\d+)?)/i);
+    if (!match) return null;
+    var centimeters = Number(match[1].replace(",", "."));
+    return isFinite(centimeters) && centimeters > 0 ? centimeters / 100 : null;
+}
+
+function buildOrthoDownloadBody(feature, bbox, width, height) {
+    var geometry = getOrthoMapGeometry(feature);
+    var extent = geometry && geometry.getExtent ? geometry.getExtent() : null;
+    var resolution = getOrthoResolutionMeters(feature);
+    if (!extent || !resolution) return null;
+    bbox = bbox || [extent.xmin, extent.ymin, extent.xmax, extent.ymax];
+    width = width || Math.ceil(extent.getWidth() / resolution);
+    height = height || Math.ceil(extent.getHeight() / resolution);
+
+    var date = orthoItemDate(feature);
+    var filter = { id: feature.id, mosaickingOrder: "mostRecent" };
+    if (date) {
+        var day = date.split("T")[0];
+        filter.timeRange = { from: day + "T00:00:00Z", to: day + "T23:59:59Z" };
+    }
+    return {
+        input: {
+            bounds: {
+                bbox: bbox,
+                properties: { crs: "http://www.opengis.net/def/crs/EPSG/0/3857" },
+            },
+            data: [{ type: feature.__orthoCollectionId, dataFilter: filter }],
+        },
+        output: {
+            width: width,
+            height: height,
+            responses: [{ identifier: "default", format: { type: "image/tiff" } }],
+        },
+        evalscript: rasterMosaicIdxScripts.TrueColor,
+        implementation: "https://services-uswest2.sentinel-hub.com",
+    };
+}
+
+function buildOrthoDownloadTiles(feature) {
+    var geometry = getOrthoMapGeometry(feature);
+    var extent = geometry && geometry.getExtent ? geometry.getExtent() : null;
+    var resolution = getOrthoResolutionMeters(feature);
+    if (!extent || !resolution) return [];
+    var maxPixels = 2500;
+    var totalWidth = Math.ceil(extent.getWidth() / resolution);
+    var totalHeight = Math.ceil(extent.getHeight() / resolution);
+    var columns = Math.ceil(totalWidth / maxPixels);
+    var rows = Math.ceil(totalHeight / maxPixels);
+    var tiles = [];
+    for (var row = 0; row < rows; row++) {
+        for (var column = 0; column < columns; column++) {
+            var width = Math.min(maxPixels, totalWidth - column * maxPixels);
+            var height = Math.min(maxPixels, totalHeight - row * maxPixels);
+            var xmin = extent.xmin + column * maxPixels * resolution;
+            var ymax = extent.ymax - row * maxPixels * resolution;
+            var bbox = [xmin, ymax - height * resolution, xmin + width * resolution, ymax];
+            tiles.push({
+                row: row,
+                column: column,
+                width: width,
+                height: height,
+                bbox: bbox,
+                body: buildOrthoDownloadBody(feature, bbox, width, height),
+            });
+        }
+    }
+    tiles.manifest = {
+        name: getOrthoDisplayName(feature),
+        crs: "EPSG:3857",
+        resolutionMeters: resolution,
+        extent: [extent.xmin, extent.ymin, extent.xmax, extent.ymax],
+        totalWidth: totalWidth,
+        totalHeight: totalHeight,
+        columns: columns,
+        rows: rows,
+        tileCount: tiles.length,
+        maxTilePixels: maxPixels,
+        tiles: tiles.map(function (tile) {
+            return { row: tile.row, column: tile.column, width: tile.width, height: tile.height, bbox: tile.bbox };
+        }),
+    };
+    return tiles;
+}
+
+function requestOrthoDownloadTile(body, attempt) {
+    attempt = attempt || 1;
+    var processUrl = sentinelHubImageProxyUrl || sh_image_stats;
+    var headers = { "Content-Type": "application/json" };
+    var requestBody = JSON.parse(JSON.stringify(body));
+    if (!sentinelHubImageProxyUrl) {
+        headers.Authorization = "Bearer " + currentSHToken;
+        delete requestBody.implementation;
+    }
+    return fetch(processUrl, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(requestBody),
+        mode: "cors",
+    }).then(function (response) {
+        if (!response.ok) {
+            return response.text().then(function (detail) {
+                var error = new Error("HTTP " + response.status + (detail ? " - " + detail : ""));
+                error.status = response.status;
+                throw error;
+            });
+        }
+        return response.blob();
+    }).catch(function (error) {
+        if (attempt < 3 && (!error.status || error.status === 429 || error.status >= 500)) {
+            return waitRasterMosaic(attempt * 1200).then(function () {
+                return requestOrthoDownloadTile(body, attempt + 1);
+            });
+        }
+        throw error;
+    });
+}
+
+function ensureOrthoZipLibrary() {
+    if (typeof JSZip !== "undefined") return Promise.resolve();
+    if (window.orthoZipLoading) return window.orthoZipLoading;
+    window.orthoZipLoading = new Promise(function (resolve, reject) {
+        var script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js";
+        script.onload = resolve;
+        script.onerror = function () { reject(new Error("No se pudo cargar el generador ZIP")); };
+        document.head.appendChild(script);
+    });
+    return window.orthoZipLoading;
+}
+
+function saveOrthoDownloadBlob(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+}
+
+async function downloadOrthoImageClientTiles(encodedKey, button) {
+    var feature = getOrthoFeature(encodedKey);
+    if (!feature) return;
+    var resolution = getOrthoResolutionMeters(feature);
+    var tiles = buildOrthoDownloadTiles(feature);
+    if (!tiles.length || !resolution) {
+        showLoading("No fue posible identificar la resolución del ortomosaico desde su nombre", null, "red", true);
+        return;
+    }
+    var baseName = getOrthoDisplayName(feature).replace(/[^a-zA-Z0-9_-]+/g, "_") + "_" + Math.round(resolution * 100) + "cm";
+    var directory = null;
+    var zip = null;
+    try {
+        if (window.showDirectoryPicker) {
+            var rootDirectory = await window.showDirectoryPicker({ mode: "readwrite" });
+            directory = await rootDirectory.getDirectoryHandle(baseName, { create: true });
+        } else {
+            await ensureOrthoZipLibrary();
+            zip = new JSZip();
+        }
+    } catch (error) {
+        if (error && error.name === "AbortError") return;
+        console.error("[ORTHO] No se pudo preparar el destino", error);
+        showLoading("No se pudo preparar la carpeta de descarga", null, "red", true);
+        return;
+    }
+
+    $(button).attr("disabled", "disabled");
+    var completed = 0;
+    var nextTile = 0;
+    var downloadError = null;
+    var manifestText = JSON.stringify(tiles.manifest, null, 2);
+    async function storeFile(filename, blob) {
+        if (directory) {
+            var fileHandle = await directory.getFileHandle(filename, { create: true });
+            var writable = await fileHandle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+        } else {
+            zip.file(filename, blob, { compression: "STORE" });
+        }
+    }
+    async function hasStoredFile(filename) {
+        if (!directory) return false;
+        try {
+            var existingHandle = await directory.getFileHandle(filename);
+            var existingFile = await existingHandle.getFile();
+            return existingFile.size > 0;
+        } catch (error) {
+            return false;
+        }
+    }
+    async function worker() {
+        while (!downloadError && nextTile < tiles.length) {
+            var tileIndex = nextTile++;
+            var tile = tiles[tileIndex];
+            var filename = baseName + "_fila_" + String(tile.row + 1).padStart(3, "0") + "_columna_" + String(tile.column + 1).padStart(3, "0") + ".tif";
+            try {
+                if (await hasStoredFile(filename)) {
+                    completed += 1;
+                    continue;
+                }
+                var blob = await requestOrthoDownloadTile(tile.body, 1);
+                await storeFile(filename, blob);
+                completed += 1;
+                $(button).attr("title", "Descargando " + completed + " de " + tiles.length + " teselas");
+            } catch (error) {
+                downloadError = error;
+            }
+        }
+    }
+    try {
+        showLoading("Descargando " + tiles.length + " teselas a " + Math.round(resolution * 100) + " cm...", null, "#337ab7", true);
+        var workers = [];
+        for (var i = 0; i < Math.min(2, tiles.length); i++) workers.push(worker());
+        await Promise.all(workers);
+        if (downloadError) throw downloadError;
+        if (directory) {
+            await storeFile("manifest.json", new Blob([manifestText], { type: "application/json" }));
+        } else {
+            zip.file("manifest.json", manifestText);
+            var zipBlob = await zip.generateAsync({ type: "blob", compression: "STORE" });
+            saveOrthoDownloadBlob(zipBlob, baseName + ".zip");
+        }
+        showLoading("Descarga completada: " + tiles.length + " teselas GeoTIFF", "ok", "#6BD279", true);
+    } catch (error) {
+        console.error("[ORTHO] Error descargando teselas", error);
+        showLoading("La descarga se interrumpió en la tesela " + (completed + 1) + " de " + tiles.length + ". Puedes volver a intentarlo.", null, "red", true);
+    } finally {
+        $(button).removeAttr("disabled").attr("title", "Descargar ortomosaico en resolución original");
+    }
+}
+
+function getStoredOrthoDownloadJobs() {
+    try {
+        return JSON.parse(localStorage.getItem("orthoDownloadJobs") || "{}");
+    } catch (error) {
+        return {};
+    }
+}
+
+function storeOrthoDownloadJob(job) {
+    var jobs = getStoredOrthoDownloadJobs();
+    jobs[job.id] = { id: job.id, name: job.name };
+    localStorage.setItem("orthoDownloadJobs", JSON.stringify(jobs));
+}
+
+function removeStoredOrthoDownloadJob(jobId) {
+    var jobs = getStoredOrthoDownloadJobs();
+    delete jobs[jobId];
+    localStorage.setItem("orthoDownloadJobs", JSON.stringify(jobs));
+}
+
+function downloadCompletedOrthoJob(job) {
+    var link = document.createElement("a");
+    link.href = orthoDownloadJobsUrl + "/" + encodeURIComponent(job.id) + "/file";
+    link.download = (job.name || "ortomosaico") + ".tif";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    removeStoredOrthoDownloadJob(job.id);
+}
+
+function monitorOrthoDownloadJob(jobId) {
+    fetch(orthoDownloadJobsUrl + "/" + encodeURIComponent(jobId), { cache: "no-store" })
+        .then(function (response) {
+            if (!response.ok) throw new Error("HTTP " + response.status);
+            return response.json();
+        })
+        .then(function (job) {
+            if (job.status === "completed") {
+                showLoading("Ortomosaico listo. Iniciando descarga del GeoTIFF final.", "ok", "#6BD279", true);
+                downloadCompletedOrthoJob(job);
+                return;
+            }
+            if (job.status === "failed") {
+                removeStoredOrthoDownloadJob(job.id);
+                showLoading("Falló la generación del ortomosaico: " + escapeOrthoHtml(job.error || "Error desconocido"), null, "red", true);
+                return;
+            }
+            showLoading("Procesando ortomosaico en el servidor: " + job.progress + "% (" + job.completedTiles + " de " + job.totalTiles + " teselas)", null, "#337ab7", true);
+            setTimeout(function () { monitorOrthoDownloadJob(jobId); }, 5000);
+        })
+        .catch(function (error) {
+            console.warn("[ORTHO_JOB] No se pudo consultar el estado", error);
+            setTimeout(function () { monitorOrthoDownloadJob(jobId); }, 10000);
+        });
+}
+
+function resumeOrthoDownloadJobs() {
+    var jobs = getStoredOrthoDownloadJobs();
+    Object.keys(jobs).forEach(function (jobId) { monitorOrthoDownloadJob(jobId); });
+}
+
+function downloadOrthoImage(encodedKey, button) {
+    var feature = getOrthoFeature(encodedKey);
+    if (!feature) return;
+    var geometry = getOrthoMapGeometry(feature);
+    var extent = geometry && geometry.getExtent ? geometry.getExtent() : null;
+    var resolution = getOrthoResolutionMeters(feature);
+    var date = orthoItemDate(feature).split("T")[0];
+    if (!extent || !resolution || !date) {
+        showLoading("No fue posible preparar el trabajo de descarga", null, "red", true);
+        return;
+    }
+    $(button).attr("disabled", "disabled");
+    fetch(orthoDownloadJobsUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            name: getOrthoDisplayName(feature) + "_" + Math.round(resolution * 100) + "cm",
+            collectionId: feature.__orthoCollectionId,
+            itemId: feature.id,
+            imageDate: date,
+            resolutionMeters: resolution,
+            bbox: [extent.xmin, extent.ymin, extent.xmax, extent.ymax],
+        }),
+    }).then(function (response) {
+        return response.json().then(function (payload) {
+            if (!response.ok) throw new Error(payload.detail || payload.error || "HTTP " + response.status);
+            return payload;
+        });
+    }).then(function (job) {
+        storeOrthoDownloadJob(job);
+        showLoading("Trabajo iniciado en el servidor. Puedes cerrar o recargar esta pestaña.", "ok", "#6BD279", true);
+        monitorOrthoDownloadJob(job.id);
+    }).catch(function (error) {
+        console.error("[ORTHO_JOB] No se pudo iniciar el trabajo", error);
+        showLoading("No se pudo iniciar la descarga en el servidor: " + escapeOrthoHtml(error.message), null, "red", true);
+    }).finally(function () {
+        $(button).removeAttr("disabled");
+    });
+}
+
 function toggleOrthoImage(encodedKey, button) {
     var key = decodeURIComponent(encodedKey);
     var active = activeOrthoImages[key];
@@ -9528,6 +9874,10 @@ function getOrthoV2ObjectId(capa) {
 function normalizeOrthoV2Row(row, index) {
     var url = String(row.URL_SERVICIO || "").replace(/\/+$/, "");
     var objectId = getOrthoV2ObjectId(row.CAPA);
+    var classificationText = [row.SUBTEMATICA, row.NOMBRE, row.NOMBRE_SERVICIO, url].join(" ").toLowerCase();
+    var dataType = "ortho";
+    if (/modelo digital de superficie|\bmds\b|\/mds/i.test(classificationText)) dataType = "mds";
+    else if (/modelo digital (de terreno|de elevaci[oó]n)|\b(md|mdt|mde)\b|\/(md|mdt|mde)/i.test(classificationText)) dataType = "mdt";
     return {
         key: url + "|" + (objectId == null ? "all" : objectId) + "|" + String(row.NOMBRE_SERVICIO || index),
         url: url,
@@ -9536,7 +9886,28 @@ function normalizeOrthoV2Row(row, index) {
         description: String(row.NOMBRE || ""),
         scale: String(row.ESCALA || ""),
         code: String(row.CODIGO || ""),
+        dataType: dataType,
     };
+}
+
+function populateOrthoV2ResolutionFilter() {
+    var selected = String($("#orthoV2Resolution").val() || "");
+    var scales = {};
+    orthoV2Items.forEach(function (item) {
+        if (item.scale) scales[item.scale] = true;
+    });
+    var values = Object.keys(scales).sort(function (a, b) {
+        var numberA = parseFloat(a.replace(",", "."));
+        var numberB = parseFloat(b.replace(",", "."));
+        var unitA = /cm/i.test(a) ? 0 : 1;
+        var unitB = /cm/i.test(b) ? 0 : 1;
+        return unitA - unitB || numberA - numberB || a.localeCompare(b);
+    });
+    var html = '<option value="">Todas las resoluciones</option>';
+    values.forEach(function (scale) {
+        html += '<option value="' + escapeOrthoHtml(scale) + '">' + escapeOrthoHtml(scale) + '</option>';
+    });
+    $("#orthoV2Resolution").html(html).val(selected);
 }
 
 function loadOrthoV2Catalog(forceReload) {
@@ -9562,7 +9933,7 @@ function loadOrthoV2Catalog(forceReload) {
             rows.forEach(function (row, index) {
                 var url = String(row.URL_SERVICIO || "");
                 var subtopic = String(row.SUBTEMATICA || "");
-                if (!/\/ImageServer\/?$/i.test(url) || !/orto/i.test(subtopic)) return;
+                if (!/\/ImageServer\/?$/i.test(url) || !/(orto|modelo)/i.test(subtopic)) return;
                 var item = normalizeOrthoV2Row(row, index);
                 if (!unique[item.key]) {
                     unique[item.key] = true;
@@ -9571,6 +9942,7 @@ function loadOrthoV2Catalog(forceReload) {
             });
             orthoV2Items.sort(function (a, b) { return a.name.localeCompare(b.name); });
             orthoV2CatalogLoaded = true;
+            populateOrthoV2ResolutionFilter();
             renderOrthoV2Catalog();
         })
         .catch(function (error) {
@@ -9582,9 +9954,13 @@ function loadOrthoV2Catalog(forceReload) {
 
 function getFilteredOrthoV2Items() {
     var term = String($("#orthoV2Search").val() || "").toLowerCase().trim();
-    if (!term) return orthoV2Items;
+    var resolution = String($("#orthoV2Resolution").val() || "");
+    var selectedTypes = {};
+    $(".ortho-v2-type:checked").each(function () { selectedTypes[this.value] = true; });
     return orthoV2Items.filter(function (item) {
-        return [item.name, item.description, item.scale, item.code, item.url].join(" ").toLowerCase().indexOf(term) !== -1;
+        if (!selectedTypes[item.dataType]) return false;
+        if (resolution && item.scale !== resolution) return false;
+        return !term || [item.name, item.description, item.scale, item.code, item.url].join(" ").toLowerCase().indexOf(term) !== -1;
     });
 }
 
@@ -9602,7 +9978,8 @@ function renderOrthoV2Catalog() {
         var encodedKey = encodeURIComponent(item.key);
         html += "<div class='ortho-result'>";
         html += "<div class='ortho-result-name' title='" + escapeOrthoHtml(item.description) + "'>" + escapeOrthoHtml(item.name) + "</div>";
-        html += "<div class='ortho-result-meta'>" + escapeOrthoHtml(item.scale || "Sin resolución") + (item.objectId == null ? "" : " · objectid=" + item.objectId) + "</div>";
+        var typeLabel = item.dataType === "mdt" ? "MDT" : (item.dataType === "mds" ? "MDS" : "Ortoimagen");
+        html += "<div class='ortho-result-meta'>" + typeLabel + " · " + escapeOrthoHtml(item.scale || "Sin resolución") + (item.objectId == null ? "" : " · objectid=" + item.objectId) + "</div>";
         html += "<div class='ortho-result-actions'>";
         html += "<button class='btn btn-xs ortho-action-btn" + (activeOrthoV2Images[item.key] ? " active" : "") + "' title='Prender/apagar imagen' onclick=\"toggleOrthoV2Image('" + encodedKey + "',this)\"><span class='glyphicon glyphicon-eye-open'></span></button>";
         html += "<button class='btn btn-xs ortho-action-btn" + (activeOrthoV2Footprints[item.key] ? " active" : "") + "' title='Prender/apagar footprint' onclick=\"toggleOrthoV2Footprint('" + encodedKey + "',this)\"><span class='glyphicon glyphicon-unchecked'></span></button>";
@@ -9717,6 +10094,10 @@ function zoomToOrthoV2(encodedKey) {
 }
 
 $(document).on("input", "#orthoV2Search", function () {
+    renderOrthoV2Catalog();
+});
+
+$(document).on("change", ".ortho-v2-type, #orthoV2Resolution", function () {
     renderOrthoV2Catalog();
 });
 

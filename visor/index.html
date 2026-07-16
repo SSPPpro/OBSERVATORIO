@@ -519,7 +519,7 @@
                         <a href="#" onclick="gotoImagenes();">Mosaicos Imagenes raster</a><br />
                         <a href="#" onclick="gotoRasterMosaicCatalog();">Descarga imagenes insumo mosaicos </a>
                         <br /><a href="#" onclick="gotoOrthoCatalog(); return false;">Ortomosaicos</a>
-                        <br /><a id="openOrthomosaicsV2" href="#" onclick="gotoOrthoV2Catalog(); return false;">Ortomosaicos V2</a>
+                        <br /><a id="openOrthomosaicsV2" href="#" onclick="gotoOrthoV2Catalog(); return false;">Ortoimágenes, MDT y MDS</a>
                     </div>
                     <div class="calcite-panels calcite-panels-right calcite-bg-light calcite-text-light panel-group"
                         role="tablist" aria-multiselectable="true">
@@ -1217,20 +1217,20 @@
                             </div>
                         </div>
 
-                        <!-- Ortomosaicos V2 ImageServer Panel -->
+                        <!-- Ortoimagenes, MDT y MDS ImageServer Panel -->
                         <div id="panelOrthomosaicsV2" class="panel collapse">
                             <div class="panel-heading-f" role="tab">
                                 <div class="panel-title">
                                     <a class="panel-toggle icon-panel" href="#"
                                         style="background-image: url('../images/iconos/Mapas base y capas.png');"></a>
-                                    <a href="#" class="panel-toggle collapsed"><span class="panel-label">Ortomosaicos V2</span></a>
+                                    <a href="#" class="panel-toggle collapsed"><span class="panel-label">Ortoimágenes, MDT y MDS</span></a>
                                     <a class="panel-close" href="#" onclick="closeOrthoV2Catalog(); return false;"><span
                                             class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
                                 </div>
                             </div>
                             <div class="panel-collapse">
                                 <div class="panel-body">
-                                    <p class="ortho-help">Servicios ArcGIS ImageServer registrados en el archivo local.</p>
+                                    <p class="ortho-help">Ortoimágenes y modelos digitales ArcGIS ImageServer registrados en el archivo local.</p>
                                     <div class="input-group input-group-sm">
                                         <input id="orthoV2Search" type="search" class="form-control"
                                             placeholder="Buscar municipio, código o resolución...">
@@ -1238,6 +1238,16 @@
                                             <button class="btn btn-default" type="button" onclick="loadOrthoV2Catalog(true);"
                                                 title="Actualizar"><span class="glyphicon glyphicon-refresh"></span></button>
                                         </span>
+                                    </div>
+                                    <div class="ortho-v2-filters">
+                                        <div class="ortho-v2-filter-label">Tipo de dato</div>
+                                        <label><input class="ortho-v2-type" type="checkbox" value="ortho" checked> Ortoimágenes</label>
+                                        <label><input class="ortho-v2-type" type="checkbox" value="mdt" checked> MDT</label>
+                                        <label><input class="ortho-v2-type" type="checkbox" value="mds" checked> MDS</label>
+                                        <label class="ortho-v2-resolution-label" for="orthoV2Resolution">Resolución</label>
+                                        <select id="orthoV2Resolution" class="form-control input-sm">
+                                            <option value="">Todas las resoluciones</option>
+                                        </select>
                                     </div>
                                     <div id="orthoV2Status" class="ortho-v2-status"></div>
                                     <div id="orthoV2Loader" class="raster-mosaic-loader" style="display:none;">Leyendo servicios...</div>

@@ -41,6 +41,9 @@
     orthoTileProxyUrl: isLocalFrontend
       ? joinUrl(localProxyBaseUrl, "/ortho-tile")
       : joinUrl(proxyBaseUrl, "/ortho-tile"),
+    orthoDownloadJobsUrl: isLocalFrontend
+      ? joinUrl(localProxyBaseUrl, "/ortho-download-jobs")
+      : joinUrl(proxyBaseUrl, "/ortho-download-jobs"),
     sentinelHubFallbackCatalogProxyUrl: isLocalFrontend ? joinUrl(localProxyBaseUrl, "/get-catalog") : "",
     sentinelHubProcessProxyUrl: joinUrl(proxyBaseUrl, "/get-image"),
     sentinelHubFallbackProcessProxyUrl: isLocalFrontend ? joinUrl(localProxyBaseUrl, "/get-image") : "",
