@@ -32,17 +32,27 @@
             <div id="weather-overlay" class="weather-overlay"></div>
             <aside id="analysis-panel" class="analysis-panel" aria-label="Panel de perfil de elevación" hidden>
                 <div class="analysis-panel__header">
-                    <div><span class="analysis-panel__eyebrow">ANÁLISIS DEL TERRENO</span><h2 id="analysis-title">Perfil de elevación</h2></div>
+                    <div>
+                        <span class="analysis-panel__eyebrow">ANÁLISIS DEL TERRENO</span>
+                        <h2 id="analysis-title">Perfil de elevación</h2>
+                    </div>
                     <button id="close-analysis-panel" class="analysis-panel__close" type="button" title="Cerrar perfil" aria-label="Cerrar perfil">×</button>
                 </div>
                 <p class="analysis-panel__hint">Dibuje una línea sobre el modelo. Desplácese para consultar todo el perfil y sus estadísticas.</p>
                 <div id="analysis-content" class="analysis-panel__content"></div>
             </aside>
             <section class="tools" aria-label="Herramientas">
-                <div class="tool-group"><span class="tool-label">MEDICIÓN</span><button class="tool-button" data-tool="distance"><span class="tool-icon">↔</span>Distancia</button><button class="tool-button" data-tool="area"><span class="tool-icon">◇</span>Área</button><button class="tool-button" data-tool="elevation"><span class="tool-icon">⌁</span>Perfil</button></div>
-                <div class="tool-group"><span class="tool-label">ANÁLISIS</span><button class="tool-button" data-tool="sight"><span class="tool-icon">◉</span>Visión</button><button id="clear-analysis" class="tool-button clear-tool"><span class="tool-icon">×</span>Limpiar</button></div>
+                <div class="tool-group">
+                    <span class="tool-label">MEDICIÓN</span><button class="tool-button" data-tool="distance"><span class="tool-icon">↔</span>Distancia</button><button class="tool-button" data-tool="area"><span class="tool-icon">◇</span>Área</button><button class="tool-button" data-tool="elevation"><span class="tool-icon">⌁</span>Perfil</button>
+                </div>
+                <div class="tool-group">
+                    <span class="tool-label">ANÁLISIS</span><button class="tool-button" data-tool="sight"><span class="tool-icon">◉</span>Visión</button><button id="clear-analysis" class="tool-button clear-tool"><span class="tool-icon">×</span>Limpiar</button>
+                </div>
                 <div class="tool-group lighting">
-                    <span class="tool-label">LUZ Y AMBIENTE</span><input id="sun-date" type="date" aria-label="Fecha" /><input id="sun-time" type="time" value="12:00" aria-label="Hora" /><select id="weather" aria-label="Clima">
+                    <span class="tool-label">LUZ Y AMBIENTE</span>
+                    <input id="sun-date" type="date" aria-label="Fecha" />
+                    <input id="sun-time" type="time" value="11:00" aria-label="Hora" />
+                    <select id="weather" aria-label="Clima">
                         <option value="clear">Despejado</option>
                         <option value="cloudy">Nublado</option>
                         <option value="rain">Lluvia</option>

@@ -138,7 +138,7 @@ require(["esri/Map", "esri/views/SceneView", "esri/layers/IntegratedMeshLayer", 
         timeInput = $("#sun-time");
     dateInput.value = new Date().toISOString().slice(0, 10);
     function sun() {
-        const d = new Date(`${dateInput.value}T${timeInput.value || "12:00"}:00`);
+        const d = new Date(`${dateInput.value}T${timeInput.value || "11:00"}:00`);
         if (!Number.isNaN(d)) view.environment.lighting.date = d;
     }
     dateInput.onchange = sun;
