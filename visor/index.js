@@ -752,6 +752,7 @@ var sentinelHubCatalogProxyUrl = runtimeEnv.sentinelHubCatalogProxyUrl || "/get-
 var sentinelHubByocTilesProxyUrl = runtimeEnv.sentinelHubByocTilesProxyUrl || "/get-byoc-tiles";
 var orthoTileProxyUrl = runtimeEnv.orthoTileProxyUrl || "/ortho-tile";
 var orthoDownloadJobsUrl = runtimeEnv.orthoDownloadJobsUrl || "/ortho-download-jobs";
+var arcgisImageExportProxyUrl = runtimeEnv.arcgisImageExportProxyUrl || "/arcgis-image-export";
 var sentinelHubImageProxyUrl = runtimeEnv.sentinelHubImageProxyUrl || runtimeEnv.sentinelHubProcessProxyUrl || "/get-image";
 var sentinelHubFallbackProcessProxyUrl = runtimeEnv.sentinelHubFallbackProcessProxyUrl || "";
 var sentinelHubFallbackCatalogProxyUrl = runtimeEnv.sentinelHubFallbackCatalogProxyUrl || "";
@@ -9984,6 +9985,7 @@ function renderOrthoV2Catalog() {
         html += "<button class='btn btn-xs ortho-action-btn" + (activeOrthoV2Images[item.key] ? " active" : "") + "' title='Prender/apagar imagen' onclick=\"toggleOrthoV2Image('" + encodedKey + "',this)\"><span class='glyphicon glyphicon-eye-open'></span></button>";
         html += "<button class='btn btn-xs ortho-action-btn" + (activeOrthoV2Footprints[item.key] ? " active" : "") + "' title='Prender/apagar footprint' onclick=\"toggleOrthoV2Footprint('" + encodedKey + "',this)\"><span class='glyphicon glyphicon-unchecked'></span></button>";
         html += "<button class='btn btn-xs ortho-action-btn' title='Zoom al servicio' onclick=\"zoomToOrthoV2('" + encodedKey + "')\"><span class='glyphicon glyphicon-zoom-in'></span></button>";
+        html += "<button class='btn btn-xs ortho-action-btn' title='Descargar archivo TIFF fuente (" + escapeOrthoHtml(item.scale || "resolución nativa") + ")' onclick=\"downloadOrthoV2('" + encodedKey + "',this)\"><span class='glyphicon glyphicon-download-alt'></span></button>";
         html += "</div></div>";
     });
     $("#orthoV2Results").html(html);
@@ -10032,7 +10034,17 @@ function toggleOrthoV2Image(encodedKey, button) {
 function requestOrthoV2Geometry(item) {
     if (item.objectId == null) {
         var activeLayer = activeOrthoV2Images[item.key];
-        return Promise.resolve(activeLayer && activeLayer.fullExtent ? activeLayer.fullExtent : null);
+        if (activeLayer && activeLayer.fullExtent) return Promise.resolve(activeLayer.fullExtent);
+        return new Promise(function (resolve, reject) {
+            $.ajax({ url: item.url, dataType: "jsonp", data: { f: "json" }, timeout: 30000 })
+                .done(function (response) {
+                    if (!response || !response.fullExtent) {
+                        reject(new Error("Extensión no disponible"));
+                        return;
+                    }
+                    resolve(esri.jsonUtilsGeometry.fromJson(response.fullExtent));
+                }).fail(reject);
+        });
     }
     return new Promise(function (resolve, reject) {
         $.ajax({
@@ -10091,6 +10103,118 @@ function zoomToOrthoV2(encodedKey) {
         console.error("[ORTHO_V2] Error haciendo zoom", error);
         showLoading("No se pudo obtener la extensión del servicio", null, "red", true);
     });
+}
+
+function getOrthoV2ResolutionMeters(item) {
+    var text = String(item && item.scale || "").toLowerCase().trim();
+    var match = text.match(/(\d+(?:[.,]\d+)?)\s*(cm|m)\b/i);
+    if (!match) return null;
+    var value = Number(match[1].replace(",", "."));
+    if (!isFinite(value) || value <= 0) return null;
+    return match[2].toLowerCase() === "cm" ? value / 100 : value;
+}
+
+async function downloadOrthoV2(encodedKey, button) {
+    var item = findOrthoV2Item(encodedKey);
+    if (!item) return;
+    var resolution = getOrthoV2ResolutionMeters(item);
+    if (!resolution) {
+        showLoading("No fue posible interpretar la resolución de este registro", null, "red", true);
+        return;
+    }
+
+    var baseName = String(item.name || "imagen").replace(/[^a-zA-Z0-9_-]+/g, "_") + "_" + String(item.scale || "nativa").replace(/[^a-zA-Z0-9_-]+/g, "_");
+    var directory = null;
+    var zip = null;
+    try {
+        if (window.showDirectoryPicker) {
+            var rootDirectory = await window.showDirectoryPicker({ mode: "readwrite" });
+            directory = await rootDirectory.getDirectoryHandle(baseName, { create: true });
+        } else {
+            await ensureOrthoZipLibrary();
+            zip = new JSZip();
+        }
+    } catch (error) {
+        if (error && error.name === "AbortError") return;
+        showLoading("No se pudo preparar la carpeta de descarga", null, "red", true);
+        return;
+    }
+
+    $(button).attr("disabled", "disabled");
+    try {
+        var geometry = await requestOrthoV2Geometry(item);
+        var extent = geometry && geometry.getExtent ? geometry.getExtent() : geometry;
+        if (!extent) throw new Error("Extensión no disponible");
+        var wkid = extent.spatialReference && (extent.spatialReference.wkid || extent.spatialReference.latestWkid);
+        if (!wkid) throw new Error("Sistema de referencia no disponible");
+        var maxPixels = 2500;
+        var totalWidth = Math.ceil(extent.getWidth() / resolution);
+        var totalHeight = Math.ceil(extent.getHeight() / resolution);
+        var columns = Math.ceil(totalWidth / maxPixels);
+        var rows = Math.ceil(totalHeight / maxPixels);
+        var tiles = [];
+        for (var row = 0; row < rows; row++) {
+            for (var column = 0; column < columns; column++) {
+                var width = Math.min(maxPixels, totalWidth - column * maxPixels);
+                var height = Math.min(maxPixels, totalHeight - row * maxPixels);
+                var xmin = extent.xmin + column * maxPixels * resolution;
+                var ymax = extent.ymax - row * maxPixels * resolution;
+                tiles.push({ row: row, column: column, width: width, height: height,
+                    bbox: [xmin, ymax - height * resolution, xmin + width * resolution, ymax] });
+            }
+        }
+
+        var completed = 0;
+        var nextTile = 0;
+        var exportError = null;
+        async function storeFile(filename, blob) {
+            if (directory) {
+                var fileHandle = await directory.getFileHandle(filename, { create: true });
+                var writable = await fileHandle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+            } else zip.file(filename, blob, { compression: "STORE" });
+        }
+        async function worker() {
+            while (!exportError && nextTile < tiles.length) {
+                var tile = tiles[nextTile++];
+                try {
+                    var response = await fetch(arcgisImageExportProxyUrl, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ serviceUrl: item.url, objectId: item.objectId, wkid: wkid,
+                            bbox: tile.bbox, width: tile.width, height: tile.height }),
+                    });
+                    if (!response.ok) throw new Error("HTTP " + response.status + " - " + await response.text());
+                    var blob = await response.blob();
+                    var filename = baseName + "_fila_" + String(tile.row + 1).padStart(3, "0") + "_columna_" + String(tile.column + 1).padStart(3, "0") + ".tif";
+                    await storeFile(filename, blob);
+                    completed += 1;
+                    $(button).attr("title", "Descargando " + completed + " de " + tiles.length + " teselas");
+                } catch (error) { exportError = error; }
+            }
+        }
+
+        showLoading("Exportando " + tiles.length + " teselas GeoTIFF a " + escapeOrthoHtml(item.scale) + "...", null, "#337ab7", true);
+        var workers = [];
+        for (var i = 0; i < Math.min(2, tiles.length); i++) workers.push(worker());
+        await Promise.all(workers);
+        if (exportError) throw exportError;
+        var manifest = JSON.stringify({ name: item.name, crs: "EPSG:" + wkid, resolutionMeters: resolution,
+            extent: [extent.xmin, extent.ymin, extent.xmax, extent.ymax], columns: columns, rows: rows,
+            totalWidth: totalWidth, totalHeight: totalHeight, tileCount: tiles.length, tiles: tiles }, null, 2);
+        if (directory) await storeFile("manifest.json", new Blob([manifest], { type: "application/json" }));
+        else {
+            zip.file("manifest.json", manifest);
+            saveOrthoDownloadBlob(await zip.generateAsync({ type: "blob", compression: "STORE" }), baseName + ".zip");
+        }
+        showLoading("Exportación completada: " + tiles.length + " teselas GeoTIFF", "ok", "#6BD279", true);
+    } catch (error) {
+        console.error("[ORTHO_V2] Error exportando teselas", error);
+        showLoading("No se pudo completar exportImage: " + escapeOrthoHtml(error.message), null, "red", true);
+    } finally {
+        $(button).removeAttr("disabled").attr("title", "Descargar por teselas con exportImage");
+    }
 }
 
 $(document).on("input", "#orthoV2Search", function () {

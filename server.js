@@ -594,6 +594,62 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (requestUrl.pathname === "/arcgis-image-export" && req.method === "POST") {
+    readRequestBody(req).then(async (requestBody) => {
+      const payload = parseJsonBody(requestBody);
+      let serviceUrl;
+      try {
+        serviceUrl = new URL(String(payload.serviceUrl || ""));
+      } catch (error) {
+        sendJson(res, 400, origin, { error: "Invalid ImageServer URL" });
+        return;
+      }
+      const allowedHosts = new Set(["mapas.igac.gov.co", "mapas2.igac.gov.co"]);
+      const bbox = Array.isArray(payload.bbox) ? payload.bbox.map(Number) : [];
+      const width = Number(payload.width);
+      const height = Number(payload.height);
+      const objectId = payload.objectId == null || payload.objectId === "" ? null : Number(payload.objectId);
+      const wkid = Number(payload.wkid);
+      if (serviceUrl.protocol !== "https:" || !allowedHosts.has(serviceUrl.hostname.toLowerCase()) ||
+          !/\/ImageServer\/?$/i.test(serviceUrl.pathname) || bbox.length !== 4 || !bbox.every(Number.isFinite) ||
+          bbox[2] <= bbox[0] || bbox[3] <= bbox[1] || !Number.isInteger(width) || !Number.isInteger(height) ||
+          width < 1 || height < 1 || width > 2500 || height > 2500 ||
+          (objectId !== null && (!Number.isInteger(objectId) || objectId < 0)) ||
+          !Number.isInteger(wkid) || wkid < 1) {
+        sendJson(res, 400, origin, { error: "Invalid ArcGIS export parameters" });
+        return;
+      }
+      const exportUrl = new URL(serviceUrl.toString().replace(/\/+$/, "") + "/exportImage");
+      exportUrl.searchParams.set("bbox", bbox.join(","));
+      exportUrl.searchParams.set("bboxSR", String(wkid));
+      exportUrl.searchParams.set("imageSR", String(wkid));
+      exportUrl.searchParams.set("size", width + "," + height);
+      exportUrl.searchParams.set("format", "tiff");
+      if (objectId !== null) {
+        exportUrl.searchParams.set("mosaicRule", JSON.stringify({
+          mosaicMethod: "esriMosaicLockRaster",
+          lockRasterIds: [objectId],
+          where: "OBJECTID = " + objectId,
+        }));
+      }
+      exportUrl.searchParams.set("adjustAspectRatio", "false");
+      exportUrl.searchParams.set("f", "image");
+      const imageResponse = await requestBufferWithRetry(
+        exportUrl,
+        { method: "GET", headers: { Accept: "image/tiff" } },
+        null,
+        "ArcGIS image export",
+        3,
+        180000
+      );
+      relayBufferedResponse(res, origin, imageResponse, "image/tiff");
+    }).catch((error) => {
+      console.error("[ARCGIS_EXPORT] Error:", error.message);
+      sendJson(res, 502, origin, { error: "ArcGIS image export failed", detail: error.message });
+    });
+    return;
+  }
+
   if (requestUrl.pathname === "/get-byoc-tiles" && req.method === "GET") {
     const collectionId = String(requestUrl.searchParams.get("collectionId") || "").replace(/^byoc-/, "");
     if (!/^[0-9a-fA-F-]{36}$/.test(collectionId)) {

@@ -44,6 +44,9 @@
     orthoDownloadJobsUrl: isLocalFrontend
       ? joinUrl(localProxyBaseUrl, "/ortho-download-jobs")
       : joinUrl(proxyBaseUrl, "/ortho-download-jobs"),
+    arcgisImageExportProxyUrl: isLocalFrontend
+      ? joinUrl(localProxyBaseUrl, "/arcgis-image-export")
+      : joinUrl(proxyBaseUrl, "/arcgis-image-export"),
     sentinelHubFallbackCatalogProxyUrl: isLocalFrontend ? joinUrl(localProxyBaseUrl, "/get-catalog") : "",
     sentinelHubProcessProxyUrl: joinUrl(proxyBaseUrl, "/get-image"),
     sentinelHubFallbackProcessProxyUrl: isLocalFrontend ? joinUrl(localProxyBaseUrl, "/get-image") : "",
