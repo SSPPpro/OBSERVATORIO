@@ -284,6 +284,102 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (requestUrl.pathname === "/get-byoc-tiles" && req.method === "GET") {
+    const collectionId = String(requestUrl.searchParams.get("collectionId") || "").replace(/^byoc-/, "");
+    if (!/^[0-9a-fA-F-]{36}$/.test(collectionId)) {
+      sendJson(res, 400, origin, { error: "Invalid BYOC collection ID" });
+      return;
+    }
+    getSentinelHubToken().then((accessToken) => {
+      const tilesUrl = `https://services-uswest2.sentinel-hub.com/api/v1/byoc/collections/${encodeURIComponent(collectionId)}/tiles?count=100`;
+      return requestBufferWithRetry(tilesUrl, {
+        method: "GET",
+        headers: { Accept: "application/json", Authorization: "Bearer " + accessToken },
+      }, null, "BYOC tiles request", 2);
+    }).then((tilesResponse) => {
+      relayBufferedResponse(res, origin, tilesResponse, "application/json");
+    }).catch((error) => {
+      console.error("[PROXY] BYOC tiles request error:", error.message);
+      sendJson(res, 502, origin, { error: "Sentinel Hub BYOC tiles request failed", detail: error.message });
+    });
+    return;
+  }
+
+  if (requestUrl.pathname === "/ortho-tile" && req.method === "GET") {
+    const collectionId = String(requestUrl.searchParams.get("collectionId") || "").replace(/^byoc-/, "");
+    const itemId = String(requestUrl.searchParams.get("itemId") || "");
+    const imageDate = String(requestUrl.searchParams.get("date") || "");
+    const z = Number(requestUrl.searchParams.get("z"));
+    const x = Number(requestUrl.searchParams.get("x"));
+    const y = Number(requestUrl.searchParams.get("y"));
+    const maxTileIndex = Number.isInteger(z) && z >= 0 && z <= 23 ? Math.pow(2, z) - 1 : -1;
+    if (!/^[0-9a-fA-F-]{36}$/.test(collectionId) || !/^[0-9a-fA-F-]{36}$/.test(itemId) ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(imageDate) || !Number.isInteger(x) || !Number.isInteger(y) ||
+        x < 0 || y < 0 || x > maxTileIndex || y > maxTileIndex) {
+      sendJson(res, 400, origin, { error: "Invalid ortho tile parameters" });
+      return;
+    }
+
+    const worldHalfWidth = 20037508.342789244;
+    const tileSize = 256;
+    const resolution = (2 * worldHalfWidth) / (tileSize * Math.pow(2, z));
+    const minX = -worldHalfWidth + x * tileSize * resolution;
+    const maxX = minX + tileSize * resolution;
+    const maxY = worldHalfWidth - y * tileSize * resolution;
+    const minY = maxY - tileSize * resolution;
+    const processBody = JSON.stringify({
+      input: {
+        bounds: {
+          bbox: [minX, minY, maxX, maxY],
+          properties: { crs: "http://www.opengis.net/def/crs/EPSG/0/3857" },
+        },
+        data: [{
+          type: "byoc-" + collectionId,
+          dataFilter: {
+            id: itemId,
+            timeRange: { from: imageDate + "T00:00:00Z", to: imageDate + "T23:59:59Z" },
+            mosaickingOrder: "mostRecent",
+          },
+        }],
+      },
+      output: {
+        width: tileSize,
+        height: tileSize,
+        responses: [{ identifier: "default", format: { type: "image/png" } }],
+      },
+      evalscript: `//VERSION=3
+function setup() {
+  return { input: [{ bands: ["red", "green", "blue", "dataMask"], units: "DN" }], output: { bands: 4, sampleType: "UINT8" } };
+}
+function evaluatePixel(sample) {
+  return [sample.red, sample.green, sample.blue, sample.dataMask * 255];
+}`,
+    });
+
+    getSentinelHubToken().then((accessToken) => requestBufferWithRetry(
+      "https://services-uswest2.sentinel-hub.com/api/v1/process",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(processBody),
+          Authorization: "Bearer " + accessToken,
+          Accept: "image/png",
+        },
+      },
+      processBody,
+      "Ortho tile request",
+      2
+    )).then((tileResponse) => {
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      relayBufferedResponse(res, origin, tileResponse, "image/png");
+    }).catch((error) => {
+      console.error("[PROXY] Ortho tile request error:", error.message);
+      sendJson(res, 502, origin, { error: "Sentinel Hub ortho tile request failed", detail: error.message });
+    });
+    return;
+  }
+
   if (requestUrl.pathname.startsWith("/prisma-proxy/") && (req.method === "GET" || req.method === "POST")) {
     const upstreamPath = requestUrl.pathname.replace(/^\/prisma-proxy/, "");
     if (!isAllowedPrismaProxyPath(upstreamPath)) {

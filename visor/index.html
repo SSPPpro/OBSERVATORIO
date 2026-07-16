@@ -518,6 +518,8 @@
                     <div id="rasterToolDiv" style="display: none;">
                         <a href="#" onclick="gotoImagenes();">Mosaicos Imagenes raster</a><br />
                         <a href="#" onclick="gotoRasterMosaicCatalog();">Descarga imagenes insumo mosaicos </a>
+                        <br /><a href="#" onclick="gotoOrthoCatalog(); return false;">Ortomosaicos</a>
+                        <br /><a id="openOrthomosaicsV2" href="#" onclick="gotoOrthoV2Catalog(); return false;">Ortomosaicos V2</a>
                     </div>
                     <div class="calcite-panels calcite-panels-right calcite-bg-light calcite-text-light panel-group"
                         role="tablist" aria-multiselectable="true">
@@ -1188,6 +1190,58 @@
                                         <div id="rasterMosaicsCatalogResults" class="raster-mosaic-results">Los
                                             resultados del catálogo aparecerán aquí...</div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ortomosaicos BYOC Panel -->
+                        <div id="panelOrthomosaics" class="panel collapse">
+                            <div id="headingOrthomosaics" class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style="background-image: url('../images/iconos/Mapas base y capas.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed"><span class="panel-label">Ortomosaicos</span></a>
+                                    <a class="panel-close" href="#" onclick="closeOrthoCatalog(); return false;"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div class="panel-collapse">
+                                <div class="panel-body">
+                                    <p class="ortho-help">Imágenes disponibles en las tres colecciones BYOC.</p>
+                                    <button type="button" class="btn btn-default btn-xs" onclick="loadOrthoCatalog(true);">
+                                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Actualizar
+                                    </button>
+                                    <div id="orthoCatalogLoader" class="raster-mosaic-loader" style="display:none;">Consultando ortomosaicos...</div>
+                                    <div id="orthoCatalogResults" class="ortho-results">Abre el panel para consultar las imágenes.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ortomosaicos V2 ImageServer Panel -->
+                        <div id="panelOrthomosaicsV2" class="panel collapse">
+                            <div class="panel-heading-f" role="tab">
+                                <div class="panel-title">
+                                    <a class="panel-toggle icon-panel" href="#"
+                                        style="background-image: url('../images/iconos/Mapas base y capas.png');"></a>
+                                    <a href="#" class="panel-toggle collapsed"><span class="panel-label">Ortomosaicos V2</span></a>
+                                    <a class="panel-close" href="#" onclick="closeOrthoV2Catalog(); return false;"><span
+                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                            <div class="panel-collapse">
+                                <div class="panel-body">
+                                    <p class="ortho-help">Servicios ArcGIS ImageServer registrados en el archivo local.</p>
+                                    <div class="input-group input-group-sm">
+                                        <input id="orthoV2Search" type="search" class="form-control"
+                                            placeholder="Buscar municipio, código o resolución...">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button" onclick="loadOrthoV2Catalog(true);"
+                                                title="Actualizar"><span class="glyphicon glyphicon-refresh"></span></button>
+                                        </span>
+                                    </div>
+                                    <div id="orthoV2Status" class="ortho-v2-status"></div>
+                                    <div id="orthoV2Loader" class="raster-mosaic-loader" style="display:none;">Leyendo servicios...</div>
+                                    <div id="orthoV2Results" class="ortho-results">Abre el panel para cargar los servicios.</div>
                                 </div>
                             </div>
                         </div>
@@ -2204,6 +2258,7 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist-browser/geotiff.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script type="text/javascript"
         src="https://cdn.jsdelivr.net/npm/@tmcw/togeojson@5.8.1/dist/togeojson.umd.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/shpjs@latest/dist/shp.min.js"></script>
