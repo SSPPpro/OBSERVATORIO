@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es-ES">
 
 <head>
@@ -518,8 +518,6 @@
                     <div id="rasterToolDiv" style="display: none;">
                         <a href="#" onclick="gotoImagenes();">Mosaicos Imagenes raster</a><br />
                         <a href="#" onclick="gotoRasterMosaicCatalog();">Descarga imagenes insumo mosaicos </a>
-                        <br /><a href="#" onclick="gotoOrthoCatalog(); return false;">Ortomosaicos</a>
-                        <br /><a id="openOrthomosaicsV2" href="#" onclick="gotoOrthoV2Catalog(); return false;">Ortoimágenes, MDT y MDS</a>
                     </div>
                     <div class="calcite-panels calcite-panels-right calcite-bg-light calcite-text-light panel-group"
                         role="tablist" aria-multiselectable="true">
@@ -600,6 +598,9 @@
                                     <a href="#" class="panel-toggle collapsed">
                                         <span class="panel-label">Coordenadas</span>
                                     </a>
+                                    <a class="panel-close" href="#" onclick="minimizeCoordenadas(); return false;"
+                                        title="Minimizar"><span id="panelCoordenadasMinimizeIcon"
+                                            class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>
                                     <a class="panel-close" href="#" onclick="closeCoordenadas();"><span
                                             class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
                                 </div>
@@ -685,6 +686,9 @@
                                         <span class="panel-label" id="panelLayersTitle">Capas activas</span><span
                                             id="panelLayersZoom" style="display: none;"></span>
                                     </a>
+                                    <a class="panel-close" href="#" onclick="minimizeLayers(); return false;"
+                                        title="Minimizar"><span id="panelLayersMinimizeIcon"
+                                            class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>
                                     <a class="panel-close" href="#" onclick="closeLayers();"><span
                                             class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
                                 </div>
@@ -731,6 +735,9 @@
                                         <span class="panel-label" id="panelSHTitle">Índices espectrales</span><span
                                             id="panelSHZoom" style="display: none;"></span>
                                     </a>
+                                    <a class="panel-close" href="#" onclick="minimizeSH(); return false;"
+                                        title="Minimizar"><span id="panelSHMinimizeIcon"
+                                            class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>
                                     <a class="panel-close" href="#" onclick="closeSH();"><span
                                             class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
                                 </div>
@@ -774,6 +781,9 @@
                                             multitemporal</span><span id="panelSHStatsZoom"
                                             style="display: none;"></span>
                                     </a>
+                                    <a class="panel-close" href="#" onclick="minimizeSHStats(); return false;"
+                                        title="Minimizar"><span id="panelSHStatsMinimizeIcon"
+                                            class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>
                                     <a class="panel-close" href="#" onclick="closeSHStats();"><span
                                             class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
                                 </div>
@@ -928,6 +938,9 @@
                                         <span class="panel-label" id="panelPrismaTitle">Segmentación De
                                             Cobertura</span><span id="panelPrismaZoom" style="display: none;"></span>
                                     </a>
+                                    <a class="panel-close" href="#" onclick="minimizePrisma(); return false;"
+                                        title="Minimizar"><span id="panelPrismaMinimizeIcon"
+                                            class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>
                                     <a class="panel-close" href="#" onclick="closePrisma();"><span
                                             class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
                                 </div>
@@ -1023,6 +1036,9 @@
                                         <span class="panel-label" id="panelSHAnalyticsTitle">Detección de
                                             cambios</span><span id="panelSHAnalyticsZoom" style="display: none;"></span>
                                     </a>
+                                    <a class="panel-close" href="#" onclick="minimizeSHAnalytics(); return false;"
+                                        title="Minimizar"><span id="panelSHAnalyticsMinimizeIcon"
+                                            class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>
                                     <a class="panel-close" href="#" onclick="closeSHAnalytics();"><span
                                             class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
                                 </div>
@@ -1115,6 +1131,9 @@
                                             mosaicos</span><span id="panelRasterMosaicsZoom"
                                             style="display: none;"></span>
                                     </a>
+                                    <a class="panel-close" href="#" onclick="minimizeRasterMosaics(); return false;"
+                                        title="Minimizar"><span id="panelRasterMosaicsMinimizeIcon"
+                                            class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>
                                     <a class="panel-close" href="#" onclick="closeRasterMosaicsCatalog();"><span
                                             class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
                                 </div>
@@ -1194,68 +1213,6 @@
                             </div>
                         </div>
 
-                        <!-- Ortomosaicos BYOC Panel -->
-                        <div id="panelOrthomosaics" class="panel collapse">
-                            <div id="headingOrthomosaics" class="panel-heading-f" role="tab">
-                                <div class="panel-title">
-                                    <a class="panel-toggle icon-panel" href="#"
-                                        style="background-image: url('../images/iconos/Mapas base y capas.png');"></a>
-                                    <a href="#" class="panel-toggle collapsed"><span class="panel-label">Ortomosaicos</span></a>
-                                    <a class="panel-close" href="#" onclick="closeOrthoCatalog(); return false;"><span
-                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
-                                </div>
-                            </div>
-                            <div class="panel-collapse">
-                                <div class="panel-body">
-                                    <p class="ortho-help">Imágenes disponibles en las tres colecciones BYOC.</p>
-                                    <button type="button" class="btn btn-default btn-xs" onclick="loadOrthoCatalog(true);">
-                                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Actualizar
-                                    </button>
-                                    <div id="orthoCatalogLoader" class="raster-mosaic-loader" style="display:none;">Consultando ortomosaicos...</div>
-                                    <div id="orthoCatalogResults" class="ortho-results">Abre el panel para consultar las imágenes.</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Ortoimagenes, MDT y MDS ImageServer Panel -->
-                        <div id="panelOrthomosaicsV2" class="panel collapse">
-                            <div class="panel-heading-f" role="tab">
-                                <div class="panel-title">
-                                    <a class="panel-toggle icon-panel" href="#"
-                                        style="background-image: url('../images/iconos/Mapas base y capas.png');"></a>
-                                    <a href="#" class="panel-toggle collapsed"><span class="panel-label">Ortoimágenes, MDT y MDS</span></a>
-                                    <a class="panel-close" href="#" onclick="closeOrthoV2Catalog(); return false;"><span
-                                            class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
-                                </div>
-                            </div>
-                            <div class="panel-collapse">
-                                <div class="panel-body">
-                                    <p class="ortho-help">Ortoimágenes y modelos digitales ArcGIS ImageServer registrados en el archivo local.</p>
-                                    <div class="input-group input-group-sm">
-                                        <input id="orthoV2Search" type="search" class="form-control"
-                                            placeholder="Buscar municipio, código o resolución...">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default" type="button" onclick="loadOrthoV2Catalog(true);"
-                                                title="Actualizar"><span class="glyphicon glyphicon-refresh"></span></button>
-                                        </span>
-                                    </div>
-                                    <div class="ortho-v2-filters">
-                                        <div class="ortho-v2-filter-label">Tipo de dato</div>
-                                        <label><input class="ortho-v2-type" type="checkbox" value="ortho" checked> Ortoimágenes</label>
-                                        <label><input class="ortho-v2-type" type="checkbox" value="mdt" checked> MDT</label>
-                                        <label><input class="ortho-v2-type" type="checkbox" value="mds" checked> MDS</label>
-                                        <label class="ortho-v2-resolution-label" for="orthoV2Resolution">Resolución</label>
-                                        <select id="orthoV2Resolution" class="form-control input-sm">
-                                            <option value="">Todas las resoluciones</option>
-                                        </select>
-                                    </div>
-                                    <div id="orthoV2Status" class="ortho-v2-status"></div>
-                                    <div id="orthoV2Loader" class="raster-mosaic-loader" style="display:none;">Leyendo servicios...</div>
-                                    <div id="orthoV2Results" class="ortho-results">Abre el panel para cargar los servicios.</div>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Importar Panel -->
                         <div id="panelImprimir" class="panel collapse">
                             <div id="headingImprimir" class="panel-heading-f" role="tab">
@@ -1265,6 +1222,9 @@
                                     <a href="#" class="panel-toggle collapsed">
                                         <span class="panel-label">Imprimir</span>
                                     </a>
+                                    <a class="panel-close" href="#" onclick="minimizeImprimir(); return false;"
+                                        title="Minimizar"><span id="panelImprimirMinimizeIcon"
+                                            class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>
                                     <a class="panel-close" href="#" onclick="closeImprimir();"><span
                                             class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
                                 </div>
@@ -1363,6 +1323,9 @@
                                     <a href="#" class="panel-toggle collapsed">
                                         <span class="panel-label">Mosaicos</span>
                                     </a>
+                                    <a class="panel-close" href="#" onclick="minimizeTiempo(); return false;"
+                                        title="Minimizar"><span id="panelTiempoMinimizeIcon"
+                                            class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>
                                     <a class="panel-close" href="#" onclick="closeTiempo();"><span
                                             class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
                                 </div>
@@ -1437,6 +1400,9 @@
                                     <a href="#" class="panel-toggle collapsed">
                                         <span class="panel-label">Imagenes Raster</span>
                                     </a>
+                                    <a class="panel-close" href="#" onclick="minimizeImagenes(); return false;"
+                                        title="Minimizar"><span id="panelImagenesMinimizeIcon"
+                                            class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>
                                     <a class="panel-close" href="#" onclick="closeImagenes();"><span
                                             class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
                                 </div>
@@ -1578,6 +1544,9 @@
                                     <a href="#" class="panel-toggle collapsed">
                                         <span class="panel-label">Herramientas de dibujo y medici&oacute;n</span>
                                     </a>
+                                    <a class="panel-close" href="#" onclick="minimizeDibujar(); return false;"
+                                        title="Minimizar"><span id="panelDibujarMinimizeIcon"
+                                            class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>
                                     <a class="panel-close" href="#" onclick="closeDibujar();"><span
                                             class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
                                 </div>
@@ -1739,6 +1708,8 @@
                         data-toggle="tooltip" data-placement="left" title="Imagenes (raster)"></a>
                     <a id="shToolBtn" class="panel-tools text-center" onclick="toggleSHTools();" data-toggle="tooltip"
                         data-placement="left" title="Analítica e IA"></a>
+                    <a id="tresDToolBtn" class="panel-tools text-center" onclick="gotoVisor3D();" data-toggle="tooltip"
+                        data-placement="left" title="Modelos 3D"></a>
                     <a id="infoToolBtn" class="panel-tools text-center" onclick="toggleInfoTools();"
                         data-toggle="tooltip" data-placement="left" title="Información adicional"></a>
                 </div>
@@ -2211,6 +2182,29 @@
         </div>
     </div>
 
+    <!-- Modal 3D  -->
+    <div id="modal3D" class="custom-modal-backdrop" onclick="if(event.target === this) closeVisor3D();">
+        <div class="custom-modal-container">
+            <!-- Encabezado -->
+            <!-- <div class="custom-modal-header">
+                <h4 class="custom-modal-title">Visor 3D</h4>
+                <button class="custom-modal-close" onclick="closeVisor3D();">&times;</button>
+            </div> -->
+            <!-- Cuerpo -->
+            <div class="custom-modal-body">
+                <button class="custom-modal-close" onclick="closeVisor3D();"><span>Cerrar visor</span></button>
+                <div id="viewerDiv3d" style="height: 100%; width: 100%;">
+                    <iframe src="visor-modelos-3d/index.html" frameborder="0"></iframe>
+                </div>
+            </div>
+            <!-- Pie del Modal -->
+            <!-- <div class="custom-modal-footer">
+                <button class="btn btn-primary" onclick="closeVisor3D();">Aceptar</button>
+            </div> -->
+        </div>
+    </div>
+
+
     <script type="text/javascript">
         window.dojoConfig = {
             async: false,
@@ -2268,7 +2262,6 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist-browser/geotiff.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script type="text/javascript"
         src="https://cdn.jsdelivr.net/npm/@tmcw/togeojson@5.8.1/dist/togeojson.umd.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/shpjs@latest/dist/shp.min.js"></script>

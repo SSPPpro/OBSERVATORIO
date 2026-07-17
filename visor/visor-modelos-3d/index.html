@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Visor M3D · IGAC</title>
+        <link rel="stylesheet" href="https://js.arcgis.com/4.31/esri/themes/light/main.css" />
+        <link rel="stylesheet" href="./styles.css" />
+        <script src="https://js.arcgis.com/4.31/"></script>
+    </head>
+    <body>
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-mark">◈</span>
+                <div><strong>Visor M3D</strong><small>Catálogo de escenas IGAC</small></div>
+            </div>
+            <label class="search"><span>⌕</span><input id="search" type="search" placeholder="Buscar municipio o código" /></label>
+            <div class="catalog-summary"><span id="service-count">0</span> servicios disponibles</div>
+            <div id="catalog" class="catalog" aria-label="Catálogo de servicios"></div>
+            <div class="sidebar-footer">Seleccione un modelo para cargarlo en la escena.</div>
+        </aside>
+
+        <main class="viewer-shell">
+            <header class="topbar">
+                <div>
+                    <span class="eyebrow">ESCENA 3D</span>
+                    <h1 id="scene-title">Seleccione un modelo</h1>
+                </div>
+                <div class="top-actions"><button id="reset-view" class="icon-button" title="Vista global" aria-label="Ir a la vista global">◎</button><button id="toggle-layer" class="button primary">Encender modelo</button></div>
+            </header>
+            <div id="viewDiv"></div>
+            <div id="weather-overlay" class="weather-overlay"></div>
+            <aside id="analysis-panel" class="analysis-panel" aria-label="Panel de perfil de elevación" hidden>
+                <div class="analysis-panel__header">
+                    <div>
+                        <span class="analysis-panel__eyebrow">ANÁLISIS DEL TERRENO</span>
+                        <h2 id="analysis-title">Perfil de elevación</h2>
+                    </div>
+                    <button id="close-analysis-panel" class="analysis-panel__close" type="button" title="Cerrar perfil" aria-label="Cerrar perfil">×</button>
+                </div>
+                <p class="analysis-panel__hint">Dibuje una línea sobre el modelo. Desplácese para consultar todo el perfil y sus estadísticas.</p>
+                <div id="analysis-content" class="analysis-panel__content"></div>
+            </aside>
+            <section class="tools" aria-label="Herramientas">
+                <div class="tool-group">
+                    <span class="tool-label">MEDICIÓN</span><button class="tool-button" data-tool="distance"><span class="tool-icon">↔</span>Distancia</button><button class="tool-button" data-tool="area"><span class="tool-icon">◇</span>Área</button><button class="tool-button" data-tool="elevation"><span class="tool-icon">⌁</span>Perfil</button>
+                </div>
+                <div class="tool-group">
+                    <span class="tool-label">ANÁLISIS</span><button class="tool-button" data-tool="sight"><span class="tool-icon">◉</span>Visión</button><button id="clear-analysis" class="tool-button clear-tool"><span class="tool-icon">×</span>Limpiar</button>
+                </div>
+                <div class="tool-group lighting">
+                    <span class="tool-label">LUZ Y AMBIENTE</span>
+                    <input id="sun-date" type="date" aria-label="Fecha" />
+                    <input id="sun-time" type="time" value="11:00" aria-label="Hora" />
+                    <select id="weather" aria-label="Clima">
+                        <option value="clear">Despejado</option>
+                        <option value="cloudy">Nublado</option>
+                        <option value="rain">Lluvia</option>
+                        <option value="fog">Niebla</option>
+                    </select>
+                </div>
+            </section>
+            <p id="status" class="status">Inicializando visor…</p>
+        </main>
+        <script src="./app.js"></script>
+    </body>
+</html>

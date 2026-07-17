@@ -1,0 +1,2596 @@
+{
+  "description": "Catálogo de servicios SceneServer de modelos 3D IGAC. Edite el arreglo services para añadir, modificar o retirar modelos.",
+  "updatedAt": "2026-07-16",
+  "services": [
+    {
+      "source": "GD1_15189000_Ciénega_20250409",
+      "name": "M3D_15189000_20250409",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15189000cienaga/SceneServer"
+    },
+    {
+      "source": "GD1_15293000_Gachantiva_20250422",
+      "name": "M3D_15293000_20250422",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15293000gachantiva/SceneServer"
+    },
+    {
+      "source": "GD1_15299000_Garagoa_20250207",
+      "name": "M3D_15299000_20250207",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15299000garagoa/SceneServer"
+    },
+    {
+      "source": "GD1_15325000_Guayatá_20250402",
+      "name": "M3D_15325000_20250402",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15325000guayata/SceneServer"
+    },
+    {
+      "source": "GD1_15367000_Jenesano_20250407",
+      "name": "M3D_15367000_20250407",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15367000jenesano/SceneServer"
+    },
+    {
+      "source": "GD1_15380000_La_Capilla_20250403",
+      "name": "M3D_15380000_20250403",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15380000lacapilla/SceneServer"
+    },
+    {
+      "source": "GD1_15469007_Los_Cayenos_20250301",
+      "name": "M3D_15469007_20250301",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15469007loscayenos/SceneServer"
+    },
+    {
+      "source": "GD1_15469000_Moniquirá_20250228",
+      "name": "M3D_15469000_20250228",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15469000moniquira/SceneServer"
+    },
+    {
+      "source": "GD1_15599004_El_Escobal_20250420",
+      "name": "M3D_15599004_20250420",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15599004elescobal/SceneServer"
+    },
+    {
+      "source": "GD1_15599001_Guayabal(Fátima)_20250420",
+      "name": "M3D_15599001_20250420",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15599001guayabal/SceneServer"
+    },
+    {
+      "source": "GD1_15599000_Ramiriqui_20250408",
+      "name": "M3D_15599000_20250408",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15599000ramiriqui/SceneServer"
+    },
+    {
+      "source": "GD1_15599005_San_Antonio_20250420",
+      "name": "M3D_15599005_20250420",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15599005sanantonio/SceneServer"
+    },
+    {
+      "source": "GD1_15599006_Villa_Toscana_20250415",
+      "name": "M3D_15599006_20250415",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15599006villatoscana/SceneServer"
+    },
+    {
+      "source": "GD1_15664000_San_José_de_Pare_20250424",
+      "name": "M3D_15664000_20250424",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15664000sanjosedepare/SceneServer"
+    },
+    {
+      "source": "GD1_15686002_Casablanca_20250305",
+      "name": "M3D_15686002_20250305",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15686002casablanca/SceneServer"
+    },
+    {
+      "source": "GD1_15686003_Mateguadua_20250304",
+      "name": "M3D_15686003_20250304",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15686003mateguadua/SceneServer"
+    },
+    {
+      "source": "GD1_15686000_Santana_20250305",
+      "name": "M3D_15686000_20250305",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15686000santana/SceneServer"
+    },
+    {
+      "source": "GD1_15759006_Alcaparral_20250225",
+      "name": "M3D_15759006_20250225",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15759006alcaparral/SceneServer"
+    },
+    {
+      "source": "GD1_15759007_Milagro_y_Playita_20250225",
+      "name": "M3D_15759007_20250225",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15759007milagroyplayita/SceneServer"
+    },
+    {
+      "source": "GD1_15759001_Morcá_20250226",
+      "name": "M3D_15759001_20250226",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15759001morca/SceneServer"
+    },
+    {
+      "source": "GD1_15759000_Sogamoso_20250222",
+      "name": "M3D_15759000_20250222",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15759000sogamoso/SceneServer"
+    },
+    {
+      "source": "GD1_15759003_Vanegas_20250224",
+      "name": "M3D_15759003_20250224",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15759003vanegas/SceneServer"
+    },
+    {
+      "source": "GD1_15761000_Somondoco_20250402",
+      "name": "M3D_15761000_20250402",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15761000somondoco/SceneServer"
+    },
+    {
+      "source": "GD1_15764000_Soracá_20250414",
+      "name": "M3D_15764000_20250414",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15764000soraca/SceneServer"
+    },
+    {
+      "source": "GD1_15798000_Tenza_20250403",
+      "name": "M3D_15798000_20250403",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15798000tenza/SceneServer"
+    },
+    {
+      "source": "GD1_15804000_Tibaná_20250210",
+      "name": "M3D_15804000_20250210",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15804000tibana/SceneServer"
+    },
+    {
+      "source": "GD1_15816000_Togüí_20250422",
+      "name": "M3D_15816000_20250422",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15816000togui/SceneServer"
+    },
+    {
+      "source": "GD1_15835000_Turmequé_20250404",
+      "name": "M3D_15835000_20250404",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15835000turmeque/SceneServer"
+    },
+    {
+      "source": "GD1_15842000_Umbita_20250404",
+      "name": "M3D_15842000_20250404",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15842000umbita/SceneServer"
+    },
+    {
+      "source": "GD1_15861002_Casa_Verde_20250215",
+      "name": "M3D_15861002_20250215",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15861002casaverde/SceneServer"
+    },
+    {
+      "source": "GD1_15861009_El_Carpi_20250214",
+      "name": "M3D_15861009_20250214",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15861009elcarpi/SceneServer"
+    },
+    {
+      "source": "GD1_15861010_El_Manzano_20250215",
+      "name": "M3D_15861010_20250215",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15861010elmanzano/SceneServer"
+    },
+    {
+      "source": "GD1_15861006_Estancia_Grande_20250212",
+      "name": "M3D_15861006_20250212",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15861006estanciagrande/SceneServer"
+    },
+    {
+      "source": "GD1_15861005_Montoya_20250212",
+      "name": "M3D_15861005_20250212",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15861005montoya/SceneServer"
+    },
+    {
+      "source": "GD1_15861001_Parroquia_Vieja_20250212",
+      "name": "M3D_15861001_20250212",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15861001parroquiavieja/SceneServer"
+    },
+    {
+      "source": "GD1_15861007_Puente_Boyacá_20250213",
+      "name": "M3D_15861007_20250213",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15861007puenteboyaca/SceneServer"
+    },
+    {
+      "source": "GD1_15861008_Tierra_Negra_20250214",
+      "name": "M3D_15861008_20250214",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15861008tierranegra/SceneServer"
+    },
+    {
+      "source": "GD1_15861000_Ventaquemada_20250212",
+      "name": "M3D_15861000_20250212",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15861000ventaquemada/SceneServer"
+    },
+    {
+      "source": "GD1_15879000_Viracachá_20250411",
+      "name": "M3D_15879000_20250411",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15879000viracacha/SceneServer"
+    },
+    {
+      "source": "GD1_08832000_Tubará_20250702",
+      "name": "MD3_08832000_20250702",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d08832000tubara/SceneServer"
+    },
+    {
+      "source": "GD1_08832001_Cuatro_Bocas_20250702",
+      "name": "M3D_08832001_20250702",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d08832001cuatrobocas/SceneServer"
+    },
+    {
+      "source": "GD1_08832002_El_Morro_20250704",
+      "name": "M3D_08832002_20250704",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d08832002elmorro/SceneServer"
+    },
+    {
+      "source": "GD1_08832003_Guaimaral_20250702",
+      "name": "M3D_08832003_20250702",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d08832003guaimaral/SceneServer"
+    },
+    {
+      "source": "GD1_08832004_Juaruco_20250704",
+      "name": "M3D_08832004_20250704",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d08832004juaruco/SceneServer"
+    },
+    {
+      "source": "GD1_08832007_Corral_de_San_Luis_20250702",
+      "name": "M3D_08832007_20250702",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d08832007corraldesanluis/SceneServer"
+    },
+    {
+      "source": "GD1_08832010_Playa_Mendoza_20250702",
+      "name": "M3D_08832010_20250702",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d08832010playamendoza/SceneServer"
+    },
+    {
+      "source": "GD1_08832011_Playas_de_Edrimán_20250704",
+      "name": "M3D_08832011_20250704",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d08832011playasdeedriman/SceneServer"
+    },
+    {
+      "source": "GD1_08832012_Villas_de_Palmarito_20250702",
+      "name": "M3D_08832012_20250702",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d08832012villasdepalmarito/SceneServer"
+    },
+    {
+      "source": "GD1_08832013_Nueva_Esperanza_20250702",
+      "name": "M3D_08832013_20250702",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d08832013nuevaesperanza/SceneServer"
+    },
+    {
+      "source": "GD1_08832014_Puerto_Caimán_20250702",
+      "name": "M3D_08832014_20250702",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d08832014puertocaiman/SceneServer"
+    },
+    {
+      "source": "GD1_13430000_Magangué_20250513",
+      "name": "M3D_13430000_20250513",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430000magangue/SceneServer"
+    },
+    {
+      "source": "GD1_13430001_Barbosa_20250423",
+      "name": "M3D_13430001_20250423",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430001barbosa/SceneServer"
+    },
+    {
+      "source": "GD1_13430002_Barranca_de_Yuca_20250428",
+      "name": "M3D_13430002_20250428",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430002barrancadeyuca/SceneServer"
+    },
+    {
+      "source": "GD1_13430003_Betania_20250509",
+      "name": "M3D_13430003_20250509",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430003betania/SceneServer"
+    },
+    {
+      "source": "GD1_13430004_Boca_de_San_Antonio_20250425",
+      "name": "M3D_13430004_20250425",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430004bocadesanantonio/SceneServer"
+    },
+    {
+      "source": "GD1_13430006_Cascajal_20250411",
+      "name": "M3D_13430006_20250411",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430006cascajal/SceneServer"
+    },
+    {
+      "source": "GD1_13430007_Ceibal_20250510",
+      "name": "M3D_13430007_20250510",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430007ceibal/SceneServer"
+    },
+    {
+      "source": "GD1_13430008_Coyongal_20250417",
+      "name": "M3D_13430008_20250417",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430008coyongal/SceneServer"
+    },
+    {
+      "source": "GD1_13430009_El_Retiro_20250426",
+      "name": "M3D_13430009_20250426",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430009elretiro/SceneServer"
+    },
+    {
+      "source": "GD1_13430010_Guazo_20250426",
+      "name": "M3D_13430010_20250426",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430010guazo/SceneServer"
+    },
+    {
+      "source": "GD1_13430011_Henequén_20250411",
+      "name": "M3D_13430011_20250411",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430011henequen/SceneServer"
+    },
+    {
+      "source": "GD1_13430013_Juan_Arias_20250514",
+      "name": "M3D_13430013_20250514",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430013juanarias/SceneServer"
+    },
+    {
+      "source": "GD1_13430014_La_Pascuala_20250509",
+      "name": "M3D_13430014_20250509",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430014lapascuala/SceneServer"
+    },
+    {
+      "source": "GD1_13430015_La_Ventura_20250429",
+      "name": "M3D_13430015_20250429",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430015laventura/SceneServer"
+    },
+    {
+      "source": "GD1_13430016_Las_Brisas_20250430",
+      "name": "M3D_13430016_20250430",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430016lasbrisas/SceneServer"
+    },
+    {
+      "source": "GD1_13430017_Madrid_20250515",
+      "name": "M3D_13430017_20250515",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430017madrid/SceneServer"
+    },
+    {
+      "source": "GD1_13430018_Palmarito_20250424",
+      "name": "M3D_13430018_20250424",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430018palmarito/SceneServer"
+    },
+    {
+      "source": "GD1_13430019_Pansegüita_20250424",
+      "name": "M3D_13430019_20250424",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430019panseguita/SceneServer"
+    },
+    {
+      "source": "GD1_13430020_Piñalito_20250412",
+      "name": "M3D_13430020_20250412",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430020pinalito/SceneServer"
+    },
+    {
+      "source": "GD1_13430021_San_Rafael_de_Cortina_20250410",
+      "name": "M3D_13430021_20250410",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430021sanrafaeldecortina/SceneServer"
+    },
+    {
+      "source": "GD1_13430022_San_José_de_las_martas_20250423",
+      "name": "M3D_13430022_20250423",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430022sanjosedelasmartas/SceneServer"
+    },
+    {
+      "source": "GD1_13430023_San_Sebastian_de_Buenavista_20250423",
+      "name": "M3D_13430023_20250423",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430023sansebastiandebuenavista/SceneServer"
+    },
+    {
+      "source": "GD1_13430024_Santa_Fe_20250517",
+      "name": "M3D_13430024_20250517",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430024santafe/SceneServer"
+    },
+    {
+      "source": "GD1_13430025_Santa_Lucía_20250517",
+      "name": "M3D_13430025_20250517",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430025santalucia/SceneServer"
+    },
+    {
+      "source": "GD1_13430026_Santa_Monica_20250414",
+      "name": "M3D_13430026_20250414",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430026santamonica/SceneServer"
+    },
+    {
+      "source": "GD1_13430027_Santa_Pabla_20250414",
+      "name": "M3D_13430027_20250414",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430027santapabla/SceneServer"
+    },
+    {
+      "source": "GD1_13430028_Sitio_Nuevo_20250421",
+      "name": "M3D_13430028_20250421",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430028sitionuevo/SceneServer"
+    },
+    {
+      "source": "GD1_13430029_Puerto_Kennedy_20250517",
+      "name": "M3D_13430029_20250517",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430029puertokennedy/SceneServer"
+    },
+    {
+      "source": "GD1_13430030_Tacaloa_20250609",
+      "name": "M3D_13430030_20250609",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430030tacaloa/SceneServer"
+    },
+    {
+      "source": "GD1_13430031_Tacasaluma_20250412",
+      "name": "M3D_13430031_20250412",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430031tacasaluma/SceneServer"
+    },
+    {
+      "source": "GD1_13430032_Tolú_20250422",
+      "name": "M3D_13430032_20250422",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430032tolu/SceneServer"
+    },
+    {
+      "source": "GD1_13430036_Playa_de_Las_Flores_20250415",
+      "name": "M3D_13430036_20250415",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430036playadelasflores/SceneServer"
+    },
+    {
+      "source": "GD1_13430038_El_Cuatro_20250517",
+      "name": "M3D_13430038_20250517",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430038elcuatro/SceneServer"
+    },
+    {
+      "source": "GD1_13430039_Boca_de_Guamal_20250417",
+      "name": "M3D_13430039_20250417",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430039bocadeguamal/SceneServer"
+    },
+    {
+      "source": "GD1_13430040_Tres_Puntas_20250429",
+      "name": "M3D_13430040_20250429",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430040trespuntas/SceneServer"
+    },
+    {
+      "source": "GD1_13430041_Emaus_20250514",
+      "name": "M3D_13430041_20250514",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430041emaus/SceneServer"
+    },
+    {
+      "source": "GD1_13430047_Puerto_Nariño_20250515",
+      "name": "M3D_13430047_20250515",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430047puertonarino/SceneServer"
+    },
+    {
+      "source": "GD1_13430048_Punta_de_Cartagena_20250415",
+      "name": "M3D_13430048_20250415",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430048puntadecartagena/SceneServer"
+    },
+    {
+      "source": "GD1_13430049_Roma_20250421",
+      "name": "M3D_13430049_20250421",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430049roma/SceneServer"
+    },
+    {
+      "source": "GD1_13430051_San_Antoñito_20250428",
+      "name": "M3D_13430051_20250428",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430051sanantonito/SceneServer"
+    },
+    {
+      "source": "GD1_13430052_Santa_Coita_20250419",
+      "name": "M3D_13430052_20250419",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430052santacoita/SceneServer"
+    },
+    {
+      "source": "GD1_13430053_Florencia_20250517",
+      "name": "M3D_13430053_20250517",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13430053florencia/SceneServer"
+    },
+    {
+      "source": "GD1_13836000_Turbaco_Zona_Norte_20250530",
+      "name": "M3D_13836000_Zona_Norte_20250530",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836000turbacozonanorte/SceneServer"
+    },
+    {
+      "source": "GD1_13836000_Turbaco_Zona_Sur_20250530",
+      "name": "M3D_13836000_Zona_Sur_20250530",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836000turbacozonasur/SceneServer"
+    },
+    {
+      "source": "GD1_13836001_Cañaveral_20250521",
+      "name": "MD3_13836001_20250521",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836001canaveral/SceneServer"
+    },
+    {
+      "source": "GD1_13836002_San_Jose_de_Chiquito_20250521",
+      "name": "MD3_13836002_20250521",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836002sanjosedechiquito/SceneServer"
+    },
+    {
+      "source": "GD1_13836006_Pueblo_Nuevo_20250531",
+      "name": "MD3_13836006_20250531",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836006pueblonuevo/SceneServer"
+    },
+    {
+      "source": "GD1_13836007_Urbanización_Villa_de_Calatrava_20250531",
+      "name": "MD3_13836007_20250531",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836007urbanizacionvilladecalatrava/SceneServer"
+    },
+    {
+      "source": "GD1_13836008_Urbanización_Campestre_20241127",
+      "name": "MD3_13836008_20241127",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836008urbanizacioncampestre/SceneServer"
+    },
+    {
+      "source": "GD1_13836009_Urbanización_Catalina_20250527",
+      "name": "MD3_13836009_20250527",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836009urbanizacioncatalina/SceneServer"
+    },
+    {
+      "source": "GD1_13836010_Urbanización_Zapote_20250527",
+      "name": "MD3_13836010_20250527",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836010urbanizacionzapote/SceneServer"
+    },
+    {
+      "source": "GD1_13836011_Condominio_Hacienda_20250528",
+      "name": "MD3_13836011_20250528",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836011condominiohacienda/SceneServer"
+    },
+    {
+      "source": "GD1_13836012_La_Pepita_20250620",
+      "name": "MD3_13836012_20250620",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836012lapepita/SceneServer"
+    },
+    {
+      "source": "GD1_13836013_Conjunto_La_Victoria_20250626",
+      "name": "MD3_13836013_20250626",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836013conjuntolavictoria/SceneServer"
+    },
+    {
+      "source": "GD1_13836014_Casas_Marsella_20250621",
+      "name": "MD3_13836014_20250621",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836014casasmarsella/SceneServer"
+    },
+    {
+      "source": "GD1_13836015_Arroyo_Grande_20250701",
+      "name": "MD3_13836015_20250701",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836015arroyogrande/SceneServer"
+    },
+    {
+      "source": "GD1_13836016_Oasis_de_Campaña_20250627",
+      "name": "MD3_13836016_20250627",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836016oasisdecampana/SceneServer"
+    },
+    {
+      "source": "GD1_13836017_Urbanización_Los_Naranjos_20250627",
+      "name": "MD3_13836017_20250627",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836017urbanizacionlosnaranjos/SceneServer"
+    },
+    {
+      "source": "GD1_13836018_Praga_20250707",
+      "name": "MD3_13836018_20250707",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836018praga/SceneServer"
+    },
+    {
+      "source": "GD1_13836019_Condominio_El_Roble_20250628",
+      "name": "MD3_13836019_20250628",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836019condominioelroble/SceneServer"
+    },
+    {
+      "source": "GD1_13836020_Brisas_del_Oriente_20250625",
+      "name": "MD3_13836020_20250625",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836020brisasdeloriente/SceneServer"
+    },
+    {
+      "source": "GD1_13836021_Villa_del_Palmar_20250707",
+      "name": "MD3_13836021_20250707",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13836021villadelpalmar/SceneServer"
+    },
+    {
+      "source": "GD1_23079000_Buenavista_20250517",
+      "name": "M3D_23079000_20250517",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079000buenavista/SceneServer"
+    },
+    {
+      "source": "GD1_23079001_Tierra_Santa_20250325",
+      "name": "M3D_23079001_20250325",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079001tierrasanta/SceneServer"
+    },
+    {
+      "source": "GD1_23079002_Villa_Fátima_20250321",
+      "name": "M3D_23079002_20250321",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079002villafatima/SceneServer"
+    },
+    {
+      "source": "GD1_23079003_Belén_20250327",
+      "name": "M3D_23079003_20250327",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079003belen/SceneServer"
+    },
+    {
+      "source": "GD1_23079004_Nueva_Estación_20250321",
+      "name": "M3D_23079004_20250321",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079004nuevaestacion/SceneServer"
+    },
+    {
+      "source": "GD1_23079005_Puerto_Córdoba_20250322",
+      "name": "M3D_23079005_20250322",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079005puertocordoba/SceneServer"
+    },
+    {
+      "source": "GD1_23079010_Mejor_Esquina_20250519",
+      "name": "M3D_23079010_20250519",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079010mejoresquina/SceneServer"
+    },
+    {
+      "source": "GD1_23079012_El_Viajano_20250519",
+      "name": "M3D_23079012_20250519",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079012elviajano/SceneServer"
+    },
+    {
+      "source": "GD1_23079014_Veracruz_20250320",
+      "name": "M3D_23079014_20250320",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079014veracruz/SceneServer"
+    },
+    {
+      "source": "GD1_23079015_Santa_Clara_20250325",
+      "name": "M3D_23079015_20250325",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079015santaclara/SceneServer"
+    },
+    {
+      "source": "GD1_23079016_Santa_Fe_del_Arcial_1_20250327",
+      "name": "M3D_23079016_20250327",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079016santafedelarcial1/SceneServer"
+    },
+    {
+      "source": "GD1_23079017_Coyonpo_20250325",
+      "name": "M3D_23079017_20250325",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079017coyonpo/SceneServer"
+    },
+    {
+      "source": "GD1_23079019_Las_Marías_20250326",
+      "name": "M3D_23079019_20250326",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079019lasmarias/SceneServer"
+    },
+    {
+      "source": "GD1_23079020_Santa_Fe_de_Arcial_2_20250327",
+      "name": "M3D_23079020_20250327",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23079020santafedearcial2/SceneServer"
+    },
+    {
+      "source": "GD1_23350000_La_Apartada_20250523",
+      "name": "M3D_23350000_20250523",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23350000laapartada/SceneServer"
+    },
+    {
+      "source": "GD1_23350003_La_Balsa_20250521",
+      "name": "M3D_23350003_20250521",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23350003labalsa/SceneServer"
+    },
+    {
+      "source": "GD1_23350007_Sitio_Nuevo_20250521",
+      "name": "M3D_23350007_20250521",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23350007sitionuevo/SceneServer"
+    },
+    {
+      "source": "GD1_23350015_Campo_Alegre_20250522",
+      "name": "M3D_23350015_20250522",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23350015campoalegre/SceneServer"
+    },
+    {
+      "source": "GD1_23350017_Puerto_Córdoba_20241113",
+      "name": "M3D_23350017_20241113",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23350017puertocordoba/SceneServer"
+    },
+    {
+      "source": "GD1_23555000_Planeta_Rica_20250327",
+      "name": "M3D_23555000_20250327",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555000planetarica/SceneServer"
+    },
+    {
+      "source": "GD1_23555001_Arenoso_20250412",
+      "name": "M3D_23555001_20250412",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555001arenoso/SceneServer"
+    },
+    {
+      "source": "GD1_23555002_Campo_Bello_20250409",
+      "name": "M3D_23555002_20250409",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555002campobello/SceneServer"
+    },
+    {
+      "source": "GD1_23555003_Carolina_20250321",
+      "name": "M3D_23555003_20250321",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555003carolina/SceneServer"
+    },
+    {
+      "source": "GD1_23555004_Santana(Centro_Alegre)_20250410",
+      "name": "M3D_23555004_20250410",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555004santanacentroalegre/SceneServer"
+    },
+    {
+      "source": "GD1_23555005_El_Almendro_20250420",
+      "name": "M3D_23555005_20250420",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555005elalmendro/SceneServer"
+    },
+    {
+      "source": "GD1_23555006_Marañonal_20250407",
+      "name": "M3D_23555006_20250407",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555006maranonal/SceneServer"
+    },
+    {
+      "source": "GD1_23555007_Plaza_Bonita_20250514",
+      "name": "M3D_23555007_20250514",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555007plazabonita/SceneServer"
+    },
+    {
+      "source": "GD1_23555008_Providencia_20250329",
+      "name": "M3D_23555008_20250329",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555008providencia/SceneServer"
+    },
+    {
+      "source": "GD1_23555010_Medio_Rancho_20250402",
+      "name": "M3D_23555010_20250402",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555010mediorancho/SceneServer"
+    },
+    {
+      "source": "GD1_23555011_Pamplona_20250322",
+      "name": "M3D_23555011_20250322",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555011pamplona/SceneServer"
+    },
+    {
+      "source": "GD1_23555012_El_Reparo_20250320",
+      "name": "M3D_23555012_20250320",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555012elreparo/SceneServer"
+    },
+    {
+      "source": "GD1_23555013_Los_Cerros_20250321",
+      "name": "M3D_23555013_20250321",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555013loscerros/SceneServer"
+    },
+    {
+      "source": "GD1_23555015_Las_Pelonas_20250325",
+      "name": "M3D_23555015_20250325",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555015laspelonas/SceneServer"
+    },
+    {
+      "source": "GD1_23555019_Nuevo_Paraíso_20250515",
+      "name": "M3D_23555019_20250515",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555019nuevoparaiso/SceneServer"
+    },
+    {
+      "source": "GD1_23555020_Santa_Rosa_20250407",
+      "name": "M3D_23555020_20250407",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555020santarosa/SceneServer"
+    },
+    {
+      "source": "GD1_23555022_Planetica_20250322",
+      "name": "M3D_23555022_20250322",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555022planetica/SceneServer"
+    },
+    {
+      "source": "GD1_23555024_Arroyo_Arena_20250329",
+      "name": "M3D_23555024_20250329",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555024arroyoarena/SceneServer"
+    },
+    {
+      "source": "GD1_23555029_San_Jerónimo(Golero)_20250617",
+      "name": "M3D_23555029_20250617",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555029sanjeronimogolero/SceneServer"
+    },
+    {
+      "source": "GD1_23555030_El_Guayabo_20250405",
+      "name": "M3D_23555030_20250405",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555030elguayabo/SceneServer"
+    },
+    {
+      "source": "GD1_23555035_Loma_de_Piedra_20250331",
+      "name": "M3D_23555035_20250331",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555035lomadepiedra/SceneServer"
+    },
+    {
+      "source": "GD1_23555039_Marimba_20250409",
+      "name": "M3D_23555039_20250409",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555039marimba/SceneServer"
+    },
+    {
+      "source": "GD1_23555044_Punta_Verde_20250402",
+      "name": "M3D_23555044_20250402",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555044puntaverde/SceneServer"
+    },
+    {
+      "source": "GD1_23555047_Santa_Ana_20250410",
+      "name": "M3D_23555047_20250410",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23555047santaana/SceneServer"
+    },
+    {
+      "source": "GD1_23570000_Pueblo_Nuevo_20250414",
+      "name": "M3D_23570000_20250414",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570000pueblonuevo/SceneServer"
+    },
+    {
+      "source": "GD1_23570002_San_José_de_Cintura_20250424",
+      "name": "M3D_23570002_20250424",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570002sanjosedecintura/SceneServer"
+    },
+    {
+      "source": "GD1_23570003_Corcovao_20250422",
+      "name": "M3D_23570003_20250422",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570003corcovao/SceneServer"
+    },
+    {
+      "source": "GD1_23570004_El_Varal_20250412",
+      "name": "M3D_23570004_20250412",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570004elvaral/SceneServer"
+    },
+    {
+      "source": "GD1_23570005_El_Poblado_20250415",
+      "name": "M3D_23570005_20250415",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570005elpoblado/SceneServer"
+    },
+    {
+      "source": "GD1_23570006_La_Granjita_20250325",
+      "name": "M3D_23570006_20250325",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570006lagranjita/SceneServer"
+    },
+    {
+      "source": "GD1_23570007_Los_Limones_20250414",
+      "name": "M3D_23570007_20250414",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570007loslimones/SceneServer"
+    },
+    {
+      "source": "GD1_23570008_Puerto_Santo_20250423",
+      "name": "M3D_23570008_20250423",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570008puertosanto/SceneServer"
+    },
+    {
+      "source": "GD1_23570009_La_Magdalena_20250410",
+      "name": "M3D_23570009_20250410",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570009lamagdalena/SceneServer"
+    },
+    {
+      "source": "GD1_23570011_Palmira_20250416",
+      "name": "M3D_23570011_20250416",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570011palmira/SceneServer"
+    },
+    {
+      "source": "GD1_23570013_Neiva_20250415",
+      "name": "M3D_23570013_20250415",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570013neiva/SceneServer"
+    },
+    {
+      "source": "GD1_23570014_Arroyo_de_Arenas_20250415",
+      "name": "M3D_23570014_20250415",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570014arroyodearenas/SceneServer"
+    },
+    {
+      "source": "GD1_23570016_El_Contento_20250416",
+      "name": "M3D_23570016_20250416",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570016elcontento/SceneServer"
+    },
+    {
+      "source": "GD1_23570017_Primavera_20250416",
+      "name": "M3D_23570017_20250416",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570017primavera/SceneServer"
+    },
+    {
+      "source": "GD1_23570018_Betania_20250421",
+      "name": "M3D_23570018_20250421",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570018betania/SceneServer"
+    },
+    {
+      "source": "GD1_23570020_El_Campano_20250411",
+      "name": "M3D_23570020_20250411",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570020elcampano/SceneServer"
+    },
+    {
+      "source": "GD1_23570024_Nueva_Esperanza_20250422",
+      "name": "M3D_23570024_20250422",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570024nuevaesperanza/SceneServer"
+    },
+    {
+      "source": "GD1_23570026_Cafe_Pisao_20250424",
+      "name": "M3D_23570026_20250424",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570026cafepisao/SceneServer"
+    },
+    {
+      "source": "GD1_23570028_Loma_de_Piedra_20250331",
+      "name": "M3D_23570028_20250331",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570028lomadepiedra/SceneServer"
+    },
+    {
+      "source": "GD1_23570029_Apartada_de_Betulia_20250414",
+      "name": "M3D_23570029_20250414",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570029apartadadebetulia/SceneServer"
+    },
+    {
+      "source": "GD1_23570030_El_Corral_20250423",
+      "name": "M3D_23570030_20250423",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570030elcorral/SceneServer"
+    },
+    {
+      "source": "GD1_23570031_El_Chipal_20250421",
+      "name": "M3D_23570031_20250421",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570031elchipal/SceneServer"
+    },
+    {
+      "source": "GD1_23570032_El_Deseo_20250421",
+      "name": "M3D_23570032_20250421",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570032eldeseo/SceneServer"
+    },
+    {
+      "source": "GD1_23570033_El_Toche_20250411",
+      "name": "M3D_23570033_20250411",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570033eltoche/SceneServer"
+    },
+    {
+      "source": "GD1_23570034_Villa_Esperanza_20250421",
+      "name": "M3D_23570034_20250421",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23570034villaesperanza/SceneServer"
+    },
+    {
+      "source": "GD1_23675000_San_Bernardo_del_Viento_20250528",
+      "name": "M3D_23675000_20250528",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675000sanbernardodelviento/SceneServer"
+    },
+    {
+      "source": "GD1_23675001_José_Manuel_de_Altamira_20250530",
+      "name": "M3D_23675001_20250530",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675001josemanueldealtamira/SceneServer"
+    },
+    {
+      "source": "GD1_23675003_Paso_Nuevo_20250609",
+      "name": "M3D_23675003_20250609",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675003pasonuevo/SceneServer"
+    },
+    {
+      "source": "GD1_23675005_Playas_del_Viento_20250606",
+      "name": "M3D_23675005_20250606",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675005playasdelviento/SceneServer"
+    },
+    {
+      "source": "GD1_23675007_Trementino_20250603",
+      "name": "M3D_23675007_20250603",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675007trementino/SceneServer"
+    },
+    {
+      "source": "GD1_23675009_San_Blas_de_Junín_20250529",
+      "name": "M3D_23675009_20250529",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675009sanblasdejunin/SceneServer"
+    },
+    {
+      "source": "GD1_23675012_Chiquí_20250605",
+      "name": "M3D_23675012_20250605",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675012chiqui/SceneServer"
+    },
+    {
+      "source": "GD1_23675013_Pajonal_20250531",
+      "name": "M3D_23675013_20250531",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675013pajonal/SceneServer"
+    },
+    {
+      "source": "GD1_23675014_San_José_de_las_Cañas_20250531",
+      "name": "M3D_23675014_20250531",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675014sanjosedelascanas/SceneServer"
+    },
+    {
+      "source": "GD1_23675015_Miramar_20250702",
+      "name": "M3D_23675015_20250702",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675015miramar/SceneServer"
+    },
+    {
+      "source": "GD1_23675017_Barcelona_20250529",
+      "name": "M3D_23675017_20250529",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675017barcelona/SceneServer"
+    },
+    {
+      "source": "GD1_23675018_Camino Real_20250608",
+      "name": "M3D_23675018_20250608",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675018caminoreal/SceneServer"
+    },
+    {
+      "source": "GD1_23675019_El_Castillo_20250530",
+      "name": "M3D_23675019_20250530",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675019elcastillo/SceneServer"
+    },
+    {
+      "source": "GD1_23675021_Tinajones_20250603",
+      "name": "M3D_23675021_20250603",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675021tinajones/SceneServer"
+    },
+    {
+      "source": "GD1_23675023_El_Darién_20250605",
+      "name": "M3D_23675023_20250605",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675023eldarien/SceneServer"
+    },
+    {
+      "source": "GD1_23675024_Santa_Inés_de_Montero_20250604",
+      "name": "M3D_23675024_20250604",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d23675024santainesdemontero/SceneServer"
+    },
+    {
+      "source": "GD1_25001000_Agua_de_Dios_20250323",
+      "name": "M3D_25001000_20250323",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25001000aguadedios/SceneServer"
+    },
+    {
+      "source": "GD1_25183000_Chocontá_20250313",
+      "name": "M3D_25183000_20250313",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25183000choconta/SceneServer"
+    },
+    {
+      "source": "GD1_25295000_Gachancipá_20250320",
+      "name": "M3D_25295000_20250320",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25295000gachancipa/SceneServer"
+    },
+    {
+      "source": "GD1_25295005_El_Roble_Sur_20250320",
+      "name": "M3D_25295005_20250320",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25295005elroblesur/SceneServer"
+    },
+    {
+      "source": "GD1_25772000_Suesca_20250317",
+      "name": "M3D_25772000_20250317",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25772000suesca/SceneServer"
+    },
+    {
+      "source": "GD1_25772001_Hato_Grande_20250315",
+      "name": "M3D_25772001_20250315",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25772001hatogrande/SceneServer"
+    },
+    {
+      "source": "GD1_25772002_Santa_Rosita_20250318",
+      "name": "M3D_25772002_20250318",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25772002santarosita/SceneServer"
+    },
+    {
+      "source": "GD1_25772004_Cacicazgo_20250317",
+      "name": "M3D_25772004_20250317",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25772004cacicazgo/SceneServer"
+    },
+    {
+      "source": "GD1_50313000_Granada_20250322",
+      "name": "M3D_50313000_20250322",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50313000granada/SceneServer"
+    },
+    {
+      "source": "GD1_50313001_Canaguaro_20250318",
+      "name": "M3D_50313001_20250318",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50313001canaguaro/SceneServer"
+    },
+    {
+      "source": "GD1_50313002_Dos_Quebradas_20250318",
+      "name": "M3D_50313002_20250318",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50313002dosquebradas/SceneServer"
+    },
+    {
+      "source": "GD1_50313004_La_Playa_20250321",
+      "name": "M3D_50313004_20250321",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50313004laplaya/SceneServer"
+    },
+    {
+      "source": "GD1_50313005_Puerto_Caldas_20250321",
+      "name": "M3D_50313005_20250321",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50313005puertocaldas/SceneServer"
+    },
+    {
+      "source": "GD1_50313006_Aguas_Claras_20250318",
+      "name": "M3D_50313006_20250318",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50313006aguasclaras/SceneServer"
+    },
+    {
+      "source": "GD1_50313007_Punta_Brava_20250318",
+      "name": "M3D_50313007_20250318",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50313007puntabrava/SceneServer"
+    },
+    {
+      "source": "GD1_63401000_La_Tebaida_20250602",
+      "name": "M3D_63401000_20250602",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d63401000latebaida/SceneServer"
+    },
+    {
+      "source": "GD1_63401003_La_Silvia_20250608",
+      "name": "M3D_63401003_20250608",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d63401003lasilvia/SceneServer"
+    },
+    {
+      "source": "GD1_63401004_Fundación_Amanecer_20250608",
+      "name": "M3D_63401004_20250608",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d63401004fundacionamanecer/SceneServer"
+    },
+    {
+      "source": "GD1_63401005_Condominio_La_Estación_20250608",
+      "name": "M3D_63401005_20250608",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d63401005condominiolaestacion/SceneServer"
+    },
+    {
+      "source": "GD1_63401006_Condominio_Moracawa_20250608",
+      "name": "M3D_63401006_20250608",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d63401006condominiomoracawa/SceneServer"
+    },
+    {
+      "source": "GD1_63401007_Murillo_20250608",
+      "name": "M3D_63401007_20250608",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d63401007murillo/SceneServer"
+    },
+    {
+      "source": "GD1_66045000_Apía_20250610",
+      "name": "M3D_66045000_20250610",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66045000apia/SceneServer"
+    },
+    {
+      "source": "GD1_66045004_Jordania_20250612",
+      "name": "M3D_66045004_20250612",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66045004jordania/SceneServer"
+    },
+    {
+      "source": "GD1_66045009_La_María_20250611",
+      "name": "M3D_66045009_20250611",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66045009lamaria/SceneServer"
+    },
+    {
+      "source": "GD1_66318000_Guática_20250604",
+      "name": "M3D_66318000_20250604",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66318000guatica/SceneServer"
+    },
+    {
+      "source": "GD1_66318002_San_Clemente_20250603",
+      "name": "M3D_66318002_20250603",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66318002sanclemente/SceneServer"
+    },
+    {
+      "source": "GD1_66318003_Santa_Ana_20250606",
+      "name": "M3D_66318003_20250606",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66318003santaana/SceneServer"
+    },
+    {
+      "source": "GD1_66318006_Travesías_20250606",
+      "name": "M3D_66318006_20250606",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66318006travesias/SceneServer"
+    },
+    {
+      "source": "GD1_66383000_La_Celia_20250621",
+      "name": "M3D_66383000_20250621",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66383000lacelia/SceneServer"
+    },
+    {
+      "source": "GD1_66383001_Patio_Bonito_20250620",
+      "name": "M3D_66383001_20250620",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66383001patiobonito/SceneServer"
+    },
+    {
+      "source": "GD1_66687000_Santuario_20250616",
+      "name": "M3D_66687000_20250616",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66687000santuario/SceneServer"
+    },
+    {
+      "source": "GD1_66687002_La_Marina_20250618",
+      "name": "M3D_66687002_20250618",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66687002lamarina/SceneServer"
+    },
+    {
+      "source": "GD1_66687003_Peralonso_20250614",
+      "name": "M3D_66687003_20250614",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66687003peralonso/SceneServer"
+    },
+    {
+      "source": "GD1_66687014_Playa_Rica_20250616",
+      "name": "M3D_66687014_20250616",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66687014playarica/SceneServer"
+    },
+    {
+      "source": "GD1_66687015_El_Rosal_20250618",
+      "name": "M3D_66687015_20250618",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d66687015elrosal/SceneServer"
+    },
+    {
+      "source": "GD1_68101000_Bolívar_20250208",
+      "name": "M3D_68101000_20250208",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68101000bolivar/SceneServer"
+    },
+    {
+      "source": "GD1_68101002_Berbeo_20240817",
+      "name": "M3D_68101002_20240817",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68101002berbeo/SceneServer"
+    },
+    {
+      "source": "GD1_68101007_Florez_20240803",
+      "name": "M3D_68101007_20240803",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68101007florez/SceneServer"
+    },
+    {
+      "source": "GD1_68101010_Santa_Rosa_20240815",
+      "name": "M3D_68101010_20240815",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68101010santarosa/SceneServer"
+    },
+    {
+      "source": "GD1_68101012_Trapal_20250526",
+      "name": "M3D_68101012_20250526",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68101012trapal/SceneServer"
+    },
+    {
+      "source": "GD1_68101014_La_Hermosura_20240817",
+      "name": "M3D_68101014_20240817",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68101014lahermosura/SceneServer"
+    },
+    {
+      "source": "GD1_68101015_La_Melona_20240816",
+      "name": "M3D_68101015_20240816",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68101015lamelona/SceneServer"
+    },
+    {
+      "source": "GD1_68101016_Gallegos_20240814",
+      "name": "M3D_68101016_20240814",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68101016gallegos/SceneServer"
+    },
+    {
+      "source": "GD1_68101025_San_Marcos_20250527",
+      "name": "M3D_68101025_20250527",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68101025sanmarcos/SceneServer"
+    },
+    {
+      "source": "GD1_68179000_Chipatá_20250426",
+      "name": "M3D_68179000_20250426",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68179000chipata/SceneServer"
+    },
+    {
+      "source": "GD1_68179010_Puente_Grande_20250513",
+      "name": "M3D_68179010_20250513",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68179010puentegrande/SceneServer"
+    },
+    {
+      "source": "GD1_68573000_Puerto_Parra_20250207",
+      "name": "M3D_68573000_20250207",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68573000puertoparra/SceneServer"
+    },
+    {
+      "source": "GD1_68573001_Campo_Capote_20240820",
+      "name": "M3D_68573001_20240820",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68573001campocapote/SceneServer"
+    },
+    {
+      "source": "GD1_68573002_Las_Montoyas_20240822",
+      "name": "M3D_68573002_20240822",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68573002lasmontoyas/SceneServer"
+    },
+    {
+      "source": "GD1_68573003_Bocas_de_Carare_o_Carare_Viejo_20240822",
+      "name": "M3D_68573003_20240822",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68573003bocasdecarareocarareviejo/SceneServer"
+    },
+    {
+      "source": "GD1_68573005_El_Cruce_20240820",
+      "name": "M3D_68573005_20240820",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68573005elcruce/SceneServer"
+    },
+    {
+      "source": "GD1_68673000_San_Benito_20250513",
+      "name": "M3D_68673000_20250513",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68673000sanbenito/SceneServer"
+    },
+    {
+      "source": "GD1_68673003_San_Benito_Nuevo_20250513",
+      "name": "M3D_68673003_20250513",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68673003sanbenitonuevo/SceneServer"
+    },
+    {
+      "source": "GD1_68673004_La_Carrera_20250425",
+      "name": "M3D_68673004_20250425",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68673004lacarrera/SceneServer"
+    },
+    {
+      "source": "GD1_68673005_Las_Casitas_20250513",
+      "name": "M3D_68673005_20250513",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68673005lascasitas/SceneServer"
+    },
+    {
+      "source": "GD1_68745000_Simacota_20240729",
+      "name": "M3D_68745000_20240729",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68745000simacota/SceneServer"
+    },
+    {
+      "source": "GD1_68745006_La_LLanita_20240729",
+      "name": "M3D_68745006_20240729",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68745006lallanita/SceneServer"
+    },
+    {
+      "source": "GD1_68745009_La_Rochela_20250528",
+      "name": "M3D_68745009_20250528",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68745009larochela/SceneServer"
+    },
+    {
+      "source": "GD1_68745011_El_Guamo_20240808",
+      "name": "M3D_68745011_20240808",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68745011elguamo/SceneServer"
+    },
+    {
+      "source": "GD1_68745012_Puerto_Nuevo_20240808",
+      "name": "M3D_68745012_20240808",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68745012puertonuevo/SceneServer"
+    },
+    {
+      "source": "GD1_68861000_Vélez_20250309",
+      "name": "M3D_68861000_20250309",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68861000velez/SceneServer"
+    },
+    {
+      "source": "GD1_68861001_Alto_Jordán_20250310",
+      "name": "M3D_68861001_20250310",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68861001altojordan/SceneServer"
+    },
+    {
+      "source": "GD1_68861002_Gualilo_20250310",
+      "name": "M3D_68861002_20250310",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68861002gualilo/SceneServer"
+    },
+    {
+      "source": "GD1_68861017_El_Limón_20250309",
+      "name": "M3D_68861017_20250309",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68861017ellimon/SceneServer"
+    },
+    {
+      "source": "GD1_68861022_Lomalta_20250307",
+      "name": "M3D_68861022_20250307",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68861022lomalta/SceneServer"
+    },
+    {
+      "source": "GD1_68861024_Los_Guayabos_20250307",
+      "name": "M3D_68861024_20250307",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68861024losguayabos/SceneServer"
+    },
+    {
+      "source": "GD1_68861025_La_Vicinia_20250311",
+      "name": "M3D_68861025_20250311",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68861025lavicinia/SceneServer"
+    },
+    {
+      "source": "GD1_68861026_Peña_Blanca_20250307",
+      "name": "M3D_68861026_20250307",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68861026penablanca/SceneServer"
+    },
+    {
+      "source": "GD1_70124000_Caimito_20250401",
+      "name": "M3D_70124000_20250401",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124000caimito/SceneServer"
+    },
+    {
+      "source": "GD1_70124001_El_Mamón_20250403",
+      "name": "M3D_70124001_20250403",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124001elmamon/SceneServer"
+    },
+    {
+      "source": "GD1_70124002_Siete_Palmas_20250409",
+      "name": "M3D_70124002_20250409",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124002sietepalmas/SceneServer"
+    },
+    {
+      "source": "GD1_70124004_Los_Cayitos_20250405",
+      "name": "M3D_70124004_20250405",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124004loscayitos/SceneServer"
+    },
+    {
+      "source": "GD1_70124006_La_Solera_20250402",
+      "name": "M3D_70124006_20250402",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124006lasolera/SceneServer"
+    },
+    {
+      "source": "GD1_70124007_Tofeme_20250331",
+      "name": "M3D_70124007_20250331",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124007tofeme/SceneServer"
+    },
+    {
+      "source": "GD1_70124008_Cedeño_20250328",
+      "name": "M3D_70124008_20250328",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124008cedeno/SceneServer"
+    },
+    {
+      "source": "GD1_70124009_Molinero_20250328",
+      "name": "M3D_70124009_20250328",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124009molinero/SceneServer"
+    },
+    {
+      "source": "GD1_70124010_Nueva_Estación_20250329",
+      "name": "M3D_70124010_20250329",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124010nuevaestacion/SceneServer"
+    },
+    {
+      "source": "GD1_70124011_La_Mejía_20250327",
+      "name": "M3D_70124011_20250327",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124011lamejia/SceneServer"
+    },
+    {
+      "source": "GD1_70124012_Las_Pavitas_20250407",
+      "name": "M3D_70124012_20250407",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124012laspavitas/SceneServer"
+    },
+    {
+      "source": "GD1_70124013_Nueva_Estrella_20250404",
+      "name": "M3D_70124013_20250404",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124013nuevaestrella/SceneServer"
+    },
+    {
+      "source": "GD1_70124014_Nueva_Fe_20250404",
+      "name": "M3D_70124014_20250404",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124014nuevafe/SceneServer"
+    },
+    {
+      "source": "GD1_70124015_Pompuma_20250402",
+      "name": "M3D_70124015_20250402",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124015pompuma/SceneServer"
+    },
+    {
+      "source": "GD1_70124016_Aguilar_20250331",
+      "name": "M3D_70124016_20250331",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124016aguilar/SceneServer"
+    },
+    {
+      "source": "GD1_70124017_Las_Ossas_20250403",
+      "name": "M3D_70124017_20250403",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124017lasossas/SceneServer"
+    },
+    {
+      "source": "GD1_70124018_Pueblo_Buho_20250407",
+      "name": "M3D_70124018_20250407",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124018pueblobuho/SceneServer"
+    },
+    {
+      "source": "GD1_70124019_Pueblo_Nuevo_20250329",
+      "name": "M3D_70124019_20250329",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124019pueblonuevo/SceneServer"
+    },
+    {
+      "source": "GD1_70124020_Punta_Alferez_20250405",
+      "name": "M3D_70124020_20250405",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124020puntaalferez/SceneServer"
+    },
+    {
+      "source": "GD1_70124021_Tanga_Sola_20250404",
+      "name": "M3D_70124021_20250404",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70124021tangasola/SceneServer"
+    },
+    {
+      "source": "GD1_54518000_Pamplona_20250911",
+      "name": "M3D_54518000_20250911",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d54518000pamplona/SceneServer"
+    },
+    {
+      "source": "GD1_41551000_Pitalito_20251006",
+      "name": "M3D_41551000_20251006",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d41551000pitalito/SceneServer"
+    },
+    {
+      "source": "GD1_25377000_La_Calera_20250204_GEO",
+      "name": "M3D_25377000_20250204",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25377000lacalera/SceneServer"
+    },
+    {
+      "source": "GD1_13268000_ElPeñon_20251124",
+      "name": "M3D_13268000_20251124",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13268000elpenon/SceneServer"
+    },
+    {
+      "source": "GD1_13458000_Montecristo_20251213",
+      "name": "M3D_13458000_20251213",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d13458000montecristo/SceneServer"
+    },
+    {
+      "source": "GD1_15172000_Chinavita_20251115",
+      "name": "M3D_15172000_20251115",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15172000chinavita/SceneServer"
+    },
+    {
+      "source": "GD1_15183000_Chita_20251128",
+      "name": "M3D_15183000_20251128",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15183000chita/SceneServer"
+    },
+    {
+      "source": "GD1_15185000_Chitaraque_20251027",
+      "name": "M3D_15185000_20251027",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15185000chitaraque/SceneServer"
+    },
+    {
+      "source": "GD1_15407000_Villa_de_Leyva_20250522",
+      "name": "M3D_15407000_20250522",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15407000villadeleyva/SceneServer"
+    },
+    {
+      "source": "GD1_15407003_El_Roble_20250522",
+      "name": "M3D_15407003_20250522",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15407003elroble/SceneServer"
+    },
+    {
+      "source": "GD1_15442002_Zulia_20251025",
+      "name": "M3D_15442002_20251025",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15442002zulia/SceneServer"
+    },
+    {
+      "source": "GD1_15442008_Guarumal_20251021",
+      "name": "M3D_15442008_20251021",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15442008guarumal/SceneServer"
+    },
+    {
+      "source": "GD1_15511000_Pachavita_20251115slpk",
+      "name": "M3D_15511000_20251115",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15511000pachavita/SceneServer"
+    },
+    {
+      "source": "GD1_15516001_Palermo_20251031",
+      "name": "M3D_15516001_20251031",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15516001palermo/SceneServer"
+    },
+    {
+      "source": "GD1_15516005_Pantano_de_Vargas_20251023",
+      "name": "M3D_15516005_20251023",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15516005pantanodevargas/SceneServer"
+    },
+    {
+      "source": "GD1_15531000_20251024",
+      "name": "M3D_15531000_20251024",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15531000pauna/SceneServer"
+    },
+    {
+      "source": "GD1_15542000_Pesca_20251119",
+      "name": "M3D_15542000_20251119",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15542000pesca/SceneServer"
+    },
+    {
+      "source": "GD1_15696000_Santa_Sofia_20251101",
+      "name": "M3D_15696000_20251101",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d15696000santasofia/SceneServer"
+    },
+    {
+      "source": "GD1_17013000_Aguadas_20250603",
+      "name": "M3D_17013000_20250603",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17013000aguadas/SceneServer"
+    },
+    {
+      "source": "GD1_17013001_Arma_20241101",
+      "name": "M3D_17013001_20241101",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17013001arma/SceneServer"
+    },
+    {
+      "source": "GD1_17013010_Edén_20241104",
+      "name": "M3D_17013010_20241104",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17013010eden/SceneServer"
+    },
+    {
+      "source": "GD1_17013011_San_Nicolás_20241104",
+      "name": "M3D_17013011_20241104",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17013011sannicolas/SceneServer"
+    },
+    {
+      "source": "GD1_17013016_Viboral_20241106",
+      "name": "M3D_17013016_20241106",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17013016viboral/SceneServer"
+    },
+    {
+      "source": "GD1_17013017_Pore_20241031",
+      "name": "M3D_17013017_20241031",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17013017pore/SceneServer"
+    },
+    {
+      "source": "GD1_17042000_Anserma_20250706",
+      "name": "M3D_17042000_20250706",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17042000anserma/SceneServer"
+    },
+    {
+      "source": "GD1_17042004_Marapra_20241209",
+      "name": "M3D_17042004_20241209",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17042004marapra/SceneServer"
+    },
+    {
+      "source": "GD1_17042007_San_Pedro_20241207",
+      "name": "M3D_17042007_20241207",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17042007sanpedro/SceneServer"
+    },
+    {
+      "source": "GD1_17088000_Belalcázar_20250611",
+      "name": "M3D_17088000_20250611",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17088000belalcazar/SceneServer"
+    },
+    {
+      "source": "GD1_17088008_Asentamiento_Indígena_Totumal_20250611",
+      "name": "M3D_17088008_20250611",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17088008asentamientoindigenatotumal/SceneServer"
+    },
+    {
+      "source": "GD1_17174000_Chinchina_20241001",
+      "name": "M3D_17174000_20241001",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17174000chinchina/SceneServer"
+    },
+    {
+      "source": "GD1_17272000_Filadelfia_20250703",
+      "name": "M3D_17272000_20250703",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17272000filadelfia/SceneServer"
+    },
+    {
+      "source": "GD1_17272002_El_Verso_20241112",
+      "name": "M3D_17272002_20241112",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17272002elverso/SceneServer"
+    },
+    {
+      "source": "GD1_17272005_Samaria_20241112",
+      "name": "M3D_17272005_20241112",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17272005samaria/SceneServer"
+    },
+    {
+      "source": "GD1_17272008_Balmoral_20241112",
+      "name": "M3D_17272008_20241112",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17272008balmoral/SceneServer"
+    },
+    {
+      "source": "GD1_17380000_La Dorada_20250624",
+      "name": "M3D_17380000_20250624",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17380000ladorada/SceneServer"
+    },
+    {
+      "source": "GD1_17433000_Manzanares_20250626",
+      "name": "M3D_17433000_20250626",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17433000manzanares/SceneServer"
+    },
+    {
+      "source": "GD1_17433001_Aguabonita_20250703",
+      "name": "M3D_17433001_20250703",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17433001aguabonita/SceneServer"
+    },
+    {
+      "source": "GD1_17433003_La_Ceiba_20250627",
+      "name": "M3D_17433003_20250627",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17433003laceiba/SceneServer"
+    },
+    {
+      "source": "GD1_17433004_Las Margaritas_20250627",
+      "name": "M3D_17433004_20250627",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17433004lasmargaritas/SceneServer"
+    },
+    {
+      "source": "GD1_17433005_Los_Planes_20250626",
+      "name": "M3D_17433005_20250626",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17433005losplanes/SceneServer"
+    },
+    {
+      "source": "GD1_17444000_Marquetalia_20250729",
+      "name": "M3D_17444000_20250729",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17444000marquetalia/SceneServer"
+    },
+    {
+      "source": "GD1_17524000_Palestina_20250703",
+      "name": "M3D_17524000_20250703",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17524000palestina/SceneServer"
+    },
+    {
+      "source": "GD1_17616000_Risaralda_20241211",
+      "name": "M3D_17616000_20241211",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17616000risaralda/SceneServer"
+    },
+    {
+      "source": "GD1_17616011_Calle_larga_20241213",
+      "name": "M3D_17616011_20241213",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17616011callelarga/SceneServer"
+    },
+    {
+      "source": "GD1_17662000_Samaná_20250704",
+      "name": "M3D_17662000_20250704",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17662000samana/SceneServer"
+    },
+    {
+      "source": "GD1_17662001_Berlín_20250717",
+      "name": "M3D_17662001_20250717",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17662001berlin/SceneServer"
+    },
+    {
+      "source": "GD1_17662003_Florencia_20250717",
+      "name": "M3D_17662003_20250717",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17662003florencia/SceneServer"
+    },
+    {
+      "source": "GD1_17662004_Encimadas_20250703",
+      "name": "M3D_17662004_20250703",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17662004encimadas/SceneServer"
+    },
+    {
+      "source": "GD1_17662005_Los_Pomos_20250717",
+      "name": "M3D_17662005_20250717",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17662005lospomos/SceneServer"
+    },
+    {
+      "source": "GD1_17662007_San_Diego_20250717",
+      "name": "M3D_17662007_20250717",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17662007sandiego/SceneServer"
+    },
+    {
+      "source": "GD1_17662018_Dulce_Nombre_20250717",
+      "name": "M3D_17662018_20250717",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17662018dulcenombre/SceneServer"
+    },
+    {
+      "source": "GD1_17665000_San_José_20250703",
+      "name": "M3D_17665000_20250703",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17665000sanjose/SceneServer"
+    },
+    {
+      "source": "GD1_17777000_Supía_20250701",
+      "name": "M3D_17777000_20250701",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17777000supia/SceneServer"
+    },
+    {
+      "source": "GD1_17777005_Hojas_Anchas_20241112",
+      "name": "M3D_17777005_20241112",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17777005hojasanchas/SceneServer"
+    },
+    {
+      "source": "GD1_17777008_Guamal_20241108",
+      "name": "M3D_17777008_20241108",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17777008guamal/SceneServer"
+    },
+    {
+      "source": "GD1_17777010_Puerto_Nuevo_20241108",
+      "name": "M3D_17777010_20241108",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17777010puertonuevo/SceneServer"
+    },
+    {
+      "source": "GD1_17867000_Victoria_20250717",
+      "name": "M3D_17867000_20250717",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17867000victoria/SceneServer"
+    },
+    {
+      "source": "GD1_17867003_Isaza_20250717",
+      "name": "M3D_17867003_20250717",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17867003isaza/SceneServer"
+    },
+    {
+      "source": "GD1_17867004_La_Pradera_20250717",
+      "name": "M3D_17867004_20250717",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17867004lapradera/SceneServer"
+    },
+    {
+      "source": "GD1_17867005_El_Llano_20250717",
+      "name": "M3D_17867005_20250717",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17867005elllano/SceneServer"
+    },
+    {
+      "source": "GD1_17867007_La_Fe_20250717",
+      "name": "M3D_17867007_20250717",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17867007lafe/SceneServer"
+    },
+    {
+      "source": "GD1_17867008_San_Mateo_20250717",
+      "name": "M3D_17867008_20250717",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d17867008sanmateo/SceneServer"
+    },
+    {
+      "source": "GD1_20032000_Astrea_20251128",
+      "name": "M3D_20032000_20251128",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20032000astrea/SceneServer"
+    },
+    {
+      "source": "GD1_20175000_Chimichagua_20251125",
+      "name": "M3D_20175000_20251125",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20175000chimichagua/SceneServer"
+    },
+    {
+      "source": "GD1_20228000_Curumaní_20240827",
+      "name": "M3D_20228000_20240827",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20228000curumani/SceneServer"
+    },
+    {
+      "source": "GD1_20228001_Sabanagrande_20240909",
+      "name": "M3D_20228001_20240909",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20228001sabanagrande/SceneServer"
+    },
+    {
+      "source": "GD1_20228002_San_Roque_20240918",
+      "name": "M3D_20228002_20240918",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20228002sanroque/SceneServer"
+    },
+    {
+      "source": "GD1_20228003_San Sebatián_20240917",
+      "name": "M3D_20228003_20240917",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20228003sansebastian/SceneServer"
+    },
+    {
+      "source": "GD1_20228004_Santa_Isabel_20240919",
+      "name": "M3D_20228004_20240919",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20228004santaisabel/SceneServer"
+    },
+    {
+      "source": "GD1_20228005_Champán_20240906",
+      "name": "M3D_20228005_20240906",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20228005champan/SceneServer"
+    },
+    {
+      "source": "GD1_20228007_Guaimaral_20240910",
+      "name": "M3D_20228007_20240910",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20228007guaimaral/SceneServer"
+    },
+    {
+      "source": "GD1_20228008_Barrio_Acosta_20240906",
+      "name": "M3D_20228008_20240906",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20228008barrioacosta/SceneServer"
+    },
+    {
+      "source": "GD1_20228012_Chinela_20240907",
+      "name": "M3D_20228012_20240907",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20228012chinela/SceneServer"
+    },
+    {
+      "source": "GD1_20250000_El_Paso_20251128",
+      "name": "M3D_20250000_20251128",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20250000elpaso/SceneServer"
+    },
+    {
+      "source": "GD1_20517000_Pailitas_20240924",
+      "name": "M3D_20517000_20240924",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20517000pailitas/SceneServer"
+    },
+    {
+      "source": "GD1_20517001_La_Floresta_20240923",
+      "name": "M3D_20517001_20240923",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20517001lafloresta/SceneServer"
+    },
+    {
+      "source": "GD1_20517002_Rivera_20240925",
+      "name": "M3D_20517002_20240925",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20517002rivera/SceneServer"
+    },
+    {
+      "source": "GD1_20517004_Palestina_20240920",
+      "name": "M3D_20517004_20240920",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20517004palestina/SceneServer"
+    },
+    {
+      "source": "GD1_20517006_El_Burro_20240921",
+      "name": "M3D_20517006_20240921",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20517006elburro/SceneServer"
+    },
+    {
+      "source": "GD1_20787000_Tamalameque_20251122",
+      "name": "M3D_20787000_20251122",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d20787000tamalameque/SceneServer"
+    },
+    {
+      "source": "GD1_25148000_Caparrapí_20250531",
+      "name": "M3D_25148000_20250531",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25148000caparrapi/SceneServer"
+    },
+    {
+      "source": "GD1_25148003_El_Dindal_20250604",
+      "name": "M3D_25148003_20250604",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25148003eldindal/SceneServer"
+    },
+    {
+      "source": "GD1_25148006_Tati_20250624",
+      "name": "M3D_25148006_20250624",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25148006tati/SceneServer"
+    },
+    {
+      "source": "GD1_25148007_Córdoba_20250609",
+      "name": "M3D_25148007_20250609",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25148007cordoba/SceneServer"
+    },
+    {
+      "source": "GD1_25148009_San_Carlos_20250606",
+      "name": "M3D_25148009_20250606",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25148009sancarlos/SceneServer"
+    },
+    {
+      "source": "GD1_25148012_San_Pablo_20250605",
+      "name": "M3D_25148012_20250605",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25148012sanpablo/SceneServer"
+    },
+    {
+      "source": "GD1_25148016_San_Ramón_Alto_20250624",
+      "name": "M3D_25148016_20250624",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25148016sanramonalto/SceneServer"
+    },
+    {
+      "source": "GD1_25572000_Puerto_Salgar_20250613",
+      "name": "M3D_25572000_20250613",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25572000puertosalgar/SceneServer"
+    },
+    {
+      "source": "GD1_25572001_Colorados_20250611",
+      "name": "M3D_25572001_20250611",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25572001colorados/SceneServer"
+    },
+    {
+      "source": "GD1_25572003_Puerto_Libre_20250612",
+      "name": "M3D_25572003_20250612",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d25572003puertolibre/SceneServer"
+    },
+    {
+      "source": "GD1_50245000_El_Calvario_20250611",
+      "name": "M3D_50245000_20250611",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50245000elcalvario/SceneServer"
+    },
+    {
+      "source": "GD1_50251000_El_Castillo_20250613",
+      "name": "M3D_50251000_20250613",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50251000elcastillo/SceneServer"
+    },
+    {
+      "source": "GD1_50251001_Medellín_del_Ariari_20250614",
+      "name": "M3D_50251001_20250614",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50251001medellindelariari/SceneServer"
+    },
+    {
+      "source": "GD1_50251003_Miravalles_20250619",
+      "name": "M3D_50251003_20250619",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50251003miravalles/SceneServer"
+    },
+    {
+      "source": "GD1_50251004_Puerto_Esperanza_20250618",
+      "name": "M3D_50251004_20250618",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50251004puertoesperanza/SceneServer"
+    },
+    {
+      "source": "GD1_50400000_Lejanías_20250616",
+      "name": "M3D_50400000_20250616",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50400000lejanias/SceneServer"
+    },
+    {
+      "source": "GD1_50400001_Cacayal_20250617",
+      "name": "M3D_50400001_20250617",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50400001cacayal/SceneServer"
+    },
+    {
+      "source": "GD1_50400002_Angosturas_del_Guape_20250617",
+      "name": "M3D_50400002_20250617",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d50400002angosturasdelguape/SceneServer"
+    },
+    {
+      "source": "GD1_52320000_Guaitarilla_20251111",
+      "name": "M3D_52320000_20251111",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d52320000guaitarilla/SceneServer"
+    },
+    {
+      "source": "GD1_52354002_Pilcuan_La_Recta_20251126",
+      "name": "M3D_52354002_20251126",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d52354002pilcuanlarecta/SceneServer"
+    },
+    {
+      "source": "GD1_52693000_San_Pablo_20250808",
+      "name": "M3D_52693000_20250808",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d52693000sanpablo/SceneServer"
+    },
+    {
+      "source": "GD1_52693002_Briceño_20250804",
+      "name": "M3D_52693002_20250804",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d52693002briceno/SceneServer"
+    },
+    {
+      "source": "GD1_52693004_La_Cañada_20250801",
+      "name": "M3D_52693004_20250801",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d52693004lacanada/SceneServer"
+    },
+    {
+      "source": "GD1_52693017_Chilcal_Alto_20250805",
+      "name": "M3D_52693017_20250805",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d52693017chilcalalto/SceneServer"
+    },
+    {
+      "source": "GD1_52786006_Alto_Don_Diego_20251028",
+      "name": "M3D_52786006_20251028",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d52786006altodediego/SceneServer"
+    },
+    {
+      "source": "GD1_52786014_Paramo_20251031",
+      "name": "M3D_52786014_20251031",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d52786014lapepita/SceneServer"
+    },
+    {
+      "source": "GD1_52786022_San_Isidro_20251105",
+      "name": "M3D_52786022_20251105",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d52786022conjuntolavictoria/SceneServer"
+    },
+    {
+      "source": "GD1_52788000_Tangua_20251125",
+      "name": "M3D_52788000_20251125",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d52788000tangua/SceneServer"
+    },
+    {
+      "source": "GD1_54239000_Durania_20250709",
+      "name": "M3D_54239000_20250709",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d54239000durania/SceneServer"
+    },
+    {
+      "source": "GD1_54239004_La_Montuosa_20250709",
+      "name": "M3D_54239004_20250709",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d54239004oasisdecampana/SceneServer"
+    },
+    {
+      "source": "GD1_54239007_Las_Aguadas_20250709",
+      "name": "M3D_54239007_20250709",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d54239007urbanizacionlosnaranjos/SceneServer"
+    },
+    {
+      "source": "GD1_63111000_Buenavista_20251030",
+      "name": "M3D_63111000_20251030",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d63111000buenavista/SceneServer"
+    },
+    {
+      "source": "GD1_63594008_Trocaderos_20250719",
+      "name": "M3D_63594008_20250719",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d63594008condominioelroble/SceneServer"
+    },
+    {
+      "source": "GD1_68020000_Albania_20250730",
+      "name": "M3D_68020000_20250730",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68020000albania/SceneServer"
+    },
+    {
+      "source": "GD1_68020002_El_Hatillo_20250801",
+      "name": "M3D_68020002_20250801",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68020002villadelpalmar/SceneServer"
+    },
+    {
+      "source": "GD1_68051000_Aratoca_20250918",
+      "name": "M3D_68051000_20250918",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68051000aratoca/SceneServer"
+    },
+    {
+      "source": "GD1_68051013_Brisas_del_Chicamocha_20250918",
+      "name": "M3D_68051013_20250918",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68051013brisasdelchicamocha/SceneServer"
+    },
+    {
+      "source": "GD1_68152000_Carcasí_20250918",
+      "name": "M3D_68152000_20250918",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68152000carcasi/SceneServer"
+    },
+    {
+      "source": "GD1_68160000_Cepitá_20250815",
+      "name": "M3D_68160000_20250815",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68160000cepita/SceneServer"
+    },
+    {
+      "source": "GD1_68162000_Cerrito_20250821",
+      "name": "M3D_68162000_20250821",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68162000cerrito/SceneServer"
+    },
+    {
+      "source": "GD1_68207000_Concepción_20250918",
+      "name": "M3D_68207000_20250918",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68207000concepcion/SceneServer"
+    },
+    {
+      "source": "GD1_68298000_Gámbita_20250918",
+      "name": "M3D_68298000_20250918",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68298000gambita/SceneServer"
+    },
+    {
+      "source": "GD1_68318000_Guaca_20250829",
+      "name": "M3D_68318000_20250829",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68318000guaca/SceneServer"
+    },
+    {
+      "source": "GD1_68324000_Guavatá_20250804",
+      "name": "M3D_68324000_20250804",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68324000guavata/SceneServer"
+    },
+    {
+      "source": "GD1_68406000_Lebrija_20250918",
+      "name": "M3D_68406000_20250918",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68406000lebrija/SceneServer"
+    },
+    {
+      "source": "GD1_68406003_El_Conchal_20251210",
+      "name": "M3D_68406003_20251210",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68406003elconchal/SceneServer"
+    },
+    {
+      "source": "GD1_68406013_Uribe_Uribe_20251211",
+      "name": "M3D_68406013_20251211",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68406013uribeuribe/SceneServer"
+    },
+    {
+      "source": "GD1_68406026_Condominio_Villas_de_Palo_Negro_20250907",
+      "name": "M3D_68406026_20250907",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68406026condominiovillasdepalonegro/SceneServer"
+    },
+    {
+      "source": "GD1_68572000_Puente_Nacional_20250806",
+      "name": "M3D_68572000_20250806",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68572000puentenacional/SceneServer"
+    },
+    {
+      "source": "GD1_68572002_Capilla_20250804",
+      "name": "M3D_68572002_20250804",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68572002capilla/SceneServer"
+    },
+    {
+      "source": "GD1_68572004_Quebrada_Negra_20250802",
+      "name": "M3D_68572004_20250802",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68572004quebradanegra/SceneServer"
+    },
+    {
+      "source": "GD1_68615000_Rionegro_20251215",
+      "name": "M3D_68615000_20251215",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68615000rionegro/SceneServer"
+    },
+    {
+      "source": "GD1_68615011_Llano_de_Palmas_20251016",
+      "name": "M3D_68615011_20251016",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68615011llanodepalmas/SceneServer"
+    },
+    {
+      "source": "GD1_68615012_Misijuay_20251114",
+      "name": "M3D_68615012_20251114",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68615012misijuay/SceneServer"
+    },
+    {
+      "source": "GD1_68615013_Papayal_20251012",
+      "name": "M3D_68615013_20251012",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68615013papayal/SceneServer"
+    },
+    {
+      "source": "GD1_68615027_Los_Chorros(San José)_20251012",
+      "name": "M3D_68615027_20251012",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68615027loschorrossanjose/SceneServer"
+    },
+    {
+      "source": "GD1_68615031_San_Rafael_20251014",
+      "name": "M3D_68615031_20251014",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68615031sanrafael/SceneServer"
+    },
+    {
+      "source": "GD1_68615036_El_Bambú_20251016",
+      "name": "M3D_68615036_20251016",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68615036elbambu/SceneServer"
+    },
+    {
+      "source": "GD1_68669005_Laguna_de_Ortices20250825",
+      "name": "M3D_68669005_20250825",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68669005lagunadeortices/SceneServer"
+    },
+    {
+      "source": "GD1_68820000_Tona_20251209",
+      "name": "M3D_68820000_20251209",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68820000tona/SceneServer"
+    },
+    {
+      "source": "GD1_68820001_Berlin_20251209",
+      "name": "M3D_68820001_20251209",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68820001berlin/SceneServer"
+    },
+    {
+      "source": "GD1_70713000_SanOnofre_20251206",
+      "name": "M3D_70713000_20251206",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70713000sanonofre/SceneServer"
+    },
+    {
+      "source": "GD1_70823000_ToluViejo_20251211",
+      "name": "M3D_70823000_20251211",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d70823000toluviejo/SceneServer"
+    },
+    {
+      "source": "GD1_73024000_Alpujarra_20250825",
+      "name": "M3D_73024000_20250825",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73024000alpujarra/SceneServer"
+    },
+    {
+      "source": "GD1_73055000_Guayabal_20250703",
+      "name": "M3D_73055000_20250703",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73055000guayabal/SceneServer"
+    },
+    {
+      "source": "GD1_73217000_Coyaima_20250827",
+      "name": "M3D_73217000_20250827",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73217000coyaima/SceneServer"
+    },
+    {
+      "source": "GD1_73226000_Cunday_20251006",
+      "name": "M3D_73226000_20251006",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73226000cunday/SceneServer"
+    },
+    {
+      "source": "GD1_73236000_Dolores_20250822",
+      "name": "M3D_73236000_20250822",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73236000dolores/SceneServer"
+    },
+    {
+      "source": "GD1_73268000_El_Espinal_20251010",
+      "name": "M3D_73268000_20251010",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73268000elespinal/SceneServer"
+    },
+    {
+      "source": "GD1_73275000_Flandes_20251010",
+      "name": "M3D_73275000_20251010",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73275000flandes/SceneServer"
+    },
+    {
+      "source": "GD1_73283000_Fresno_20251006",
+      "name": "M3D_73283000_20251006",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73283000fresno/SceneServer"
+    },
+    {
+      "source": "GD1_73319000_Guamo_20251008",
+      "name": "M3D_73319000_20251008",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73319000guamo/SceneServer"
+    },
+    {
+      "source": "GD1_73349000_Honda_20250704",
+      "name": "M3D_73349000_20250704",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73349000honda/SceneServer"
+    },
+    {
+      "source": "GD1_73352000_Icononzo_20251007",
+      "name": "M3D_73352000_20251007",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73352000icononzo/SceneServer"
+    },
+    {
+      "source": "GD1_73443000_San_Sebastián_de_Mariquita_20250628",
+      "name": "M3D_73443000_20250628",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73443000sansebastiandemariquita/SceneServer"
+    },
+    {
+      "source": "GD1_73443002_La_Cabaña_20250626",
+      "name": "M3D_73443002_20250626",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73443002marimba/SceneServer"
+    },
+    {
+      "source": "GD1_73443006_Camelias_20250626",
+      "name": "M3D_73443006_20250626",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73443006camelias/SceneServer"
+    },
+    {
+      "source": "GD1_73443008_La_Parroquia_20250704",
+      "name": "M3D_73443008_20250704",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73443008laparroquia/SceneServer"
+    },
+    {
+      "source": "GD1_73483000_Natagaima_20250826",
+      "name": "M3D_73483000_20250826",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73483000natagaima/SceneServer"
+    },
+    {
+      "source": "GD1_73483001_La_Palmita_20250825",
+      "name": "M3D_73483001_20250825",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73483001lapalmita/SceneServer"
+    },
+    {
+      "source": "GD1_73483002_Velú_20250825",
+      "name": "M3D_73483002_20250825",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73483002velu/SceneServer"
+    },
+    {
+      "source": "GD1_73483008_Rincón_Anchique_20250826",
+      "name": "M3D_73483008_20250826",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73483008rinconanchique/SceneServer"
+    },
+    {
+      "source": "GD1_73504000_Ortega_20251007",
+      "name": "M3D_73504000_20251007",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73504000ortega/SceneServer"
+    },
+    {
+      "source": "GD1_73504003_Guaipa_20251007",
+      "name": "M3D_73504003_20251007",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73504003guaipa/SceneServer"
+    },
+    {
+      "source": "GD1_73504004_Hato_de_Iglesia_20251007",
+      "name": "M3D_73504004_20251007",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73504004hatodeiglesia/SceneServer"
+    },
+    {
+      "source": "GD1_73504007_La_Mesa_de_Ortega_20251007",
+      "name": "M3D_73504007_20251007",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73504007lamesadeortega/SceneServer"
+    },
+    {
+      "source": "GD1_73504008_Olaya_Herrera_20251007",
+      "name": "M3D_73504008_20251007",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73504008olayaherrera/SceneServer"
+    },
+    {
+      "source": "GD1_73504009_El_Vergel_20251007",
+      "name": "M3D_73504009_20251007",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73504009elvergel/SceneServer"
+    },
+    {
+      "source": "GD1_73520000_Palocabildo_20251006",
+      "name": "M3D_73520000_20251006",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73520000palocabildo/SceneServer"
+    },
+    {
+      "source": "GD1_73563000_Prado_20250828",
+      "name": "M3D_73563000_20250828",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73563000prado/SceneServer"
+    },
+    {
+      "source": "GD1_73563001_Aco_20250829",
+      "name": "M3D_73563001_20250829",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73563001aco/SceneServer"
+    },
+    {
+      "source": "GD1_73585000_Purificación_20250910",
+      "name": "M3D_73585000_20250910",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73585000purificacion/SceneServer"
+    },
+    {
+      "source": "GD1_73585001_Chenche_Asoleado_20250830",
+      "name": "M3D_73585001_20250830",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73585001chencheasoleado/SceneServer"
+    },
+    {
+      "source": "GD1_73585002_Lozania_20250911",
+      "name": "M3D_73585002_20250911",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73585002lozania/SceneServer"
+    },
+    {
+      "source": "GD1_73585009_El_Baura_20250911",
+      "name": "M3D_73585009_20250911",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73585009elbaura/SceneServer"
+    },
+    {
+      "source": "GD1_73585013_La_Mata_20250908",
+      "name": "M3D_73585013_20250908",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73585013lamata/SceneServer"
+    },
+    {
+      "source": "GD1_73585015_Buenavista_20250901",
+      "name": "M3D_73585015_20250901",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73585015buenavista/SceneServer"
+    },
+    {
+      "source": "GD1_73585018_Chenche_Uno_20250830",
+      "name": "M3D_73585018_20250830",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73585018chencheuno/SceneServer"
+    },
+    {
+      "source": "GD1_73624000_Rovira_20250818",
+      "name": "M3D_73624000_20250818",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73624000rovira/SceneServer"
+    },
+    {
+      "source": "GD1_73624001_El_Corazón_20250819",
+      "name": "M3D_73624001_20250819",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73624001elcorazon/SceneServer"
+    },
+    {
+      "source": "GD1_73624003_Los_Andes_La_Bella_20250819",
+      "name": "M3D_73624003_20250819",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73624003losandeslabella/SceneServer"
+    },
+    {
+      "source": "GD1_73624004_Riomanso_20250820",
+      "name": "M3D_73624004_20250820",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73624004riomanso/SceneServer"
+    },
+    {
+      "source": "GD1_73671000_Saldaña_20251007",
+      "name": "M3D_73671000_20251007",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73671000saldana/SceneServer"
+    },
+    {
+      "source": "GD1_73675000_San_Antonio_20251007",
+      "name": "M3D_73675000_20251007",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73675000sanantonio/SceneServer"
+    },
+    {
+      "source": "GD1_76111000_Guadalajara_de_Buga_20251007",
+      "name": "M3D_76111000_20251007",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111000guadalajaradebuga/SceneServer"
+    },
+    {
+      "source": "GD1_76111001_La_Campiña_20250902",
+      "name": "M3D_76111001_20250902",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111001lacampina/SceneServer"
+    },
+    {
+      "source": "GD1_76111005_El_Vínculo_20250725",
+      "name": "M3D_76111005_20250725",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111005elvinculo/SceneServer"
+    },
+    {
+      "source": "GD1_76111006_La_Habana_20250903",
+      "name": "M3D_76111006_20250903",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111006lahabana/SceneServer"
+    },
+    {
+      "source": "GD1_76111007_La_María_20250907",
+      "name": "M3D_76111007_20250907",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111007lamaria/SceneServer"
+    },
+    {
+      "source": "GD1_76111012_Quebradaseca_20250829",
+      "name": "M3D_76111012_20250829",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111012quebradaseca/SceneServer"
+    },
+    {
+      "source": "GD1_76111014_Zanjón_Hondo_20250725",
+      "name": "M3D_76111014_20250725",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111014zanjonhondo/SceneServer"
+    },
+    {
+      "source": "GD1_76111016_El_Porvenir_20250916",
+      "name": "M3D_76111016_20250916",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111016elporvenir/SceneServer"
+    },
+    {
+      "source": "GD1_76111020_La_Magdalena_20250903",
+      "name": "M3D_76111020_20250903",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111020lamagdalena/SceneServer"
+    },
+    {
+      "source": "GD1_76111021_El_Manantial_20250830",
+      "name": "M3D_76111021_20250830",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111021barcelona/SceneServer"
+    },
+    {
+      "source": "GD1_76111022_Alaska_20250903",
+      "name": "M3D_76111022_20250903",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111022alaska/SceneServer"
+    },
+    {
+      "source": "GD1_76111025_La_Unidad_20250829",
+      "name": "M3D_76111025_20250829",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111025launidad/SceneServer"
+    },
+    {
+      "source": "GD1_76111027_San_Antonio_20250901",
+      "name": "M3D_76111027_20250901",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111027sanantonio/SceneServer"
+    },
+    {
+      "source": "GD1_76111030_La_Granjita_20250902",
+      "name": "M3D_76111030_20250902",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76111030lagranjita/SceneServer"
+    },
+    {
+      "source": "GD1_76248000_El_Cerrito_20250825",
+      "name": "M3D_76248000_20250825",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76248000elcerrito/SceneServer"
+    },
+    {
+      "source": "GD1_76248003_El_Castillo_20250829",
+      "name": "M3D_76248003_20250829",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76248003elcastillo/SceneServer"
+    },
+    {
+      "source": "GD1_76248005_El_Placer_20250828",
+      "name": "M3D_76248005_20250828",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76248005elplacer/SceneServer"
+    },
+    {
+      "source": "GD1_76248008_San_Antonio_20250827",
+      "name": "M3D_76248008_20250827",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76248008sanantonio/SceneServer"
+    },
+    {
+      "source": "GD1_76248009_Santa_Helena_20250902",
+      "name": "M3D_76248009_20250902",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76248009santaelena/SceneServer"
+    },
+    {
+      "source": "GD1_76248014_Campoalegre_20250902",
+      "name": "M3D_76248014_20250902",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76248014campoalegre/SceneServer"
+    },
+    {
+      "source": "GD1_76248018_La_Honda_20250829",
+      "name": "M3D_76248018_20250829",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76248018lahonda/SceneServer"
+    },
+    {
+      "source": "GD1_76670000_San_Pedro_20250823",
+      "name": "M3D_76670000_20250823",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76670000sanpedro/SceneServer"
+    },
+    {
+      "source": "GD1_76670007_Presidente_20250820",
+      "name": "M3D_76670007_20250820",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76670007presidente/SceneServer"
+    },
+    {
+      "source": "GD1_76670008_San_José_20250823",
+      "name": "M3D_76670008_20250823",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76670008sanjose/SceneServer"
+    },
+    {
+      "source": "GD1_76670009_Todos_Los_Santos_20250823",
+      "name": "M3D_76670009_20250823",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76670009todoslossantos/SceneServer"
+    },
+    {
+      "source": "GD1_76670010_Guayabal_20250823",
+      "name": "M3D_76670010_20250823",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76670010guayabal/SceneServer"
+    },
+    {
+      "source": "GD1_76670011_Monte_Grande_20250823",
+      "name": "M3D_76670011_20250823",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76670011montegrande/SceneServer"
+    },
+    {
+      "source": "GD1_76890008_PuenteTierra_20250814",
+      "name": "M3D_76890008_20250814",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76890008puentetierra/SceneServer"
+    },
+    {
+      "source": "GD1_76890009_San_Antonio_de_Piedras_20250819",
+      "name": "M3D_76890009_20250819",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76890009sanantoniodepiedras/SceneServer"
+    },
+    {
+      "source": "GD1_76890014_Punta_Brava_20250813",
+      "name": "M3D_76890014_20250813",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d76890014puntabrava/SceneServer"
+    },
+    {
+      "source": "GD1_85010000_Aguazul_20250810",
+      "name": "M3D_85010000_20250810",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d85010000aguazul/SceneServer"
+    },
+    {
+      "source": "GD1_85010001_Cupiagua_20250806",
+      "name": "M3D_85010001_20250806",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d85010001cupiagua/SceneServer"
+    },
+    {
+      "source": "GD1_85010002_Monterralo_20250808",
+      "name": "M3D_85010002_20250808",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d85010002monterralo/SceneServer"
+    },
+    {
+      "source": "GD1_85010003_San_Benito_20250808",
+      "name": "M3D_85010003_20250808",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d85010003sanbenito/SceneServer"
+    },
+    {
+      "source": "GD1_85010005_San_José_20250805",
+      "name": "M3D_85010005_20250805",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d85010005sanjose/SceneServer"
+    },
+    {
+      "source": "GD1_85010006_Unete_20250806",
+      "name": "M3D_85010006_20250806",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d85010006unete/SceneServer"
+    },
+    {
+      "source": "GD1_85010010_Puente_Cusiana_20250808",
+      "name": "M3D_85010010_20250808",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d85010010puentecusiana/SceneServer"
+    },
+    {
+      "source": "GD1_85010011_Turua_20250806",
+      "name": "M3D_85010011_20250806",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d85010011turua/SceneServer"
+    },
+    {
+      "source": "GD1_85010015_Plan_Brisas_20250809",
+      "name": "M3D_85010015_20250809",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d85010015planbrisas/SceneServer"
+    },
+    {
+      "source": "GD1_85015000_Chámeza_20250804",
+      "name": "M3D_85015000_20250804",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d85015000chameza/SceneServer"
+    },
+    {
+      "source": "GD1_85279000_Recetor_20250804",
+      "name": "M3D_85279000_20250804",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d85279000recetor/SceneServer"
+    },
+    {
+      "source": "GD1_91001014_Kilometro6_20251002",
+      "name": "M3D_91001014_20251002",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d91001014kilometro6/SceneServer"
+    },
+    {
+      "source": "GD1_91001022_Monilla_Amena_20250919",
+      "name": "M3D_91001022_20250919",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d91001022comunidadindigenajussymonillaamena/SceneServer"
+    },
+    {
+      "source": "GD1_91001029_Comunidad_Indigena_Ziera_Amena_20250919",
+      "name": "M3D_91001029_20250919",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d91001029comunidadindigenazieraamena/SceneServer"
+    },
+    {
+      "source": "GD1_91001030_Barrio_San_Miguel_20251003",
+      "name": "M3D_91001030_20251003",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d91001030barriosanmiguel/SceneServer"
+    },
+    {
+      "source": "GD1_68298002_La_Palma_20250918",
+      "name": "M3D_68298002_20250918",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68298002lapalma/SceneServer"
+    },
+    {
+      "source": "GD1_68498000_Ocamonte_20250811",
+      "name": "M3D_68498000_20250811",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68498000ocamonte/SceneServer"
+    },
+    {
+      "source": "68669007_Pangote_20250918",
+      "name": "M3D_68669007_20250918",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68669007pangote/SceneServer"
+    },
+    {
+      "source": "68684009_Villa_Jardín_20250918",
+      "name": "M3D_68684009_20250918",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d68684009villajardin/SceneServer"
+    },
+    {
+      "source": "GD1_73624010_La_Selva_20250821",
+      "name": "M3D_73624010_20250821",
+      "url": "https://mapas2.igac.gov.co/host/rest/services/Escenas3D/m3d73624010laselva/SceneServer"
+    }
+  ]
+}
