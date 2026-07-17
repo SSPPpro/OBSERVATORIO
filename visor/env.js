@@ -11,8 +11,10 @@
   var existingEnv = window.__env || {};
   var isLocalFrontend = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
   var proxyBaseUrl = existingEnv.sentinelHubProxyBaseUrl || remoteProxyBaseUrl;
-  var prismaProxyBaseUrl = existingEnv.prismaProxyBaseUrl || remoteProxyBaseUrl;
-  var prismaFallbackProxyBaseUrl = existingEnv.prismaFallbackProxyBaseUrl || (isLocalFrontend ? localProxyBaseUrl : "");
+  // Configuración temporal de diagnóstico: Prisma usa primero el proxy local
+  // y recurre al servidor de CCG si localhost no está disponible.
+  var prismaProxyBaseUrl = existingEnv.prismaProxyBaseUrl || localProxyBaseUrl;
+  var prismaFallbackProxyBaseUrl = existingEnv.prismaFallbackProxyBaseUrl || remoteProxyBaseUrl;
   var prismaApiBaseUrl = existingEnv.prismaApiBaseUrl || (
     prismaProxyBaseUrl
       ? joinUrl(prismaProxyBaseUrl, "/prisma-proxy")

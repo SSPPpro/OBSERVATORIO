@@ -761,6 +761,7 @@ var sentinelSpectralResolutionMeters = 10;
 var rasterMosaicResolutionMeters = 3;
 var rasterMosaicMaxOutputPixels = 2500;
 var metersPerDegreeApprox = 111000;
+var sentinelProcessMaxOutputPixels = 2400;
 var sentinelLargeAreaMaxPixels = 1000;
 var sentinelLargeAreaMaxConcurrentRequests = 2;
 var sentinelStatsRequestTimeoutMs = 180000;
@@ -2792,6 +2793,12 @@ function procesarSH() {
     var params = {};
 
     var resolutionInfo = calculateOptimalResolution(currentSearchArea);
+    console.info("[INDICES] Resolución de procesamiento", {
+        resolutionMeters: resolutionInfo.resx,
+        estimatedWidth: resolutionInfo.estimatedWidth,
+        estimatedHeight: resolutionInfo.estimatedHeight,
+        adjustedForLargeArea: resolutionInfo.maxResolution,
+    });
 
     var maxCloudCoveragePercent = getSHCloudCoverageMaxPercent();
     var cloudCoverageValue = getSHCloudCoverageMaxRatio();
@@ -3123,7 +3130,9 @@ function setSHStatsIndexThreshold(value) {
     $("#sliderCCSHStatsIndex").val(formattedValue);
 }
 
-// Sentinel spectral tools must always request native 10m resolution.
+// Mantener 10 m cuando el área cabe en una petición de Sentinel Hub. Para
+// extensiones grandes, aumentar solo lo necesario para no superar 2500 px por
+// eje (se usa 2400 como margen frente a redondeos de bbox/resolución).
 // Returns {resx, resy, pixelCount, areaKm2}
 function calculateOptimalResolution(geometryGeo) {
     try {
@@ -3155,10 +3164,19 @@ function calculateOptimalResolution(geometryGeo) {
             "meters",
         );
 
-        var resolutionM = sentinelSpectralResolutionMeters;
+        var resolutionM = Math.max(
+            sentinelSpectralResolutionMeters,
+            horizontalMeter / sentinelProcessMaxOutputPixels,
+            verticalMeter / sentinelProcessMaxOutputPixels,
+        );
+        // Evitar decimales excesivos y garantizar que el redondeo nunca vuelva
+        // a llevar la petición por encima del límite.
+        resolutionM = Math.ceil(resolutionM * 10) / 10;
         var resolutionDegrees = resolutionM / metersPerDegreeApprox;
 
-        var estimatedPixelCount = Math.max(Math.round(horizontalMeter / resolutionM), Math.round(verticalMeter / resolutionM));
+        var estimatedWidth = Math.ceil(horizontalMeter / resolutionM);
+        var estimatedHeight = Math.ceil(verticalMeter / resolutionM);
+        var estimatedPixelCount = Math.max(estimatedWidth, estimatedHeight);
 
         return {
             resx: resolutionM,
@@ -3169,7 +3187,9 @@ function calculateOptimalResolution(geometryGeo) {
             areaKm2: areaKm2,
             horizontalMeters: horizontalMeter,
             verticalMeters: verticalMeter,
-            maxResolution: false,
+            estimatedWidth: estimatedWidth,
+            estimatedHeight: estimatedHeight,
+            maxResolution: resolutionM > sentinelSpectralResolutionMeters,
         };
     } catch (e) {
         console.error("Error calculating resolution:", e);
@@ -3863,7 +3883,7 @@ function requestPrismaAnalysis(paramsData) {
         },
         error: function (xhr) {
             if (!paramsData._prismaFallbackTried && prismaFallbackApiBaseUrl && prismaFallbackApiBaseUrl !== prismaActiveApiBaseUrl) {
-                console.warn("[PRISMA] Servidor principal no disponible, reintentando en localhost", xhr);
+                console.warn("[PRISMA] Servidor principal no disponible, reintentando con el servidor alternativo", xhr);
                 paramsData._prismaFallbackTried = true;
                 prismaActiveApiBaseUrl = prismaFallbackApiBaseUrl;
                 prismaToken = null;
@@ -8457,6 +8477,23 @@ function bindBurnsLayerClickHandler() {
         if (!evt || !evt.graphic || !lastProcessedSHResult) return;
         var indexLabel = getMonthlyMosaicIndexLabel(lastProcessedSHResult.index);
         if (!indexLabel) return;
+
+        // El polígono clasificado solo se usa para consultar mosaicos. Detener el
+        // clic evita que las capas de dibujo/área situadas debajo intenten activar
+        // esri.toolbars.Edit sobre una geometría que no les pertenece.
+        if (typeof evt.stopPropagation === "function") {
+            evt.stopPropagation();
+        }
+        if (editTool && typeof editTool.deactivate === "function") {
+            editTool.deactivate();
+        }
+        if (editTool3 && typeof editTool3.deactivate === "function") {
+            editTool3.deactivate();
+        }
+        if (editTool4 && typeof editTool4.deactivate === "function") {
+            editTool4.deactivate();
+        }
+
         openMonthlyMosaicFloatingWindowFromDates($("#selectSHStats1").val(), $("#selectSHStats2").val(), indexLabel, evt.graphic);
     });
 }
@@ -12816,8 +12853,9 @@ function setupMap() {
         });
 
     /* Search */
-    // Borde azul claro y relleno transparente para zonas clasificadas
-    searchImagenSymbol = new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_NULL, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color(CLASSIFIED_POLYGON_BORDER_COLOR), CLASSIFIED_POLYGON_BORDER_WIDTH), new esri.Color([80, 210, 210, 0]));
+    // Mantener el relleno visualmente transparente, pero sólido para que toda el
+    // área del polígono (no solo su borde) responda al clic.
+    searchImagenSymbol = new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color(CLASSIFIED_POLYGON_BORDER_COLOR), CLASSIFIED_POLYGON_BORDER_WIDTH), new esri.Color([80, 210, 210, 0.01]));
     searchCoberturaSymbol = new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color([0, 0, 0, 0.5]), 4), new esri.Color([0, 0, 0, 0]));
     searchImagenActiveSymbol = new esri.SimpleFillSymbol(esri.SimpleFillSymbol.STYLE_SOLID, new esri.SimpleLineSymbol(esri.SimpleLineSymbol.STYLE_SOLID, new esri.Color([64, 147, 208, 0.5]), 2), new esri.Color([64, 147, 208, 0]));
 
@@ -13071,7 +13109,7 @@ function setupMap() {
     areaLayer.setVisibility(false);
     areaLayer.on("click", function (evt) {
         if (evt.graphic != null) {
-            editTool.activate(esri.Edit.MOVE | esri.Edit.EDIT_VERTICES | esri.Edit.SCALE | esri.Edit.ROTATE, evt.graphic, {
+            editTool2.activate(esri.Edit.MOVE | esri.Edit.EDIT_VERTICES | esri.Edit.SCALE | esri.Edit.ROTATE, evt.graphic, {
                 allowAddVertices: true,
                 allowDeleteVertices: true,
                 uniformScaling: true,
@@ -13129,6 +13167,11 @@ function setupMap() {
     });
     areaLayer3.setVisibility(false);
     areaLayer3.on("click", function (evt) {
+        // Cuando ya hay polígonos clasificados, el área original es solo el
+        // contexto del análisis y no debe competir con ellos por el clic.
+        if (lastProcessedSHResult && currentSHLayer && currentSHLayer.visible && currentSHLayer.graphics.length) {
+            return;
+        }
         if (evt.graphic != null) {
             editTool3.activate(esri.Edit.MOVE | esri.Edit.EDIT_VERTICES | esri.Edit.SCALE | esri.Edit.ROTATE, evt.graphic, {
                 allowAddVertices: true,
@@ -16409,6 +16452,17 @@ function fetchBurnsSentinelOverlay() {
             return;
         }
 
+        // La imagen de contexto es una segunda petición Process independiente.
+        // Debe usar la misma resolución adaptativa que el GeoTIFF clasificado;
+        // de lo contrario las áreas grandes vuelven a superar 2500 px.
+        var overlayResolutionInfo = calculateOptimalResolution(searchArea4326);
+        console.info("[BURNS_OVERLAY] Resolución de imagen", {
+            resolutionMeters: overlayResolutionInfo.resx,
+            estimatedWidth: overlayResolutionInfo.estimatedWidth,
+            estimatedHeight: overlayResolutionInfo.estimatedHeight,
+            adjustedForLargeArea: overlayResolutionInfo.maxResolution,
+        });
+
         var params = {
             input: {
                 bounds: {
@@ -16427,8 +16481,8 @@ function fetchBurnsSentinelOverlay() {
                 ],
             },
             output: {
-                resx: sentinelSpectralResolutionMeters / metersPerDegreeApprox,
-                resy: sentinelSpectralResolutionMeters / metersPerDegreeApprox,
+                resx: overlayResolutionInfo.resxDegrees,
+                resy: overlayResolutionInfo.resyDegrees,
                 responses: [{ identifier: "default", format: { type: "image/png" } }],
             },
             evalscript: `//VERSION=3
