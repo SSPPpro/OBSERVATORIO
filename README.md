@@ -1,5 +1,16 @@
 # Observatorio Tierra y Territorio
 
+## Notificaciones de Prisma
+
+Cuando Prisma termina una capa y devuelve el resultado GeoJSON, el backend envía un único correo por ID a `ottigac@gmail.com`, `Colombiaenmapas@igac.gov.co`, `ott@igac.gov.co` y `elkin.gongora@igac.gov.co`. La cuenta remitente de Gmail y los destinatarios están configurados directamente en `server.js`.
+
+```text
+const SMTP_PASS = "REEMPLAZAR_CON_CONTRASENA_DE_APLICACION_GMAIL";
+const ARCGIS_PORTAL_URL = "https://mapas2.igac.gov.co/portal";
+```
+
+Use una contraseña de aplicación de Google para `SMTP_PASS`. El backend busca la capa publicada en ArcGIS Portal por el modelo y el ID de la solicitud, y envía el enlace al elemento junto con el nombre y el correo del usuario autenticado que hizo la solicitud.
+
 
 
 ## Getting started

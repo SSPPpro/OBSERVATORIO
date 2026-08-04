@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const { spawn } = require("child_process");
+const nodemailer = require("nodemailer");
 
 const CLIENT_ID = process.env.SENTINEL_HUB_CLIENT_ID || "89499d2c-67f4-4f57-86c0-cdef0ece217e";
 const CLIENT_SECRET = process.env.SENTINEL_HUB_CLIENT_SECRET || "lVjg5KL43HXjNMQiRll1IruOXlvG3KqM";
@@ -16,6 +17,19 @@ const PORT = Number(process.env.PORT) || 3000;
 const ORTHO_JOB_ROOT = path.resolve(process.env.ORTHO_JOB_ROOT || path.join(__dirname, "ortho-download-jobs"));
 const GDALBUILDVRT_PATH = process.env.GDALBUILDVRT_PATH || "gdalbuildvrt";
 const GDAL_TRANSLATE_PATH = process.env.GDAL_TRANSLATE_PATH || "gdal_translate";
+const SMTP_HOST = "smtp.gmail.com";
+const SMTP_PORT = 465;
+const SMTP_SECURE = true;
+const SMTP_USER = "ottigac@gmail.com";
+const SMTP_PASS = "uevt tsmd smyg lalf";
+const SMTP_FROM = "Observatorio IGAC <ottigac@gmail.com>";
+const PRISMA_NOTIFICATION_RECIPIENTS = [
+  "ottigac@gmail.com",
+  "Colombiaenmapas@igac.gov.co",
+  "ott@igac.gov.co",
+  "elkin.gongora@igac.gov.co",
+];
+const ARCGIS_PORTAL_URL = "https://mapas2.igac.gov.co/portal";
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "*")
   .split(",")
   .map((origin) => origin.trim())
@@ -29,7 +43,72 @@ let prismaTokenCache = null;
 let prismaTokenExpiresAt = 0;
 let prismaTokenRequest = null;
 const orthoDownloadJobs = new Map();
+const prismaNotificationJobs = new Map();
+const prismaRequestContexts = new Map();
 let gdalAvailabilityPromise = null;
+
+function cleanHeaderValue(value) {
+  return String(value || "").trim().slice(0, 200);
+}
+
+async function findPrismaPortalItem(layerName, maxAttempts = 12) {
+  const query = `owner:Prisma_Procalculo AND title:"${layerName}"`;
+  const searchUrl = `${ARCGIS_PORTAL_URL}/sharing/rest/search?q=${encodeURIComponent(query)}&f=json&num=10`;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const response = await requestBufferWithRetry(searchUrl, { method: "GET" }, null, "ArcGIS Portal search", 2, 20000);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      const payload = JSON.parse(response.body.toString("utf8"));
+      const item = Array.isArray(payload.results)
+        ? payload.results.find((result) => result && result.title === layerName)
+        : null;
+      if (item && item.id) return item;
+    }
+    if (attempt < maxAttempts) await wait(5000);
+  }
+
+  throw new Error(`No se encontró el elemento ${layerName} en ArcGIS Portal`);
+}
+
+function getMailTransport() {
+  return nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_SECURE,
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+  });
+}
+
+function notifyPrismaLayerReady(layerId, context = {}) {
+  if (prismaNotificationJobs.has(layerId)) return prismaNotificationJobs.get(layerId);
+
+  if (SMTP_PASS.startsWith("REEMPLAZAR_")) {
+    console.warn("[PRISMA] Notificación omitida: configure SMTP_PASS en server.js");
+    return Promise.resolve(false);
+  }
+
+  const notification = findPrismaPortalItem(context.layerName || layerId).then((portalItem) => {
+    const layerUrl = `${ARCGIS_PORTAL_URL}/home/item.html?id=${encodeURIComponent(portalItem.id)}`;
+    const requesterName = context.requesterName || "No identificado";
+    const requesterEmail = context.requesterEmail || "No disponible";
+    return getMailTransport().sendMail({
+      from: SMTP_FROM,
+      to: PRISMA_NOTIFICATION_RECIPIENTS,
+      subject: `Capa Prisma disponible - ${portalItem.id}`,
+      text: `La capa ya está disponible.\n\nID de solicitud: ${layerId}\nID de la capa: ${portalItem.id}\nSolicitada por: ${requesterName}\nCorreo del usuario: ${requesterEmail}\nEnlace: ${layerUrl}`,
+      html: `<p>La capa ya está disponible.</p><p><strong>ID de solicitud:</strong> ${layerId}</p><p><strong>ID de la capa:</strong> ${portalItem.id}</p><p><strong>Solicitada por:</strong> ${requesterName}<br><strong>Correo del usuario:</strong> ${requesterEmail}</p><p><a href="${layerUrl}">Abrir la capa en el Portal IGAC</a></p>`,
+    });
+  }).then(() => {
+    console.log(`[PRISMA] Notificación enviada para la capa ${layerId}`);
+    return true;
+  }).catch((error) => {
+    prismaNotificationJobs.delete(layerId);
+    throw error;
+  });
+
+  prismaNotificationJobs.set(layerId, notification);
+  return notification;
+}
 
 const ORTHO_DOWNLOAD_EVALSCRIPT = `//VERSION=3
 function setup() {
@@ -457,7 +536,7 @@ const server = http.createServer((req, res) => {
   const origin = getCorsOrigin(req.headers.origin);
   res.setHeader("Access-Control-Allow-Origin", origin);
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Prisma-Requester-Name, X-Prisma-Requester-Email");
 
   if (req.method === "OPTIONS") {
     res.writeHead(204);
@@ -748,6 +827,8 @@ function evaluatePixel(sample) {
 
   if (requestUrl.pathname.startsWith("/prisma-proxy/") && (req.method === "GET" || req.method === "POST")) {
     const upstreamPath = requestUrl.pathname.replace(/^\/prisma-proxy/, "");
+    const requesterName = cleanHeaderValue(req.headers["x-prisma-requester-name"]);
+    const requesterEmail = cleanHeaderValue(req.headers["x-prisma-requester-email"]);
     if (!isAllowedPrismaProxyPath(upstreamPath)) {
       sendJson(res, 400, origin, { error: "Invalid Prisma proxy path" });
       return;
@@ -781,6 +862,42 @@ function evaluatePixel(sample) {
         180000
       );
     }).then((prismaResponse) => {
+      if (req.method === "POST" && prismaResponse.statusCode >= 200 && prismaResponse.statusCode < 300) {
+        try {
+          const payload = JSON.parse(prismaResponse.body.toString("utf8"));
+          if (payload && payload.name) {
+            const modelName = upstreamPath.split("/").filter(Boolean).pop().replace(/^dl_/, "");
+            const requestId = String(payload.name);
+            const layerName = requestId.startsWith(`${modelName}_`)
+              ? requestId
+              : `${modelName}_${requestId}`;
+            prismaRequestContexts.set(String(payload.name), {
+              requesterName,
+              requesterEmail,
+              layerName,
+            });
+            console.log(`[PRISMA] Solicitud ${requestId}; capa esperada en Portal: ${layerName}`);
+          }
+        } catch (error) {
+          console.warn("[PRISMA] No se pudo registrar el usuario solicitante:", error.message);
+        }
+      }
+      const completedRequest = req.method === "GET" && upstreamPath.match(/^\/dl\/([^/]+)\/$/);
+      if (completedRequest && prismaResponse.statusCode >= 200 && prismaResponse.statusCode < 300) {
+        try {
+          const payload = JSON.parse(prismaResponse.body.toString("utf8"));
+          if (payload && payload.geojson) {
+            const requestContext = prismaRequestContexts.get(completedRequest[1]) || {};
+            notifyPrismaLayerReady(completedRequest[1], requestContext).then(() => {
+              prismaRequestContexts.delete(completedRequest[1]);
+            }).catch((error) => {
+              console.error(`[PRISMA] No se pudo enviar la notificación para ${completedRequest[1]}:`, error.message);
+            });
+          }
+        } catch (error) {
+          console.warn("[PRISMA] No se pudo interpretar la respuesta final:", error.message);
+        }
+      }
       relayBufferedResponse(res, origin, prismaResponse, "application/json");
     }).catch((error) => {
       console.error("[PROXY] Prisma request error:", error.message);

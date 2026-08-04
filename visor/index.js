@@ -3833,10 +3833,15 @@ function getPrismaApiUrl(path, baseUrl) {
 }
 
 function getPrismaAuthHeaders() {
-    return {
+    var headers = {
         Authorization: "Bearer " + getPrismaAccessToken(),
         "Content-Type": "application/json",
     };
+    if (currentUser) {
+        headers["X-Prisma-Requester-Name"] = currentUser.displayName || "";
+        headers["X-Prisma-Requester-Email"] = currentUser.email || "";
+    }
+    return headers;
 }
 
 function getPrismaAccessToken() {
@@ -3922,7 +3927,7 @@ function pollPrismaResult(code, attempt) {
     $.ajax({
         url: getPrismaApiUrl("dl/" + code + "/"),
         type: "GET",
-        headers: { Authorization: "Bearer " + getPrismaAccessToken() },
+        headers: getPrismaAuthHeaders(),
         dataType: "json",
         success: function (data) {
             if (data && data.geojson) {
