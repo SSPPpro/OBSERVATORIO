@@ -1,11 +1,15 @@
 import geopandas as gpd
 import os
 
-# 1. Definir la ruta de la carpeta
+# 1. Definir la carpeta que contiene los archivos GeoJSON
 ruta_carpeta = r'C:\Users\maico\OneDrive\Escritorio\PROCALCULO SAS\OneDrive - Procalculo Prosis S.A.S\GOB CIVIL\CLIENTES\IGAC\OBSERVATORIO TIERRA Y TERRITORIO\ott_princ_24_05\ott\visor\data\reportes'
 
 # 2. Listar todos los archivos GeoJSON en la ruta
-archivos = [os.path.join(ruta_carpeta, f) for f in os.listdir(ruta_carpeta) if f.endswith('.geojson')]
+archivos = [
+    os.path.join(ruta_carpeta, f)
+    for f in os.listdir(ruta_carpeta)
+    if f.lower().endswith('.geojson')
+]
 
 if not archivos:
     print("No se encontraron archivos .geojson en la ruta especificada.")
@@ -20,5 +24,5 @@ else:
     ruta_salida = os.path.join(ruta_carpeta, 'resultado_unido_total.geojson')
     gdf_final.to_file(ruta_salida, driver='GeoJSON')
 
-    print(f"¡Proceso completado! Se unieron {len(archivos)} archivos.")
-    print(f"Archivo guardado en: {ruta_salida}")
+    print("¡Proceso completado! Se unieron {} archivos.".format(len(archivos)))
+    print("Archivo guardado en: {}".format(ruta_salida))
