@@ -4053,7 +4053,7 @@ function getSHAnalyticsLocalUrl(subscriptionId) {
 }
 
 function getSHAnalyticsStaticLocalSubscriptions() {
-    var subscriptions = [];
+    var subscriptions = [{ id: "ordenamiento-territorial", title: "Ordenamiento Territorial", description: "" }];
     if (planetAnalyticsLocalUrls.building) {
         subscriptions.push({
             id: "building",
@@ -4425,7 +4425,7 @@ function loadSHAnalyticsBoundaries() {
             var added = drawSHAnalyticsBoundaries(geojson);
             currentSHAnalyticsBoundariesLoaded = added > 0;
             if (added > 0) {
-                currentSHAnalyticsBoundaryLayer.setVisibility($("#chkSHAnalyticsBoundaries").is(":checked"));
+                currentSHAnalyticsBoundaryLayer.setVisibility($("#chkSHAnalyticsBoundaries").is(":checked") && currentScreen === "SHAnalytics" && !isOrdenamientoTerritorial());
                 bringSHAnalyticsBoundariesToFront();
                 setSHAnalyticsBoundaryStatus("", false);
             } else {
@@ -6455,7 +6455,7 @@ function updateSHAnalyticsBoundaryVisibility() {
     if (!currentSHAnalyticsBoundaryLayer) {
         return;
     }
-    var shouldShow = $("#chkSHAnalyticsBoundaries").is(":checked") && currentScreen === "SHAnalytics";
+    var shouldShow = $("#chkSHAnalyticsBoundaries").is(":checked") && currentScreen === "SHAnalytics" && !isOrdenamientoTerritorial();
     currentSHAnalyticsBoundaryLayer.setVisibility(shouldShow);
     if (shouldShow) {
         loadSHAnalyticsBoundaries();
@@ -6500,6 +6500,8 @@ function closeSHAnalyticsLoadingDialog(loadingDialog, delay) {
 }
 
 function gotoSHAnalytics() {
+    currentSHAnalyticsLoadRequestId++;
+    $(".sh-analytics-municipality-control, .sh-analytics-boundary-control").show();
     currentScreen = "SHAnalytics";
     reporteUso("Abrir SHAnalytics");
     minAll();
@@ -6568,6 +6570,10 @@ function gotoSHAnalytics() {
 }
 
 function updateSHAnalytics() {
+    clearBurnsMonthlyMosaicWindow();
+    $(".sh-analytics-municipality-control, .sh-analytics-boundary-control").toggle(!isOrdenamientoTerritorial());
+    if (map.infoWindow) map.infoWindow.hide();
+    $("#selectSHAnalyticsResults").off("click.territorial");
     currentSHAnalyticsLoadRequestId++;
     var loadRequestId = currentSHAnalyticsLoadRequestId;
     $("#selectSHAnalyticsResults").html("");
@@ -6612,6 +6618,11 @@ function updateSHAnalytics() {
             closeSHAnalyticsLoadingDialog(shAnalyticsResultsLoading);
             return;
         }
+        if (isOrdenamientoTerritorial()) {
+            loadOrdenamientoTerritorial(loadRequestId, shAnalyticsResultsLoading);
+            return;
+        }
+        updateSHAnalyticsBoundaryVisibility();
         loadSHAnalyticsMunicipalities();
         loadSHAnalyticsPage($("#selectSHAnalyticsSubs").val(), null, false, shAnalyticsResultsLoading, loadRequestId);
     }, 120);
@@ -7026,7 +7037,7 @@ function resetSHAnalyticsHexSymbols(selectedGraphic) {
     }
     for (var i = 0; i < currentSHAnalyticsHexLayer.graphics.length; i++) {
         var graphic = currentSHAnalyticsHexLayer.graphics[i];
-        if (!graphic || !graphic.attributes) {
+        if (!graphic || !graphic.attributes || graphic.attributes.analyticsHexKey === undefined) {
             continue;
         }
         if (selectedGraphic && graphic === selectedGraphic) {
@@ -7304,6 +7315,12 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     if (indexLabel === "Pérdida de cobertura vegetal") {
         indexInfoHtml = "<span class='tooltip-container burns-nbr-info' title='Información del índice'><span class='icon'>i</span><span class='tooltip-text'>El índice de pérdida de cobertura vegetal se calcula con imágenes Sentinel siguiendo metodologías del evalscript de Sentinel Hub: <a href='https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel/sentinel-2/' target='_blank' rel='noopener noreferrer'>Sentinel Hub Custom Scripts</a>. En el mapa principal se muestra la imagen Sentinel empleada para el cálculo del índice. Esta ventana flotante muestra mosaicos mensuales de Planet, usados estrictamente para validaciones y comparaciones visuales, no para ejecutar el evalscript.</span></span>";
     }
+    var isTerritorialPreview = !!(selectedGraphic && selectedGraphic.attributes && selectedGraphic.attributes.territorialGroup !== undefined);
+    var createMosaicPreviewSymbol = function () {
+        return selectedGraphic && selectedGraphic.attributes && selectedGraphic.attributes.territorialGroup !== undefined
+            ? createOrdenamientoTerritorialSymbol()
+            : createClassifiedPolygonPreviewSymbol();
+    };
     var hasSelectedPolygon = !!(selectedGraphic && selectedGraphic.geometry);
     var shAnalyticsDownloadHtml = "";
     var shAnalyticsPdfHtml = "";
@@ -7317,7 +7334,14 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             shAnalyticsHexHtml = "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Hexágono</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='sh-analytics-hex-number'>" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.number) + "</span>" + "<button type='button' class='sh-analytics-floating-hex-download-btn' title='Descargar cambios del hexágono' data-sh-analytics-hex='" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.key) + "'><span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span></button>" + "<button type='button' class='sh-analytics-floating-hex-pdf-btn' title='Descargar reporte del hexágono' data-sh-analytics-hex='" + escapeSHAnalyticsHtml(shAnalyticsHexInfo.key) + "'><span class='sh-analytics-pdf-icon'>PDF</span></button>" + "</td></tr>";
         }
     }
-    var panelHtml = "<div id='burnsFloatingHeader' style='display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#4f6b5a;color:#fff;border-radius:6px 6px 0 0;cursor:move;'>" + "<div style='font-weight:600;'>Visualización de mosaicos mensuales</div>" + "<a href='#' id='burnsFloatingClose' style='color:#fff;text-decoration:none;font-size:18px;line-height:18px;'>×</a></div>" + "<div id='burnsFloatingContent'>" + "<table style='width:100%;border-collapse:collapse;background:#fff;border:1px solid #ddd;'>" + "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Índice</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='burns-index-label'>" + indexLabel + "</span>" + shAnalyticsDownloadHtml + shAnalyticsPdfHtml + indexInfoHtml + "</td></tr>" + (detectionDateLabel ? "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Fecha de detección</td><td style='padding:8px;border-bottom:1px solid #eee;'>" + formatSHAnalyticsDateLabel(detectionDateLabel) + "</td></tr>" : "") + shAnalyticsHexHtml + "</table>" + "<div id='burnsSelectPolygonMessage' style='display:" + (hasSelectedPolygon ? "none" : "block") + ";margin:8px 0 0;padding:9px 10px;border:1px solid #d9e2dc;background:#f6faf7;color:#3d5e4f;font-weight:600;text-align:center;border-radius:4px;'>Seleccione poligono en el mapa para desplegar los mosaicos</div>" + "<div style='display:flex;gap:8px;margin-top:8px;margin-bottom:10px;'>" + "<button id='burnsModeGallery' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#4f6b5a;color:#fff;border-radius:4px;font-weight:600;'>Galería</button>" + "<button id='burnsModeSwipe' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#fff;color:#3d5e4f;border-radius:4px;font-weight:600;'>Swipe</button>" + "<button id='burnsModeSuperRes' type='button' style='display:none;flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#fff;color:#3d5e4f;border-radius:4px;font-weight:600;'>SuperResolucion</button>" + "</div>" + "<div id='burnsGalleryPane'>" + "<div id='burnsGalleryGrid' style='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;'></div>" + "</div>" + "<div id='burnsSwipePane' style='display:none;'>" + "<div id='burnsSwipeMapWrap' style='position:relative;height:420px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'>" + "<div id='burnsSwipeMap' style='position:absolute;inset:0;z-index:1;'></div>" + "<div id='burnsSwipeControl' style='position:absolute;inset:0;z-index:40;pointer-events:none;'><div id='burnsSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div></div>" + "<div id='burnsCustomVerticalSwipe' style='display:none;position:absolute;left:0;right:0;top:50%;height:28px;margin-top:-14px;z-index:70;cursor:ns-resize;pointer-events:auto;'>" + "<div style='position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;background:#fff;border-top:1px solid rgba(0,0,0,0.55);border-bottom:1px solid rgba(0,0,0,0.55);box-shadow:0 0 7px rgba(0,0,0,0.75);'></div>" + "<div style='position:absolute;left:50%;top:50%;width:30px;height:24px;margin-left:-15px;margin-top:-12px;background:#fff;border:2px solid #4f6b5a;border-radius:4px;box-shadow:0 1px 7px rgba(0,0,0,0.55);color:#4f6b5a;font-size:15px;font-weight:700;line-height:20px;text-align:center;'>↕</div>" + "</div>" + "<div id='burnsSwipeToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:2147483001;display:flex;align-items:center;gap:0;pointer-events:auto;'>" + "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" + "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" + "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" + "<div id='burnsSwipeOpacityPopover' style='display:none;position:absolute;bottom:30px;left:56px;z-index:17;width:112px;padding:7px 8px;background:#fff;border:1px solid #d5d5d5;border-radius:4px;box-shadow:0 7px 18px rgba(0,0,0,0.2);text-align:center;'>" + "<input id='burnsSwipeOpacityRange' type='range' min='0' max='1' step='0.05' value='0.5' style='width:100%;accent-color:#4f6b5a;'>" + "<div id='burnsSwipeOpacityLabel' style='margin-top:4px;color:#4f6b5a;font-size:13px;'>50%</div>" + "</div>" + "</div>" + "<div id='burnsSwipeLeftLabel' style='position:absolute;left:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:auto;display:flex;align-items:center;gap:8px;'>" + "<span id='burnsSwipeLeftLabelText'></span>" + "<button id='burnsSwipeMonthPickerBtn' type='button' style='border:0;background:#3d5e4f;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;line-height:1;cursor:pointer;' title='Seleccionar mes inicial'>▾</button>" + "</div>" + "<div id='burnsSwipeRightLabel' style='position:absolute;right:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:none;'></div>" + "<div id='burnsMonthPickerPopover' style='display:none;position:absolute;left:80px;bottom:62px;z-index:13;background:#fff;border:1px solid #d5d5d5;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.18);padding:10px;width:220px;'>" + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;'>" + "<button id='burnsMonthPickerPrevYear' type='button' style='border:0;background:transparent;color:#3d5e4f;font-size:18px;line-height:1;cursor:pointer;'>«</button>" + "<div id='burnsMonthPickerYear' style='font-weight:700;color:#3d5e4f;'></div>" + "<button id='burnsMonthPickerNextYear' type='button' style='border:0;background:transparent;color:#3d5e4f;font-size:18px;line-height:1;cursor:pointer;'>»</button>" + "</div>" + "<div id='burnsMonthPickerGrid' style='display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;'></div>" + "</div>" + "</div>" + "</div>" + "<div id='burnsSuperResPane' style='display:none;'>" + "<div style='display:flex;gap:10px;align-items:center;margin-bottom:8px;'>" + "<label style='flex:1;color:#3d5e4f;font-weight:600;'>Inicial <select id='burnsSuperResInitialSelect' style='width:100%;margin-top:4px;border:1px solid #cfd8d2;border-radius:4px;padding:5px;'></select></label>" + "<label style='flex:1;color:#3d5e4f;font-weight:600;'>Final <select id='burnsSuperResFinalSelect' style='width:100%;margin-top:4px;border:1px solid #cfd8d2;border-radius:4px;padding:5px;'></select></label>" + "</div>" + "<div id='burnsSuperResMapWrap' style='position:relative;height:420px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'>" + "<div id='burnsSuperResMap' style='position:absolute;inset:0;z-index:1;'></div>" + "<div id='burnsSuperResStatus' style='position:absolute;left:10px;top:10px;z-index:15;padding:5px 8px;background:rgba(255,255,255,0.92);border:1px solid #d5d5d5;border-radius:4px;color:#3d5e4f;font-size:12px;font-weight:600;'>Cargando mosaicos...</div>" + "<div id='burnsSuperResSwipeControl' style='position:absolute;inset:0;z-index:40;pointer-events:none;'><div id='burnsSuperResSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div></div>" + "<div id='burnsSuperResToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:2147483001;display:flex;align-items:center;gap:0;pointer-events:auto;'>" + "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" + "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" + "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" + "<div id='burnsSuperResOpacityPopover' style='display:none;position:absolute;bottom:30px;left:56px;z-index:17;width:112px;padding:7px 8px;background:#fff;border:1px solid #d5d5d5;border-radius:4px;box-shadow:0 7px 18px rgba(0,0,0,0.2);text-align:center;'>" + "<input id='burnsSuperResOpacityRange' type='range' min='0' max='1' step='0.05' value='0.5' style='width:100%;accent-color:#4f6b5a;'>" + "<div id='burnsSuperResOpacityLabel' style='margin-top:4px;color:#4f6b5a;font-size:13px;'>50%</div>" + "</div>" + "</div>" + "<div id='burnsSuperResLeftLabel' style='position:absolute;left:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;pointer-events:none;'></div>" + "<div id='burnsSuperResRightLabel' style='position:absolute;right:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;pointer-events:none;'></div>" + "</div>" + "</div>" + "</div>";
+    var panelHtml = "<div id='burnsFloatingHeader' style='display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#4f6b5a;color:#fff;border-radius:6px 6px 0 0;cursor:move;'>" + "<div style='font-weight:600;'>Visualización de mosaicos mensuales</div>" + "<a href='#' id='burnsFloatingClose' style='color:#fff;text-decoration:none;font-size:18px;line-height:18px;'>×</a></div>" + "<div id='burnsFloatingContent'>" + "<table style='width:100%;border-collapse:collapse;background:#fff;border:1px solid #ddd;'>" + "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Índice</td><td style='padding:8px;border-bottom:1px solid #eee;'><span class='burns-index-label'>" + indexLabel + "</span>" + shAnalyticsDownloadHtml + shAnalyticsPdfHtml + indexInfoHtml + "</td></tr>" + (detectionDateLabel ? "<tr><td style='padding:8px;border-bottom:1px solid #eee;font-weight:600;'>Fecha de detección</td><td style='padding:8px;border-bottom:1px solid #eee;'>" + formatSHAnalyticsDateLabel(detectionDateLabel) + "</td></tr>" : "") + shAnalyticsHexHtml + "</table>" + "<div id='burnsSelectPolygonMessage' style='display:" + (hasSelectedPolygon ? "none" : "block") + ";margin:8px 0 0;padding:9px 10px;border:1px solid #d9e2dc;background:#f6faf7;color:#3d5e4f;font-weight:600;text-align:center;border-radius:4px;'>Seleccione poligono en el mapa para desplegar los mosaicos</div>" + "<div style='display:flex;gap:8px;margin-top:8px;margin-bottom:10px;'>" + "<button id='burnsModeGallery' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#4f6b5a;color:#fff;border-radius:4px;font-weight:600;'>Galería</button>" + "<button id='burnsModeSwipe' type='button' style='flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#fff;color:#3d5e4f;border-radius:4px;font-weight:600;'>Swipe</button>" + "<button id='burnsModeSuperRes' type='button' style='display:none;flex:1;padding:6px 10px;border:1px solid #3d5e4f;background:#fff;color:#3d5e4f;border-radius:4px;font-weight:600;'>SuperResolucion</button>" + "</div>" + "<div id='burnsGalleryPane'>" + "<div id='burnsGalleryGrid' style='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;'></div>" + "</div>" + "<div id='burnsSwipePane' style='display:none;'>" + "<div id='burnsSwipeMapWrap' style='position:relative;height:420px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'>" + "<div id='burnsSwipeMap' style='position:absolute;inset:0;z-index:1;'></div>" + "<div id='burnsSwipeControl' style='position:absolute;inset:0;z-index:40;pointer-events:none;'><div id='burnsSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div></div>" + "<div id='burnsCustomVerticalSwipe' style='display:none;position:absolute;left:0;right:0;top:50%;height:28px;margin-top:-14px;z-index:70;cursor:ns-resize;pointer-events:auto;'>" + "<div style='position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;background:#fff;border-top:1px solid rgba(0,0,0,0.55);border-bottom:1px solid rgba(0,0,0,0.55);box-shadow:0 0 7px rgba(0,0,0,0.75);'></div>" + "<div style='position:absolute;left:50%;top:50%;width:30px;height:24px;margin-left:-15px;margin-top:-12px;background:#fff;border:2px solid #4f6b5a;border-radius:4px;box-shadow:0 1px 7px rgba(0,0,0,0.55);color:#4f6b5a;font-size:15px;font-weight:700;line-height:20px;text-align:center;'>↕</div>" + "</div>" + "<div id='burnsSwipeToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:2147483001;display:flex;align-items:center;gap:0;pointer-events:auto;'>" + "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" + "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" + "<button type='button' class='burns-swipe-mode-btn' data-burns-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" + "<div id='burnsSwipeOpacityPopover' style='display:none;position:absolute;bottom:30px;left:56px;z-index:17;width:112px;padding:7px 8px;background:#fff;border:1px solid #d5d5d5;border-radius:4px;box-shadow:0 7px 18px rgba(0,0,0,0.2);text-align:center;'>" + "<input id='burnsSwipeOpacityRange' type='range' min='0' max='1' step='0.05' value='0.5' style='width:100%;accent-color:#4f6b5a;'>" + "<div id='burnsSwipeOpacityLabel' style='margin-top:4px;color:#4f6b5a;font-size:13px;'>50%</div>" + "</div>" + "</div>" + "<div id='burnsSwipeLeftLabel' style='position:absolute;left:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:auto;display:flex;align-items:center;gap:8px;'>" + "<span id='burnsSwipeLeftLabelText'></span>" + "<button id='burnsSwipeMonthPickerBtn' type='button' style='border:0;background:#3d5e4f;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;line-height:1;cursor:pointer;' title='Seleccionar mes inicial'>▾</button>" + "</div>" + "<div id='burnsSwipeRightLabel' style='position:absolute;right:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;text-transform:capitalize;pointer-events:auto;display:flex;align-items:center;gap:8px;'><span id='burnsSwipeRightLabelText'></span><button id='burnsSwipeFinalMonthPickerBtn' type='button' title='Seleccionar mes final' aria-label='Seleccionar mes final' style='border:0;background:#3d5e4f;color:#fff;border-radius:4px;padding:2px 6px;cursor:pointer;'>&#9662;</button></div>" + "<div id='burnsMonthPickerPopover' style='display:none;position:absolute;left:80px;bottom:62px;z-index:13;background:#fff;border:1px solid #d5d5d5;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.18);padding:10px;width:220px;'>" + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;'>" + "<button id='burnsMonthPickerPrevYear' type='button' style='border:0;background:transparent;color:#3d5e4f;font-size:18px;line-height:1;cursor:pointer;'>«</button>" + "<div id='burnsMonthPickerYear' style='font-weight:700;color:#3d5e4f;'></div>" + "<button id='burnsMonthPickerNextYear' type='button' style='border:0;background:transparent;color:#3d5e4f;font-size:18px;line-height:1;cursor:pointer;'>»</button>" + "</div>" + "<div id='burnsMonthPickerGrid' style='display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;'></div>" + "</div>" + "</div>" + "</div>" + "<div id='burnsSuperResPane' style='display:none;'>" + "<div style='display:flex;gap:10px;align-items:center;margin-bottom:8px;'>" + "<label style='flex:1;color:#3d5e4f;font-weight:600;'>Inicial <select id='burnsSuperResInitialSelect' style='width:100%;margin-top:4px;border:1px solid #cfd8d2;border-radius:4px;padding:5px;'></select></label>" + "<label style='flex:1;color:#3d5e4f;font-weight:600;'>Final <select id='burnsSuperResFinalSelect' style='width:100%;margin-top:4px;border:1px solid #cfd8d2;border-radius:4px;padding:5px;'></select></label>" + "</div>" + "<div id='burnsSuperResMapWrap' style='position:relative;height:420px;border:1px solid #ddd;border-radius:4px;overflow:hidden;background:#f7f7f7;'>" + "<div id='burnsSuperResMap' style='position:absolute;inset:0;z-index:1;'></div>" + "<div id='burnsSuperResStatus' style='position:absolute;left:10px;top:10px;z-index:15;padding:5px 8px;background:rgba(255,255,255,0.92);border:1px solid #d5d5d5;border-radius:4px;color:#3d5e4f;font-size:12px;font-weight:600;'>Cargando mosaicos...</div>" + "<div id='burnsSuperResSwipeControl' style='position:absolute;inset:0;z-index:40;pointer-events:none;'><div id='burnsSuperResSwipeControlNode' style='position:absolute;inset:0;width:100%;height:100%;'></div></div>" + "<div id='burnsSuperResToolbar' style='position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:2147483001;display:flex;align-items:center;gap:0;pointer-events:auto;'>" + "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='horizontal' title='Swipe horizontal' style='width:28px;height:26px;border:1px solid #cfcfcf;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↔</button>" + "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='vertical' title='Swipe vertical' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:14px;font-weight:700;line-height:1;'>↕</button>" + "<button type='button' class='burns-superres-mode-btn' data-superres-swipe-mode='overlay' title='Superponer con transparencia' style='width:28px;height:26px;border:1px solid #cfcfcf;border-left:0;background:#fff;color:#3d5e4f;font-size:13px;font-weight:700;line-height:1;'>⇄</button>" + "<div id='burnsSuperResOpacityPopover' style='display:none;position:absolute;bottom:30px;left:56px;z-index:17;width:112px;padding:7px 8px;background:#fff;border:1px solid #d5d5d5;border-radius:4px;box-shadow:0 7px 18px rgba(0,0,0,0.2);text-align:center;'>" + "<input id='burnsSuperResOpacityRange' type='range' min='0' max='1' step='0.05' value='0.5' style='width:100%;accent-color:#4f6b5a;'>" + "<div id='burnsSuperResOpacityLabel' style='margin-top:4px;color:#4f6b5a;font-size:13px;'>50%</div>" + "</div>" + "</div>" + "<div id='burnsSuperResLeftLabel' style='position:absolute;left:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;pointer-events:none;'></div>" + "<div id='burnsSuperResRightLabel' style='position:absolute;right:80px;bottom:18px;z-index:12;padding:6px 14px;border:1px solid #3d5e4f;border-radius:4px;color:#3d5e4f;font-size:14px;font-weight:600;line-height:1;background:#fff;pointer-events:none;'></div>" + "</div>" + "</div>" + "</div>";
+    if (isTerritorialPreview) {
+        var territorialLegend = "<div role='note' aria-label='Leyenda de capas' style='display:flex;flex-wrap:wrap;gap:16px;padding:10px;background:#fff;border:1px solid #ddd;margin-bottom:8px'>" +
+            "<span><i style='display:inline-block;width:18px;height:12px;border:2px solid #ffe600;margin-right:5px'></i>Área urbana</span>" +
+            "<span><i style='display:inline-block;width:18px;height:12px;border:2px solid #0066ff;margin-right:5px'></i>Detecciones</span>" +
+            "<span><i style='display:inline-block;width:18px;height:12px;border:2px solid #a020f0;margin-right:5px'></i>Área de expansión urbana</span></div>";
+        panelHtml = panelHtml.replace("<div id='burnsGalleryPane'>", territorialLegend + "<div id='burnsGalleryPane'>");
+    }
     var wasHidden = !$("#burnsFloatingDetail").is(":visible");
     if ($("#burnsFloatingDetail").length === 0) {
         $("#mapViewDiv").append("<div id='burnsFloatingDetail' style='position:absolute;top:20px;left:20px;z-index:1200;width:780px;max-width:calc(100vw - 40px);box-shadow:0 4px 14px rgba(0,0,0,0.25);border-radius:6px;overflow:auto;resize:both;'></div>");
@@ -7644,7 +7668,8 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             if (superResSwipeStarted || !burnsSuperResLeftLayer.loaded || !burnsSuperResRightLayer.loaded) return;
             superResSwipeStarted = true;
             if (selectedGraphic && selectedGraphic.geometry) {
-                burnsSuperResMap.graphics.add(new esri.Graphic(selectedGraphic.geometry, createClassifiedPolygonPreviewSymbol()));
+                addTerritorialUrbanPreview(burnsSuperResMap, selectedGraphic);
+                burnsSuperResMap.graphics.add(new esri.Graphic(selectedGraphic.geometry, createMosaicPreviewSymbol()));
             }
             burnsSuperResMap.resize();
             burnsSuperResMap.reposition();
@@ -7676,14 +7701,18 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     };
     var renderGallery = function () {
         $("#burnsGalleryGrid").empty();
-        for (var i = 5; i >= 0; i--) {
-            var dm = endMoment.clone().add(-i, "month");
+        var galleryCount = isTerritorialPreview ? Math.max(1, endMoment.year() - 2021 + 1) : 6;
+        for (var galleryIndex = 0; galleryIndex < galleryCount; galleryIndex++) {
+            var dm = isTerritorialPreview
+                ? endMoment.clone().subtract(galleryIndex, "year")
+                : endMoment.clone().subtract(5 - galleryIndex, "month");
             var cellId = "burnsGalleryCell_" + dm.format("YYYY_MM");
             $("#burnsGalleryGrid").append("<div><div class='burns-gallery-viewport'><div id='" + cellId + "' class='burns-gallery-map-canvas'></div></div><div style='text-align:center;font-weight:600;margin-top:6px;'>" + formatBurnsMonthYear(dm) + "</div></div>");
             var miniMap = new esri.Map(cellId, { logo: false, slider: false, showAttribution: false, center: targetExtent.getCenter(), zoom: map.getZoom(), autoResize: false });
             miniMap.addLayer(buildMosaicLayer(dm));
             if (selectedGraphic && selectedGraphic.geometry) {
-                miniMap.graphics.add(new esri.Graphic(selectedGraphic.geometry, createClassifiedPolygonPreviewSymbol()));
+                addTerritorialUrbanPreview(miniMap, selectedGraphic);
+                miniMap.graphics.add(new esri.Graphic(selectedGraphic.geometry, createMosaicPreviewSymbol()));
             }
             miniMap.setExtent(targetExtent, true);
             burnsGalleryMaps.push(miniMap);
@@ -7694,6 +7723,8 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     var swipeCompareMoment = null;
     var swipeMinMoment = esri.moment("2021-01-01").startOf("month");
     var monthPickerYear = null;
+    var monthPickerField = "start";
+    var swipeMaxMoment = esri.moment().subtract(1, "month").startOf("month");
     var burnsSwipeViewMode = "horizontal";
     var burnsSwipeOverlayOpacity = 0.5;
     var burnsSwipeLeftLayer = null;
@@ -7942,10 +7973,11 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         var html = "";
         for (var monthIdx = 0; monthIdx < 12; monthIdx++) {
             var monthMoment = esri.moment({ year: monthPickerYear, month: monthIdx, day: 1 });
-            var isFutureThanEnd = monthMoment.isAfter(swipeFinalMoment, "month");
-            var isBeforeMin = monthMoment.isBefore(swipeMinMoment, "month");
+            var isFutureThanEnd = monthMoment.isAfter(monthPickerField === "end" ? swipeMaxMoment : swipeFinalMoment, "month");
+            var isBeforeMin = monthMoment.isBefore(monthPickerField === "end" ? swipeCompareMoment : swipeMinMoment, "month");
             var isDisabled = isFutureThanEnd || isBeforeMin;
-            var isActive = swipeCompareMoment.year() === monthPickerYear && swipeCompareMoment.month() === monthIdx;
+            var activeMoment = monthPickerField === "end" ? swipeFinalMoment : swipeCompareMoment;
+            var isActive = activeMoment.year() === monthPickerYear && activeMoment.month() === monthIdx;
             html += "<button type='button' class='burns-month-option' data-month='" + monthIdx + "' style='padding:8px 0;border:1px solid " + (isActive ? "#3d5e4f" : "#e0e0e0") + ";background:" + (isActive ? "#e8efe9" : "#fff") + ";border-radius:6px;color:#3d5e4f;cursor:" + (isDisabled ? "not-allowed" : "pointer") + ";opacity:" + (isDisabled ? "0.45" : "1") + ";'>" + monthShortNamesEs[monthIdx] + "</button>";
         }
         $("#burnsMonthPickerGrid").html(html);
@@ -7959,6 +7991,18 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             leftLayer.id = "burnsSwipeLeftLayer";
             burnsSwipeLeftLayer = leftLayer;
             burnsCompareMap.addLayer(leftLayer);
+            applyBurnsSwipeViewMode();
+        }
+        renderMonthPicker();
+    };
+    var updateSwipeRightSelection = function (newFinalMoment) {
+        if (newFinalMoment.isBefore(swipeCompareMoment, "month") || newFinalMoment.isAfter(swipeMaxMoment, "month")) return;
+        swipeFinalMoment = newFinalMoment.clone().startOf("month");
+        $("#burnsSwipeRightLabelText").text(formatBurnsMonthYear(swipeFinalMoment).toLowerCase());
+        if (burnsCompareMap) {
+            if (burnsSwipeRightLayer) burnsCompareMap.removeLayer(burnsSwipeRightLayer);
+            burnsSwipeRightLayer = buildMosaicLayer(swipeFinalMoment);
+            burnsCompareMap.addLayer(burnsSwipeRightLayer, 0);
             applyBurnsSwipeViewMode();
         }
         renderMonthPicker();
@@ -7994,7 +8038,9 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
     };
     var renderSwipe = function () {
         var finalMoment = endMoment.clone();
-        var compareMoment = finalMoment.clone().add(-1, "month").startOf("month");
+        var compareMoment = selectedGraphic && selectedGraphic.attributes && selectedGraphic.attributes.territorialGroup !== undefined
+            ? swipeMinMoment.clone()
+            : finalMoment.clone().add(-1, "month").startOf("month");
         if (compareMoment.isBefore(swipeMinMoment, "month")) {
             compareMoment = swipeMinMoment.clone();
         }
@@ -8005,7 +8051,7 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         swipeCompareMoment = compareMoment.clone().startOf("month");
         monthPickerYear = swipeCompareMoment.year();
         $("#burnsSwipeLeftLabelText").text(formatBurnsMonthYear(swipeCompareMoment).toLowerCase());
-        $("#burnsSwipeRightLabel").text(formatBurnsMonthYear(finalMoment).toLowerCase());
+        $("#burnsSwipeRightLabelText").text(formatBurnsMonthYear(finalMoment).toLowerCase());
         burnsCompareMap = new esri.Map("burnsSwipeMap", {
             logo: false,
             slider: false,
@@ -8026,7 +8072,8 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             if (swipeStarted || !leftLayer.loaded || !rightLayer.loaded) return;
             swipeStarted = true;
             if (selectedGraphic && selectedGraphic.geometry) {
-                burnsCompareMap.graphics.add(new esri.Graphic(selectedGraphic.geometry, createClassifiedPolygonPreviewSymbol()));
+                addTerritorialUrbanPreview(burnsCompareMap, selectedGraphic);
+                burnsCompareMap.graphics.add(new esri.Graphic(selectedGraphic.geometry, createMosaicPreviewSymbol()));
             }
             burnsCompareMap.resize();
             burnsCompareMap.reposition();
@@ -8117,12 +8164,16 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
         .on("input change", function () {
             setSuperResOverlayOpacity($(this).val());
         });
-    $("#burnsSwipeMonthPickerBtn")
+    $("#burnsSwipeMonthPickerBtn, #burnsSwipeFinalMonthPickerBtn")
         .off("click")
         .on("click", function (evt) {
             evt.preventDefault();
             evt.stopPropagation();
-            $("#burnsMonthPickerPopover").toggle();
+            var field = this.id === "burnsSwipeFinalMonthPickerBtn" ? "end" : "start";
+            var wasOpen = $("#burnsMonthPickerPopover").is(":visible") && monthPickerField === field;
+            monthPickerField = field;
+            monthPickerYear = (field === "end" ? swipeFinalMoment : swipeCompareMoment).year();
+            $("#burnsMonthPickerPopover").css({ left: field === "end" ? "auto" : "80px", right: field === "end" ? "80px" : "auto" }).toggle(!wasOpen);
             renderMonthPicker();
         });
     $("#burnsMonthPickerPrevYear")
@@ -8143,13 +8194,17 @@ function openMonthlyMosaicFloatingWindowFromDates(startDateStr, endDateStr, inde
             if ($(this).css("cursor") === "not-allowed") return;
             var monthIdx = parseInt($(this).attr("data-month"), 10);
             var selectedMoment = esri.moment({ year: monthPickerYear, month: monthIdx, day: 1 });
-            updateSwipeLeftSelection(selectedMoment);
+            if (monthPickerField === "end") {
+                updateSwipeRightSelection(selectedMoment);
+            } else {
+                updateSwipeLeftSelection(selectedMoment);
+            }
             $("#burnsMonthPickerPopover").hide();
         });
     $("#burnsFloatingDetail")
         .off("click.burnsMonthPickerOutside")
         .on("click.burnsMonthPickerOutside", function (evt) {
-            if (!$(evt.target).closest("#burnsMonthPickerPopover, #burnsSwipeMonthPickerBtn").length) {
+            if (!$(evt.target).closest("#burnsMonthPickerPopover, #burnsSwipeMonthPickerBtn, #burnsSwipeFinalMonthPickerBtn").length) {
                 $("#burnsMonthPickerPopover").hide();
             }
         });
@@ -8618,6 +8673,9 @@ function detailSHAnalytics(pos) {
 }
 
 function clearSHAnalyticsWorkArea(options) {
+    currentSHAnalyticsLoadRequestId++;
+    $(".sh-analytics-municipality-control, .sh-analytics-boundary-control").show();
+    $("#selectSHAnalyticsResults").off("click.territorial");
     options = options || {};
     if (options.resetControls !== false) {
         $("#selectSHAnalyticsSubs").val("");
