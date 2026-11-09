@@ -721,7 +721,7 @@ var web_service_proxy = "https://serviciosgeovisor.igac.gov.co:8080/Geovisor";
 var thumb_service = "https://mapas2.igac.gov.co/image/rest/services/ott/amazonas_alta/ImageServer";
 var runtimeEnv = window.__env || {};
 // var isLocalHost = ["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1;
-var planetApiKey = runtimeEnv.planetApiKey || "PLAKd9faf25449294d9d86096fe33d980662";
+var planetApiKey = runtimeEnv.planetApiKey || "";
 var usePlanetDirect = planetApiKey != null && planetApiKey !== "";
 var planetAnalyticsBoundaryUrl = runtimeEnv.planetAnalyticsBoundaryUrl || "data/planet-analytics-limites.geojson";
 var planetAnalyticsLocalUrl = runtimeEnv.planetAnalyticsLocalUrl || "data/reportes/resultado_unido_total.geojson";

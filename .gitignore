@@ -3,3 +3,8 @@ visor/data/reportes/resultado_unido_vias.geojson
 visor/data/reportes/resultado_unido_construcciones.geojson
 ortho-download-jobs/
 node_modules/
+.env
+.env.*
+~$*
+visor/data/ClasificacionSuelo.shp
+visor/data/clasificacion suelo.geojson

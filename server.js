@@ -7,12 +7,12 @@ const crypto = require("crypto");
 const { spawn } = require("child_process");
 const nodemailer = require("nodemailer");
 
-const CLIENT_ID = process.env.SENTINEL_HUB_CLIENT_ID || "89499d2c-67f4-4f57-86c0-cdef0ece217e";
-const CLIENT_SECRET = process.env.SENTINEL_HUB_CLIENT_SECRET || "lVjg5KL43HXjNMQiRll1IruOXlvG3KqM";
-const PLANET_API_KEY = process.env.PLANET_API_KEY || "PLAKd9faf25449294d9d86096fe33d980662";
+const CLIENT_ID = process.env.SENTINEL_HUB_CLIENT_ID || "";
+const CLIENT_SECRET = process.env.SENTINEL_HUB_CLIENT_SECRET || "";
+const PLANET_API_KEY = process.env.PLANET_API_KEY || "";
 const PRISMA_API_BASE_URL = (process.env.PRISMA_API_BASE_URL || "https://prisma.procalculo.com").replace(/\/+$/, "");
-const PRISMA_USERNAME = process.env.PRISMA_USERNAME || "karens_diaz";
-const PRISMA_PASSWORD = process.env.PRISMA_PASSWORD || "Ig4c.2026";
+const PRISMA_USERNAME = process.env.PRISMA_USERNAME || "";
+const PRISMA_PASSWORD = process.env.PRISMA_PASSWORD || "";
 const PORT = Number(process.env.PORT) || 3000;
 const ORTHO_JOB_ROOT = path.resolve(process.env.ORTHO_JOB_ROOT || path.join(__dirname, "ortho-download-jobs"));
 const GDALBUILDVRT_PATH = process.env.GDALBUILDVRT_PATH || "gdalbuildvrt";
@@ -20,8 +20,8 @@ const GDAL_TRANSLATE_PATH = process.env.GDAL_TRANSLATE_PATH || "gdal_translate";
 const SMTP_HOST = "smtp.gmail.com";
 const SMTP_PORT = 465;
 const SMTP_SECURE = true;
-const SMTP_USER = "ottigac@gmail.com";
-const SMTP_PASS = "uevt tsmd smyg lalf";
+const SMTP_USER = process.env.SMTP_USER || "";
+const SMTP_PASS = process.env.SMTP_PASS || "";
 const SMTP_FROM = "Observatorio IGAC <ottigac@gmail.com>";
 const PRISMA_NOTIFICATION_RECIPIENTS = [
   "ottigac@gmail.com",
@@ -82,8 +82,8 @@ function getMailTransport() {
 function notifyPrismaLayerReady(layerId, context = {}) {
   if (prismaNotificationJobs.has(layerId)) return prismaNotificationJobs.get(layerId);
 
-  if (SMTP_PASS.startsWith("REEMPLAZAR_")) {
-    console.warn("[PRISMA] Notificación omitida: configure SMTP_PASS en server.js");
+  if (!SMTP_PASS || SMTP_PASS.startsWith("REEMPLAZAR_")) {
+    console.warn("[PRISMA] Notificación omitida: configure SMTP_PASS en variables de entorno o server.js");
     return Promise.resolve(false);
   }
 
